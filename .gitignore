@@ -1,7 +1,5 @@
 out/*
 lib/*
 src/META-INF/*
-.idea/
-*.iml
 *.jar
 *.class
