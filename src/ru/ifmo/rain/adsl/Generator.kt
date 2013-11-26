@@ -82,7 +82,7 @@ class GeneratorSettings() {
     }
 
     fun getPackage(): String {
-        return "package ru.ifmo.rain.adsl"
+        return "package com.example.adsl"
     }
 
     fun getImports(): String {
@@ -216,7 +216,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
 
 
     private fun processClass(classData: InputStream?) {
-        val cn = AdslVisitor(Opcodes.ASM5)
+        val cn = AdslVisitor(Opcodes.V1_6)
         try {
             val cr = ClassReader(classData)
             cr.accept(cn, 0)
@@ -236,8 +236,37 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         return entries.mapTo(ret) { jarFile.getInputStream(it) }
     }
 
-    inner class AdslVisitor(api: Int) : ClassVisitor(api) {
+    inner class AdslVisitor(api: Int) : ClassVisitor {
         var className: String = ""
+
+        override fun visitAnnotation(p0: String?, p1: Boolean): AnnotationVisitor? {
+            return null
+        }
+
+        override fun visitAttribute(p0: Attribute?) {
+            return
+        }
+
+        override fun visitEnd() {
+            return
+        }
+
+        override fun visitField(p0: Int, p1: String?, p2: String?, p3: String?, p4: Any?): FieldVisitor? {
+            return null
+        }
+
+        override fun visitInnerClass(p0: String?, p1: String?, p2: String?, p3: Int) {
+            return
+        }
+
+        override fun visitOuterClass(p0: String?, p1: String?, p2: String?) {
+            return
+        }
+
+        override fun visitSource(p0: String?, p1: String?) {
+            return
+        }
+
         override fun visit(version: Int, access: Int, name: String?, signature: String?, supername: String?, p5: Array<out String>?) {
             className = cleanInternalName(name!!)
             if (isBlacklistedClass(className))
@@ -247,6 +276,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
             if (!isInnerClass(name))
                 genContainerFun(className)
         }
+
         override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
             if ((access and Opcodes.ACC_PROTECTED) != 0)
                 return null

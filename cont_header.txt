@@ -18,5 +18,5 @@ trait _Container{
         val builder =  AlertDialog.Builder(ctx)
         builder.setTitle(title)
         builder.func()
-        return builder.create().show()
+        return builder.create()!!.show()
     }
