@@ -82,7 +82,7 @@ class GeneratorSettings() {
     }
 
     fun getPackage(): String {
-        return "package com.example.andr.dsl"
+        return "package ru.ifmo.rain.adsl"
     }
 
     fun getImports(): String {
@@ -91,6 +91,10 @@ class GeneratorSettings() {
 
     fun getContainerHeader(): String {
         return readFile("cont_header.txt")
+    }
+
+    fun getFooter(): String {
+        return readFile("footer.txt")
     }
 
     fun getBlackListedClasses(): Set<String> {
@@ -130,6 +134,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         extractClasses(jarPath, packageName) forEach { processClass(it) }
         genContainer()
         genProperties()
+        ps.write(settings.getFooter())
         ps.close()
     }
 

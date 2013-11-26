@@ -1,3 +1,5 @@
+package basic;
+
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -18,6 +20,7 @@ public class BasicGeneratorTest extends Assert {
         assertTrue(new File("cont_header.txt").exists());
         assertTrue(new File("class_blacklist.txt").exists());
         assertTrue(new File("prop_blacklist.txt").exists());
+        assertTrue(new File("footer.txt").exists());
 
         kotlincFilename = "lib/kotlinc/bin/kotlinc-jvm";
         assertTrue(new File(kotlincFilename).exists());
