@@ -1,4 +1,4 @@
-package com.adsl
+package ru.ifmo.rain.adsl;
 
 import java.io.FileOutputStream
 
