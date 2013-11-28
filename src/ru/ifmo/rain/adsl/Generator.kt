@@ -62,7 +62,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
                 !it.parent.isGeneric()
             }, { genGetter(it) }),
             Hook({
-                it.isSetter()
+                it.isSetter() and
                 !it.isProtected() and
                 !it.isGeneric() and
                 !it.parent.isGeneric()

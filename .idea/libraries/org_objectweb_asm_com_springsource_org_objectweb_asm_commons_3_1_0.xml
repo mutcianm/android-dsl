@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="org.objectweb.asm:com.springsource.org.objectweb.asm.commons:3.1.0" type="repository">
+    <properties maven-id="org.objectweb.asm:com.springsource.org.objectweb.asm.commons:3.1.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/com.springsource.org.objectweb.asm.commons-3.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/com.springsource.org.objectweb.asm-3.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/com.springsource.org.objectweb.asm.tree-3.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
