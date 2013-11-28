@@ -1,3 +1,4 @@
 android.widget.AutoCompleteTextView.adapter
 android.widget.EditText.text
 android.widget.AbsListView.selector
+android.widget.RemoteViews.package

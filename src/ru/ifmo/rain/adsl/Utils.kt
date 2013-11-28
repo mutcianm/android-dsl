@@ -2,6 +2,10 @@ package ru.ifmo.rain.adsl
 
 import org.objectweb.asm.*
 
+fun cleanInternalName(name: String): String {
+    return name.replace('/', '.').replace('$', '.')
+}
+
 fun Type.toStr(nullable: Boolean = true): String {
     return when (getSort()) {
         Type.BOOLEAN -> "Boolean"

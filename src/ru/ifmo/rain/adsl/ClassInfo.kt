@@ -3,6 +3,11 @@ package ru.ifmo.rain.adsl
 import org.objectweb.asm.*
 import java.util.ArrayList
 
+public fun decapitalize(name: String): String {
+    return name.substring(0, 1).toLowerCase() + name.substring(1)
+}
+
+
 class MethodInfo(val parent: ClassInfo, val access: Int, val name: String, val desc: String, val signature: String?,
                  val exceptions: Array<out String>?) {
 
@@ -20,6 +25,10 @@ class MethodInfo(val parent: ClassInfo, val access: Int, val name: String, val d
         return name == "<init>"
     }
 
+    fun isGeneric(): Boolean {
+        return signature != null
+    }
+
     public fun isProtected(): Boolean {
         return ((access and Opcodes.ACC_PROTECTED) != 0)
     }
@@ -35,10 +44,6 @@ class MethodInfo(val parent: ClassInfo, val access: Int, val name: String, val d
     public fun getReturnType(): Type? {
         return Type.getReturnType(desc)
     }
-
-    private fun decapitalize(str: String): String {
-        return str.substring(0, 1).toLowerCase() + str.substring(1)
-    }
 }
 
 
@@ -48,14 +53,14 @@ class ClassInfo(val access: Int, val name: String, val signature: String?, val s
     var methods: List<MethodInfo> = ArrayList<MethodInfo>()
 
     public fun cleanName(): String {
-        return stripClassName(cleanInternalName(name))
+        return stripClassName(cleanInternalName())
+    }
+
+    public fun cleanNameDecap(): String {
+        return decapitalize(cleanName())
     }
 
     public fun isInner(): Boolean {
-        return isInnerClass(name)
-    }
-
-    public fun isInnerClass(): Boolean {
         return name.contains("$")
     }
 
@@ -63,15 +68,15 @@ class ClassInfo(val access: Int, val name: String, val signature: String?, val s
         return ((access and Opcodes.ACC_ABSTRACT) != 0)
     }
 
-    public fun decapitalize(): String {
-        return name.substring(0, 1).toLowerCase() + name.substring(1)
+    fun isGeneric(): Boolean {
+        return signature != null
     }
 
     public fun cleanInternalName(): String {
         return name.replace('/', '.').replace('$', '.')
     }
 
-    private fun stripClassName(): String {
+    private fun stripClassName(name: String): String {
         return name.substring(name.lastIndexOf('.') + 1)
     }
 }

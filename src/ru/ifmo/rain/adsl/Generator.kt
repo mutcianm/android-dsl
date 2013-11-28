@@ -15,7 +15,6 @@ import java.util.Arrays
 
 class IgnoredClassEx : Exception()
 
-
 class Hook<T>(val predicate: ((_class: T) -> Boolean), val function: ((_class: T) -> Unit)) {
     public fun run(_class: T) {
         if (predicate(_class))
@@ -27,6 +26,8 @@ class Hook<T>(val predicate: ((_class: T) -> Boolean), val function: ((_class: T
     }
 }
 
+class PropData(val className: String, val propName: String, var propType: Type?, var getter: String?, var setter: String?, var arg: Type?)
+
 fun typeFilter(str: String): String {
     return when (str) {
         "java.lang.CharSequence" -> "jet.CharSequence"
@@ -37,50 +38,6 @@ fun typeFilter(str: String): String {
     }
 }
 
-fun cleanInternalName(name: String): String {
-    return name.replace('/', '.').replace('$', '.')
-}
-
-fun isInnerClass(name: String): Boolean {
-    return name.contains("$")
-}
-
-fun typeStr(_type: Type?, nullable: Boolean = true): String {
-    if (_type != null) {
-        return when (_type.getSort()) {
-            Type.BOOLEAN -> "Boolean"
-            Type.INT -> "Int"
-            Type.FLOAT -> "Float"
-            Type.DOUBLE -> "Double"
-            Type.LONG -> "Long"
-            Type.ARRAY -> {
-                when (_type.getElementType()?.getSort()) {
-                    Type.INT -> "IntArray?"
-                    Type.FLOAT -> "FloatArray?"
-                    Type.DOUBLE -> "DoubleArray?"
-                    Type.LONG -> "LongArray?"
-                    else -> {
-                        "Array<" + typeFilter(typeStr(_type.getElementType(), nullable = false)) + ">?"
-                    }
-                }
-            }
-            else -> {
-                return typeFilter(cleanInternalName(_type.getInternalName()!!)) + if(nullable) "?" else ""
-            }
-        }
-    } else
-        throw RuntimeException("Type can't be null(this sholdn't happen)")
-}
-
-
-fun decapitalize(str: String): String {
-    return str.substring(0, 1).toLowerCase() + str.substring(1)
-}
-
-fun stripClassName(className: String): String {
-    return className.substring(className.lastIndexOf('.') + 1)
-}
-
 class Generator(val out: OutputStream, val jarPath: String, val packageName: String) {
     val ps = BufferedWriter(OutputStreamWriter(out))
     val settings = GeneratorSettings()
@@ -88,23 +45,32 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     val propsCache = StringBuffer()
     val containerCache = StringBuffer()
 
-    class PropData(val className: String, val propName: String, var propType: Type?, var getter: String?, var setter: String?, var arg: Type?)
     val propMap = TreeMap<String, PropData>()
 
     val classBlackList = settings.getBlackListedClasses()
     val propBlackList = settings.getBlackListedProperties()
 
     val classHooks = Arrays.asList<Hook<ClassInfo>>(
-            Hook({ !isBlacklistedClass(it.name) and !it.isAbstract() }, { genContainerFun(it) }),
-            Hook({ true }, { System.out.println(it.cleanName()) })
+            Hook({ !isBlacklistedClass(it) and !it.isAbstract() and !it.isInner() }, { genContainerFun(it) })
     )
 
     val methodHooks = Arrays.asList<Hook<MethodInfo>>(
-            Hook({ it.isGetter() }, { genGetter() })
+            Hook({
+                it.isGetter() and
+                !it.isProtected() and
+                !it.isGeneric() and
+                !it.parent.isGeneric()
+            }, { genGetter(it) }),
+            Hook({
+                it.isSetter()
+                !it.isProtected() and
+                !it.isGeneric() and
+                !it.parent.isGeneric()
+            }, { genSetter(it) })
     )
 
-    private fun isBlacklistedClass(className: String): Boolean {
-        return classBlackList contains className
+    private fun isBlacklistedClass(classInfo: ClassInfo): Boolean {
+        return classBlackList contains classInfo.cleanInternalName()
     }
 
     private fun isBlacklistedProperty(propertyName: String): Boolean {
@@ -113,10 +79,12 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
 
     public fun run() {
         genHeader()
-        //        for (it in classHooks)
         extractClasses(jarPath, packageName) forEach {
             val info = processClassData(it)
-
+            if(info != null){
+                classHooks.forEach { hook -> hook(info) }
+                info.methods.forEach { method -> methodHooks.forEach { hook -> hook(method) } }
+            }
         }
         genContainer()
         genProperties()
@@ -141,14 +109,14 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
 
     private fun genProperties() {
         propMap.values().forEach {
-            if(!isBlacklistedProperty(it.className + '.' + decapitalize(it.propName))) {
+            if(!isBlacklistedProperty(it.className + '.' + it.propName)) {
                 if (it.getter != null) {
                     propsCache append if (it.setter == null) "val " else "var "
                     propsCache append it.className
                     propsCache append '.'
-                    propsCache append decapitalize(it.propName)
+                    propsCache append it.propName
                     propsCache append ": "
-                    propsCache append typeStr(it.propType)
+                    propsCache append it.propType!!.toStr()
                     propsCache append '\n'
                     propsCache append "\tget() = this."
                     propsCache append it.getter
@@ -167,35 +135,33 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         ps.write(propsCache.toString())
     }
 
-    private fun genSetter(classInfo: ClassInfo, methodInfo: MethodInfo) {
-        //        private fun genSetter(className: String, propName: String, setter: String, arg: Type) {
-        val prop = propMap[classInfo.name + methodInfo.toProperty()]
+    private fun genSetter(methodInfo: MethodInfo) {
+        val prop = propMap[methodInfo.parent.name + methodInfo.toProperty()]
         if (prop != null) {
             prop.setter = methodInfo.name
             prop.arg = methodInfo.arguments!![0]
         } else {
-            propMap[classInfo.name + methodInfo.toProperty()] = PropData(classInfo.name, methodInfo.toProperty(),
+            propMap[methodInfo.parent.name + methodInfo.toProperty()] = PropData(methodInfo.parent.cleanInternalName(), methodInfo.toProperty(),
                     null, null, methodInfo.name, methodInfo.arguments!![0])
         }
     }
 
-    private fun genGetter(classInfo: ClassInfo, methodInfo: MethodInfo) {
-        //        private fun genGetter(className: String, propName: String, getter: String, propType: Type?) {
-        val prop = propMap[classInfo.name + methodInfo.toProperty()]
+    private fun genGetter(methodInfo: MethodInfo) {
+        val prop = propMap[methodInfo.parent.name + methodInfo.toProperty()]
         if (prop != null) {
             if (prop.getter != null)
                 return
             prop.getter = methodInfo.name
             prop.propType = methodInfo.getReturnType()
         } else {
-            propMap[classInfo.name + methodInfo.toProperty()] = PropData(classInfo.name, methodInfo.toProperty(),
+            propMap[methodInfo.parent.name + methodInfo.toProperty()] = PropData(methodInfo.parent.cleanInternalName(), methodInfo.toProperty(),
                     methodInfo.getReturnType(), methodInfo.name, null, null)
         }
     }
 
     private fun genContainerFun(classInfo: ClassInfo) {
         containerCache append "fun "
-        containerCache append classInfo.decapitalize()
+        containerCache append classInfo.cleanNameDecap()
         containerCache append "( init: " + classInfo.cleanInternalName() + ".() -> Unit): " + classInfo.cleanInternalName() + " {\n"
         containerCache append "val v = " + classInfo.cleanInternalName() + "(ctx)\n"
         containerCache append "v.init()\n"
