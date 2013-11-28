@@ -8,17 +8,24 @@ import org.objectweb.asm.*
 import java.io.InputStream
 import java.util.ArrayList
 import java.io.OutputStream
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.Path
-import java.nio.charset.StandardCharsets
-import java.nio.ByteBuffer
 import java.io.BufferedWriter
 import java.io.OutputStreamWriter
 import java.util.TreeMap
-import java.util.HashSet
+import java.util.Arrays
 
 class IgnoredClassEx : Exception()
+
+
+class Hook<T>(val predicate: ((_class: T) -> Boolean), val function: ((_class: T) -> Unit)) {
+    public fun run(_class: T) {
+        if (predicate(_class))
+            function(_class)
+    }
+
+    public fun invoke(_class: T) {
+        run(_class)
+    }
+}
 
 fun typeFilter(str: String): String {
     return when (str) {
@@ -74,40 +81,6 @@ fun stripClassName(className: String): String {
     return className.substring(className.lastIndexOf('.') + 1)
 }
 
-class GeneratorSettings() {
-
-    fun readFile(name: String): String {
-        val data = Files.readAllBytes(Paths.get(name) as Path)
-        return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(data)).toString()
-    }
-
-    fun getPackage(): String {
-        return "package com.example.adsl"
-    }
-
-    fun getImports(): String {
-        return readFile("imports.txt")
-    }
-
-    fun getContainerHeader(): String {
-        return readFile("cont_header.txt")
-    }
-
-    fun getFooter(): String {
-        return readFile("footer.txt")
-    }
-
-    fun getBlackListedClasses(): Set<String> {
-        val lines = Files.readAllLines(Paths.get("class_blacklist.txt")!!, StandardCharsets.UTF_8)
-        return HashSet<String>(lines)
-    }
-
-    fun getBlackListedProperties(): Set<String> {
-        val lines = Files.readAllLines(Paths.get("prop_blacklist.txt")!!, StandardCharsets.UTF_8)
-        return HashSet<String>(lines)
-    }
-}
-
 class Generator(val out: OutputStream, val jarPath: String, val packageName: String) {
     val ps = BufferedWriter(OutputStreamWriter(out))
     val settings = GeneratorSettings()
@@ -121,6 +94,15 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     val classBlackList = settings.getBlackListedClasses()
     val propBlackList = settings.getBlackListedProperties()
 
+    val classHooks = Arrays.asList<Hook<ClassInfo>>(
+            Hook({ !isBlacklistedClass(it.name) and !it.isAbstract() }, { genContainerFun(it) }),
+            Hook({ true }, { System.out.println(it.cleanName()) })
+    )
+
+    val methodHooks = Arrays.asList<Hook<MethodInfo>>(
+            Hook({ it.isGetter() }, { genGetter() })
+    )
+
     private fun isBlacklistedClass(className: String): Boolean {
         return classBlackList contains className
     }
@@ -131,7 +113,11 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
 
     public fun run() {
         genHeader()
-        extractClasses(jarPath, packageName) forEach { processClass(it) }
+        //        for (it in classHooks)
+        extractClasses(jarPath, packageName) forEach {
+            val info = processClassData(it)
+
+        }
         genContainer()
         genProperties()
         ps.write(settings.getFooter())
@@ -181,33 +167,37 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         ps.write(propsCache.toString())
     }
 
-    private fun genSetter(className: String, propName: String, setter: String, arg: Type) {
-        val prop = propMap[className + propName]
+    private fun genSetter(classInfo: ClassInfo, methodInfo: MethodInfo) {
+        //        private fun genSetter(className: String, propName: String, setter: String, arg: Type) {
+        val prop = propMap[classInfo.name + methodInfo.toProperty()]
         if (prop != null) {
-            prop.setter = setter
-            prop.arg = arg
+            prop.setter = methodInfo.name
+            prop.arg = methodInfo.arguments!![0]
         } else {
-            propMap[className + propName] = PropData(className, propName, null, null, setter, arg)
+            propMap[classInfo.name + methodInfo.toProperty()] = PropData(classInfo.name, methodInfo.toProperty(),
+                    null, null, methodInfo.name, methodInfo.arguments!![0])
         }
     }
 
-    private fun genGetter(className: String, propName: String, getter: String, propType: Type?) {
-        val prop = propMap[className + propName]
+    private fun genGetter(classInfo: ClassInfo, methodInfo: MethodInfo) {
+        //        private fun genGetter(className: String, propName: String, getter: String, propType: Type?) {
+        val prop = propMap[classInfo.name + methodInfo.toProperty()]
         if (prop != null) {
             if (prop.getter != null)
                 return
-            prop.getter = getter
-            prop.propType = propType
+            prop.getter = methodInfo.name
+            prop.propType = methodInfo.getReturnType()
         } else {
-            propMap[className + propName] = PropData(className, propName, propType, getter, null, null)
+            propMap[classInfo.name + methodInfo.toProperty()] = PropData(classInfo.name, methodInfo.toProperty(),
+                    methodInfo.getReturnType(), methodInfo.name, null, null)
         }
     }
 
-    private fun genContainerFun(className: String) {
+    private fun genContainerFun(classInfo: ClassInfo) {
         containerCache append "fun "
-        containerCache append decapitalize(stripClassName(className))
-        containerCache append "( init: " + className + ".() -> Unit): " + className + " {\n"
-        containerCache append "val v = " + className + "(ctx)\n"
+        containerCache append classInfo.decapitalize()
+        containerCache append "( init: " + classInfo.cleanInternalName() + ".() -> Unit): " + classInfo.cleanInternalName() + " {\n"
+        containerCache append "val v = " + classInfo.cleanInternalName() + "(ctx)\n"
         containerCache append "v.init()\n"
         containerCache append "vg.addView(v)\n"
         containerCache append "_style(v)\n"
@@ -215,7 +205,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     }
 
 
-    private fun processClass(classData: InputStream?) {
+    private fun processClassData(classData: InputStream?): ClassInfo? {
         val cn = AdslVisitor(Opcodes.V1_6)
         try {
             val cr = ClassReader(classData)
@@ -225,6 +215,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         } finally {
             classData?.close()
         }
+        return cn.classInfo
     }
 
     private fun extractClasses(jarPath: String, packageName: String): ArrayList<InputStream?> {
@@ -235,60 +226,6 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         var ret = arrayListOf<InputStream?>()
         return entries.mapTo(ret) { jarFile.getInputStream(it) }
     }
-
-    inner class AdslVisitor(api: Int) : ClassVisitor {
-        var className: String = ""
-
-        override fun visitAnnotation(p0: String?, p1: Boolean): AnnotationVisitor? {
-            return null
-        }
-
-        override fun visitAttribute(p0: Attribute?) {
-            return
-        }
-
-        override fun visitEnd() {
-            return
-        }
-
-        override fun visitField(p0: Int, p1: String?, p2: String?, p3: String?, p4: Any?): FieldVisitor? {
-            return null
-        }
-
-        override fun visitInnerClass(p0: String?, p1: String?, p2: String?, p3: Int) {
-            return
-        }
-
-        override fun visitOuterClass(p0: String?, p1: String?, p2: String?) {
-            return
-        }
-
-        override fun visitSource(p0: String?, p1: String?) {
-            return
-        }
-
-        override fun visit(version: Int, access: Int, name: String?, signature: String?, supername: String?, p5: Array<out String>?) {
-            className = cleanInternalName(name!!)
-            if (isBlacklistedClass(className))
-                throw IgnoredClassEx()
-            if ((access and Opcodes.ACC_ABSTRACT) != 0)
-                return
-            if (!isInnerClass(name))
-                genContainerFun(className)
-        }
-
-        override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-            if ((access and Opcodes.ACC_PROTECTED) != 0)
-                return null
-            if (name != null && name.startsWith("set") && Type.getArgumentTypes(desc)?.size == 1) {
-                genSetter(className, name.substring(3), name, Type.getArgumentTypes(desc)!![0])
-            } else if (name != null && name.startsWith("get") && Type.getArgumentTypes(desc)?.size == 0) {
-                genGetter(className, name.substring(3), name, Type.getReturnType(desc))
-            }
-            return null
-        }
-    }
-
 }
 
 
