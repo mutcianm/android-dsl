@@ -1,0 +1,18 @@
+<project name="Update Dependencies" default="get_libs">
+    <target name="get_libs">
+        <mkdir dir="lib"/>
+        <get src="http://repo1.maven.org/maven2/asm/asm/3.1/asm-3.1.jar"
+             dest="lib/asm-3.1.jar"/>
+        <get src="http://repo1.maven.org/maven2/org/testng/testng/6.7/testng-6.7.jar"
+             dest="lib/testng-6.7.jar"/>
+        <get src="http://repo1.maven.org/maven2/com/google/android/android/4.1.1.4/android-4.1.1.4.jar"
+             dest="android.jar"/>
+        <get src="http://confluence.jetbrains.com/download/attachments/50496439/kotlin-compiler-0.6.31.zip"
+             dest="lib/kotlinc.zip"/>
+        <unzip src="lib/kotlinc.zip"
+               dest="lib/"/>
+        <delete file="lib/kotlinc.zip"/>
+        <chmod dir="lib/kotlinc/bin" perm="+x"
+               includes="**/*"/>
+    </target>
+</project>
