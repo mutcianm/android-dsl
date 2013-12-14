@@ -1,3 +1,7 @@
+//class ViewGroupData(val val vg: android.view.ViewGroup,
+//                    val ctx: android.app.Activity,
+//                    val _style: ((X: Any) -> Unit))
+
 trait _Container{
 
     val vg: android.view.ViewGroup

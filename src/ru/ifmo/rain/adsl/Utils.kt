@@ -2,10 +2,6 @@ package ru.ifmo.rain.adsl
 
 import org.objectweb.asm.*
 
-fun cleanInternalName(name: String): String {
-    return name.replace('/', '.').replace('$', '.')
-}
-
 fun Type.toStr(nullable: Boolean = true): String {
     return when (getSort()) {
         Type.BOOLEAN -> "Boolean"
@@ -15,20 +11,20 @@ fun Type.toStr(nullable: Boolean = true): String {
         Type.LONG -> "Long"
         Type.ARRAY -> {
             val innerType = getElementType()
-            if(innerType != null){
+            if (innerType != null) {
                 when (getElementType()?.getSort()) {
                     Type.INT -> "IntArray?"
                     Type.FLOAT -> "FloatArray?"
                     Type.DOUBLE -> "DoubleArray?"
                     Type.LONG -> "LongArray?"
                     else -> {
-                        "Array<" + typeFilter(innerType.toStr(nullable = false)) + ">?"
+                        "Array<" + typeMap(innerType.toStr(nullable = false)) + ">?"
                     }
                 }
             } else {
                 throw RuntimeException("Type is of ArrayType, but element type is null")
             }
         }
-        else -> typeFilter(cleanInternalName(getInternalName()!!)) + if(nullable) "?" else ""
+        else -> typeMap(cleanInternalName(getInternalName()!!)) + if (nullable) "?" else ""
     }
 }

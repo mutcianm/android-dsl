@@ -39,6 +39,7 @@ public class BasicGeneratorTest extends Assert {
         BufferedReader br1 = new BufferedReader(new InputStreamReader(p.getInputStream()));
         BufferedReader br2 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         while ((br1.readLine() != null) && (br2.readLine() != null)) {
+            continue;
         }
         p.waitFor();
         assertEquals(p.exitValue(), 0);

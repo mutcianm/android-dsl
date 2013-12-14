@@ -41,4 +41,8 @@ class GeneratorSettings() {
     fun getBlackListedProperties(): Set<String> {
         return HashSet<String>(readLines("prop_blacklist.txt"))
     }
+
+    fun getContainerClasses(): Set<String> {
+        return HashSet<String>(readLines("container_classes.txt"))
+    }
 }

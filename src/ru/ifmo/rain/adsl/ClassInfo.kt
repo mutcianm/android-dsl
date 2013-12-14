@@ -1,83 +1,82 @@
 package ru.ifmo.rain.adsl
 
 import org.objectweb.asm.*
-import java.util.ArrayList
+import org.objectweb.asm.tree.ClassNode
+import org.objectweb.asm.tree.MethodNode
 
 public fun decapitalize(name: String): String {
     return name.substring(0, 1).toLowerCase() + name.substring(1)
 }
 
-
-class MethodInfo(val parent: ClassInfo, val access: Int, val name: String, val desc: String, val signature: String?,
-                 val exceptions: Array<out String>?) {
-
-    val arguments = Type.getArgumentTypes(desc)
-
-    public fun isGetter(): Boolean {
-        return (name.startsWith("get") && arguments?.size == 0)
-    }
-
-    public fun isSetter(): Boolean {
-        return (name.startsWith("set") && arguments?.size == 1)
-    }
-
-    public fun isConstructor(): Boolean {
-        return name == "<init>"
-    }
-
-    fun isGeneric(): Boolean {
-        return signature != null
-    }
-
-    public fun isProtected(): Boolean {
-        return ((access and Opcodes.ACC_PROTECTED) != 0)
-    }
-
-    public fun toProperty(): String {
-        return decapitalize(name.substring(3))
-    }
-
-    public fun getArgumentCount(): Int {
-        return if(arguments != null) arguments.size else 0
-    }
-
-    public fun getReturnType(): Type? {
-        return Type.getReturnType(desc)
-    }
+fun stripClassName(name: String): String {
+    return name.substring(name.lastIndexOf('.') + 1)
 }
 
-
-class ClassInfo(val access: Int, val name: String, val signature: String?, val supername: String?,
-                val exceptions: Array<out String>?) {
-
-    var methods: List<MethodInfo> = ArrayList<MethodInfo>()
-
-    public fun cleanName(): String {
-        return stripClassName(cleanInternalName())
-    }
-
-    public fun cleanNameDecap(): String {
-        return decapitalize(cleanName())
-    }
-
-    public fun isInner(): Boolean {
-        return name.contains("$")
-    }
-
-    public fun isAbstract(): Boolean {
-        return ((access and Opcodes.ACC_ABSTRACT) != 0)
-    }
-
-    fun isGeneric(): Boolean {
-        return signature != null
-    }
-
-    public fun cleanInternalName(): String {
-        return name.replace('/', '.').replace('$', '.')
-    }
-
-    private fun stripClassName(name: String): String {
-        return name.substring(name.lastIndexOf('.') + 1)
-    }
+fun cleanInternalName(name: String): String {
+    return name.replace('/', '.').replace('$', '.')
 }
 
+val MethodNode.arguments: Array<Type>?
+    get() = Type.getArgumentTypes(desc)
+
+fun MethodNode.isGetter(): Boolean {
+    return (name!!.startsWith("get") && arguments?.size == 0)
+}
+
+fun MethodNode.isSetter(): Boolean {
+    return (name!!.startsWith("set") && arguments?.size == 1)
+}
+
+fun MethodNode.isConstructor(): Boolean {
+    return name == "<init>"
+}
+
+fun MethodNode.isProtected(): Boolean {
+    return ((access and Opcodes.ACC_PROTECTED) != 0)
+}
+
+fun MethodNode.isGeneric(): Boolean {
+    return signature != null
+}
+
+fun MethodNode.getArgumentCount(): Int {
+    //wtf !!
+    return if (arguments != null) arguments!!.size else 0
+}
+
+fun MethodNode.getReturnType(): Type {
+    return Type.getReturnType(desc)!!
+}
+
+fun MethodNode.toProperty(): String {
+    return decapitalize(name!!.substring(3))
+}
+
+class MethodNodeWithParent(var parent: ClassNode, val child: MethodNode)
+
+//fun MethodNode.getClassName(): String {
+//
+//}
+
+fun ClassNode.cleanName(): String {
+    return stripClassName(cleanInternalName(name!!))
+}
+
+fun ClassNode.cleanNameDecap(): String {
+    return decapitalize(cleanName())
+}
+
+fun ClassNode.cleanInternalName(): String {
+    return name!!.replace('/', '.').replace('$', '.')
+}
+fun ClassNode.isInner(): Boolean {
+    return name!!.contains("$")
+}
+
+public fun ClassNode.isAbstract(): Boolean {
+    return ((access and Opcodes.ACC_ABSTRACT) != 0)
+}
+
+public fun ClassNode.isGeneric(): Boolean {
+    return signature != null
+}

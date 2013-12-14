@@ -1,5 +1,6 @@
 out/*
 lib/*
 src/META-INF/*
+**/.idea/workspace.xml
 *.jar
 *.class
