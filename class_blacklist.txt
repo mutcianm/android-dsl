@@ -22,3 +22,4 @@ android.widget.Toast
 android.widget.ListPopupWindow
 android.widget.ShareActionProvider
 android.view.ViewGroup
+android.widget.SlidingDrawer

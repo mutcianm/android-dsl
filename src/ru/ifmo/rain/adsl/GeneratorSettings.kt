@@ -34,6 +34,10 @@ class GeneratorSettings() {
         return readFile("cont_header.txt")
     }
 
+    fun getUIClassHeader(): String {
+        return "class _UI(val act: android.app.Activity) {\n"
+    }
+
     fun getFooter(): String {
         return readFile("footer.txt")
     }

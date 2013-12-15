@@ -2,15 +2,11 @@
 //                    val ctx: android.app.Activity,
 //                    val _style: ((X: Any) -> Unit))
 
-trait _Container{
+class _Container(val vgInstance: android.view.ViewGroup,
+                 val ctx: android.app.Activity) {
 
-    val vg: android.view.ViewGroup
-    val ctx: android.app.Activity
-    var _style: ((X: Any) -> Unit)
+    var _style: ((X: Any) -> Unit) = {}
 
-    /**
-     * Style helper
-     */
     fun style(init: (X: Any) -> Unit) {
         this._style = init
     }

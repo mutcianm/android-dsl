@@ -51,7 +51,8 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
 
     val propsCache = StringBuffer()
     val containerCache = StringBuffer()
-    val containerClassCache = StringBuffer()
+    val containerClassesCache = StringBuffer()
+    val uiClassCache = StringBuffer()
 
     val propMap = TreeMap<String, PropertyData>()
 
@@ -61,9 +62,20 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     val classTree: ClassTree = ClassTree()
 
     val classHooks = Arrays.asList<Hook<ClassNode>>(
-            Hook({ !isBlacklistedClass(it) && !it.isAbstract() && !it.isInner() }, { genContainerFun(it) }),
-            Hook({ !it.isAbstract() && !it.isInner() && classTree.isChildOf(it, settings.getContainerBaseClass())},
-                    { genContainerClass(it)})
+            Hook({
+                !isBlacklistedClass(it) &&
+                !it.isAbstract() &&
+                !it.isInner() &&
+                !isContainer(it)
+            },
+                    { genWidget(it) }),
+            Hook({
+                !isBlacklistedClass(it) &&
+                !it.isAbstract() &&
+                !it.isInner() &&
+                isContainer(it)
+            },
+                    { genContainer(it) })
     )
 
     val methodHooks = Arrays.asList<Hook<MethodNodeWithParent>>(
@@ -89,23 +101,43 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         return propertyName in propBlackList
     }
 
+    private fun isContainer(widget: ClassNode): Boolean {
+        return classTree.isChildOf(widget, settings.getContainerBaseClass())
+    }
+
+    private fun initCaches() {
+        containerCache append settings.getContainerHeader()
+        uiClassCache   append settings.getUIClassHeader()
+    }
+
+    private fun finalizeCaches() {
+        containerCache append "}\n\n"
+        uiClassCache   append "}\n\n"
+    }
+
     public fun run() {
-        genHeader()
+        initCaches()
         val vg = ClassNode()
         vg.name = settings.getContainerBaseClass()
         classTree.add(vg)
         for (classData in extractClasses(jarPath, packageName)) {
             classTree.add(processClassData(classData))
         }
-        for(classInfo in classTree) {
+        for (classInfo in classTree) {
             classHooks.forEach { hook -> hook(classInfo) }
-            classInfo.methods!!.forEach { method -> methodHooks.forEach {
-                    hook -> hook(MethodNodeWithParent(classInfo, method as MethodNode))
+            classInfo.methods!!.forEach { method ->
+                methodHooks.forEach {
+                    hook ->
+                    hook(MethodNodeWithParent(classInfo, method as MethodNode))
                 }
             }
         }
-        genContainer()
-        genProperties()
+        finalizeCaches()
+        genHeader()
+        produceContainerBaseClass()
+        produceProperties()
+        produceContainerClasses()
+        produceUIClass()
         ps.write(settings.getFooter())
         ps.close()
     }
@@ -117,17 +149,21 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         ps.newLine()
     }
 
-    private fun genContainer() {
-        ps.write(settings.getContainerHeader())
-        ps.newLine()
+    private fun produceContainerBaseClass() {
         ps.write(containerCache.toString())
-        ps.write("}")
-        ps.newLine()
     }
 
-    private fun genProperties() {
+    private fun produceContainerClasses() {
+        ps.write(containerClassesCache.toString())
+    }
+
+    private fun produceUIClass() {
+        ps.write(uiClassCache.toString())
+    }
+
+    private fun produceProperties() {
         propMap.values().forEach {
-            if(!isBlacklistedProperty(it.className + '.' + it.propName)) {
+            if (!isBlacklistedProperty(it.className + '.' + it.propName)) {
                 if (it.getter != null) {
                     propsCache append if (it.setter == null) "val " else "var "
                     propsCache append it.className
@@ -179,26 +215,65 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         }
     }
 
-    private fun genContainerFun(classInfo: ClassNode) {
-        containerCache append "fun "
-        containerCache append classInfo.cleanNameDecap()
-        containerCache append "( init: " + classInfo.cleanInternalName() + ".() -> Unit): " + classInfo.cleanInternalName() + " {\n"
-        containerCache append "val v = " + classInfo.cleanInternalName() + "(ctx)\n"
-        containerCache append "v.init()\n"
-        containerCache append "vg.addView(v)\n"
-        containerCache append "_style(v)\n"
-        containerCache append "return v\n}\n\n"
+    private fun genWidget(classNode: ClassNode) {
+        containerCache append "\tfun "
+        containerCache append classNode.cleanNameDecap()
+        containerCache append "( init: " + classNode.cleanInternalName() + ".() -> Unit): " + classNode.cleanInternalName() + " {\n"
+        containerCache append "\t\tval v = " + classNode.cleanInternalName() + "(ctx)\n"
+        containerCache append "\t\tv.init()\n"
+        containerCache append "\t\tvgInstance.addView(v)\n"
+        containerCache append "\t\t_style(v)\n"
+        containerCache append "\t\treturn v\n\t}\n\n"
+    }
+
+    private fun genContainer(classNode: ClassNode) {
+        genContainerWidgetFun(classNode)
+        genContainerClass(classNode)
+        genUIWidgetFun(classNode)
+    }
+
+    private fun genContainerWidgetFun(classNode: ClassNode) {
+        containerCache append "\t//container function\n"
+        containerCache append "\tfun "
+        containerCache append classNode.cleanNameDecap()
+        containerCache append "\t( init: _"
+        containerCache append classNode.cleanName()
+        containerCache append ".() -> Unit): _"
+        containerCache append classNode.cleanName()
+        containerCache append " {\n"
+        containerCache append "\t\tval v = _"
+        containerCache append classNode.cleanName()
+        containerCache append  "("
+        containerCache append classNode.cleanInternalName()
+        containerCache append "(ctx), ctx)\n"
+        containerCache append "\t\tv.init()\n"
+        containerCache append "\t\tvgInstance.addView(v.vgInstance)\n"
+        containerCache append "\t\t_style(v)\n"
+        containerCache append "\t\treturn v\n\t}\n\n"
     }
 
     private fun genContainerClass(classNode: ClassNode) {
-        containerClassCache append "class "
-        containerClassCache append  classNode.cleanNameDecap()
-        containerClassCache append "("
+        containerClassesCache append "class _"
+        containerClassesCache append  classNode.cleanName()
+        containerClassesCache append "(val vgInstance: android.view.ViewGroup, val ctx: android.app.Activity) {\n"
+        containerClassesCache append "\n}\n\n"
+    }
+
+    private fun genUIWidgetFun(classNode: ClassNode) {
+        uiClassCache append "\tfun "
+        uiClassCache append classNode.cleanNameDecap()
+        uiClassCache append "(init: _"
+        uiClassCache append classNode.cleanName()
+        uiClassCache append ".() -> Unit) {\n\t\tval layout = _"
+        uiClassCache append classNode.cleanName()
+        uiClassCache append "("
+        uiClassCache append classNode.cleanInternalName()
+        uiClassCache append "(act), act)\n\t\tlayout.init()\n"
+        uiClassCache append "\t\tact.setContentView(layout.vgInstance)\n\t}\n\n"
     }
 
 
     private fun processClassData(classData: InputStream?): ClassNode {
-        //        val cn = AdslVisitor(Opcodes.V1_6)
         val cn = ClassNode()
         try {
             val cr = ClassReader(classData)

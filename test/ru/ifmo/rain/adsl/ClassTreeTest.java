@@ -8,12 +8,6 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * User: miha
- * Date: 12/13/13
- * Time: 8:16 PM
- */
 public class ClassTreeTest extends Assert {
 
     private final ArrayList<ClassNode> classes = new ArrayList<>();
