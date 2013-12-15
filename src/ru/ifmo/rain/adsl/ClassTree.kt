@@ -14,11 +14,13 @@ class ClassTreeNode(parent: ClassTreeNode?, data: ClassNode) {
 }
 
 class ClassTree : Iterable<ClassNode>{
-    val root = ClassTreeNode(null, ClassNode())
+    private val root = ClassTreeNode(null, ClassNode())
+    private var lastQueryAncestor: ClassTreeNode = root
 
     override fun iterator(): ClassTreeIterator {
         return ClassTreeIterator(root)
     }
+
     public fun add(_class: ClassNode) {
         val node = findNode(root, _class.superName)
         if (node != null) {
@@ -28,17 +30,38 @@ class ClassTree : Iterable<ClassNode>{
         }
     }
 
+    public fun isChildOf(_class: ClassNode, ancestorName: String): Boolean {
+        val parent = findParent(ancestorName)
+        return findChildByName(parent, _class.name!!)
+    }
+
     public fun isSuccessorOf(_class: ClassNode, ancestorName: String): Boolean {
-        val parent = findNode(root, ancestorName)
+        val parent = findParent(ancestorName)
+        val child = findNode(parent, _class.name!!)
+        if ((child == null) || (child == parent))
+            return false
+        else
+            return true
+    }
+
+    private fun findParent(name: String): ClassTreeNode {
+        //use cached parent node from last call
+        val parent = if (lastQueryAncestor.data.name == name) lastQueryAncestor
+        else findNode(root, name)
         if (parent == null) {
             throw NoSuchClassEx()
         } else {
-            val child = findNode(parent, _class.name!!)
-            if ((child == null) || (child == parent))
-                return false
-            else
+            lastQueryAncestor = parent
+            return parent
+        }
+    }
+
+    private fun findChildByName(parent: ClassTreeNode, childName: String): Boolean {
+        for (child in parent.children) {
+            if (child.data.name == childName)
                 return true
         }
+        return false
     }
 
     //performance: rewrite search as downtop-bfs

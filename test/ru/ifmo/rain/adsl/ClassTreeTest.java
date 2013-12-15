@@ -1,5 +1,6 @@
 package ru.ifmo.rain.adsl;
 
+import jet.runtime.typeinfo.KotlinSignature;
 import org.objectweb.asm.tree.ClassNode;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -45,6 +46,15 @@ public class ClassTreeTest extends Assert {
     }
 
     @Test
+    public void testIsChild() throws Exception {
+        ClassTree tree = new ClassTree();
+        doAdd(tree);
+        assertTrue(tree.isChildOf(classes.get(1), "java.lang.Object"));
+        assertTrue(tree.isChildOf(classes.get(2), "java.lang.Object"));
+        assertFalse(tree.isChildOf(classes.get(3), "java.lang.Object"));
+    }
+
+    @Test
     public void testTree() throws Exception {
         ClassTree tree = new ClassTree();
         doAdd(tree);
@@ -56,6 +66,14 @@ public class ClassTreeTest extends Assert {
         assertFalse(tree.isSuccessorOf(classes.get(2), "com.example.B"));
         assertFalse(tree.isSuccessorOf(classes.get(2), "java.lang.Integer"));
         assertFalse(tree.isSuccessorOf(classes.get(0), "java.lang.Object"));
+    }
+
+    @Test(expectedExceptions = NoSuchClassEx.class)
+    public void testNoSuchClassException() throws Exception {
+        ClassTree tree = new ClassTree();
+        ClassNode cn = new ClassNode();
+        cn.name = "java.lang.Integer";
+        tree.isSuccessorOf(cn, "java.util.List");
     }
 
     @Test

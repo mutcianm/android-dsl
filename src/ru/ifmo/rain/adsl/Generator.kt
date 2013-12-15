@@ -58,8 +58,12 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     val classBlackList = settings.getBlackListedClasses()
     val propBlackList = settings.getBlackListedProperties()
 
+    val classTree: ClassTree = ClassTree()
+
     val classHooks = Arrays.asList<Hook<ClassNode>>(
-            Hook({ !isBlacklistedClass(it) and !it.isAbstract() and !it.isInner() }, { genContainerFun(it) })
+            Hook({ !isBlacklistedClass(it) && !it.isAbstract() && !it.isInner() }, { genContainerFun(it) }),
+            Hook({ !it.isAbstract() && !it.isInner() && classTree.isChildOf(it, settings.getContainerBaseClass())},
+                    { genContainerClass(it)})
     )
 
     val methodHooks = Arrays.asList<Hook<MethodNodeWithParent>>(
@@ -87,10 +91,18 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
 
     public fun run() {
         genHeader()
+        val vg = ClassNode()
+        vg.name = settings.getContainerBaseClass()
+        classTree.add(vg)
         for (classData in extractClasses(jarPath, packageName)) {
-            val info: ClassNode = processClassData(classData)
-            classHooks.forEach { hook -> hook(info) }
-            info.methods!!.forEach { method -> methodHooks.forEach { hook -> hook(MethodNodeWithParent(info, method as MethodNode)) } }
+            classTree.add(processClassData(classData))
+        }
+        for(classInfo in classTree) {
+            classHooks.forEach { hook -> hook(classInfo) }
+            classInfo.methods!!.forEach { method -> methodHooks.forEach {
+                    hook -> hook(MethodNodeWithParent(classInfo, method as MethodNode))
+                }
+            }
         }
         genContainer()
         genProperties()
@@ -178,9 +190,9 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         containerCache append "return v\n}\n\n"
     }
 
-    private fun genContainerClassFun(classinfo: ClassNode) {
+    private fun genContainerClass(classNode: ClassNode) {
         containerClassCache append "class "
-        containerClassCache append  classinfo.cleanNameDecap()
+        containerClassCache append  classNode.cleanNameDecap()
         containerClassCache append "("
     }
 

@@ -22,6 +22,10 @@ class GeneratorSettings() {
         return "package com.example.adsl"
     }
 
+    fun getContainerBaseClass(): String {
+        return "android/view/ViewGroup"
+    }
+
     fun getImports(): String {
         return readFile("imports.txt")
     }
