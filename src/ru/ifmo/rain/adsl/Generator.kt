@@ -172,13 +172,13 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
                     propsCache append ": "
                     propsCache append it.propType!!.toStr()
                     propsCache append '\n'
-                    propsCache append "\tget() = this."
+                    propsCache append "\tget() = "
                     propsCache append it.getter
                     propsCache append "()\n"
                     if (it.setter != null) {
                         propsCache append "\tset(value) = "
                         propsCache append it.setter
-                        propsCache append "(value) \n\n"
+                        propsCache append "(value!!) \n\n"
                     } else {
                         propsCache append "\n"
                     }
@@ -190,28 +190,42 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     }
 
     private fun genSetter(methodInfo: MethodNodeWithParent) {
-        val prop = propMap[methodInfo.parent.name + methodInfo.child.toProperty()]
+        var className: String = methodInfo.parent.cleanInternalName()
+        var setter = methodInfo.child.name
+        if (isContainer(methodInfo.parent)) {
+            className = "_" + methodInfo.parent.cleanName()
+            setter = "(vgInstance as " + methodInfo.parent.cleanInternalName() +
+            ")." + methodInfo.child.name
+        }
+        val prop = propMap[className + methodInfo.child.toProperty()]
         if (prop != null) {
-            prop.setter = methodInfo.child.name
+            prop.setter = setter
             prop.arg = methodInfo.child.arguments!![0]
         } else {
-            propMap[methodInfo.parent.name + methodInfo.child.toProperty()] =
-            PropertyData(methodInfo.parent.cleanInternalName(), methodInfo.child.toProperty(),
-                    null, null, methodInfo.child.name, methodInfo.child.arguments!![0])
+            propMap[className + methodInfo.child.toProperty()] =
+            PropertyData(className, methodInfo.child.toProperty(),
+                    null, null, setter, methodInfo.child.arguments!![0])
         }
     }
 
     private fun genGetter(methodInfo: MethodNodeWithParent) {
-        val prop = propMap[methodInfo.parent.name + methodInfo.child.toProperty()]
+        var className: String = methodInfo.parent.cleanInternalName()
+        var getter = methodInfo.child.name
+        if (isContainer(methodInfo.parent)) {
+            className = "_" + methodInfo.parent.cleanName()
+            getter = "(vgInstance as " + methodInfo.parent.cleanInternalName() +
+            ")." + methodInfo.child.name
+        }
+        val prop = propMap[className + methodInfo.child.toProperty()]
         if (prop != null) {
             if (prop.getter != null)
                 return
-            prop.getter = methodInfo.child.name
+            prop.getter = getter
             prop.propType = methodInfo.child.getReturnType()
         } else {
-            propMap[methodInfo.parent.name + methodInfo.child.toProperty()] =
-            PropertyData(methodInfo.parent.cleanInternalName(), methodInfo.child.toProperty(),
-                    methodInfo.child.getReturnType(), methodInfo.child.name, null, null)
+            propMap[className + methodInfo.child.toProperty()] =
+            PropertyData(className, methodInfo.child.toProperty(),
+                    methodInfo.child.getReturnType(), getter, null, null)
         }
     }
 
@@ -255,7 +269,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     private fun genContainerClass(classNode: ClassNode) {
         containerClassesCache append "class _"
         containerClassesCache append  classNode.cleanName()
-        containerClassesCache append "(val vgInstance: android.view.ViewGroup, val ctx: android.app.Activity) {\n"
+        containerClassesCache append "(override val vgInstance: android.view.ViewGroup, override val ctx: android.app.Activity): _Container(vgInstance, ctx) {\n"
         containerClassesCache append "\n}\n\n"
     }
 
