@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 
 public class AndroidPropertiesTest extends BaseCompileTest {
 
+    final String outFile = this.getClass() + "out.kt";
     private final File testDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/android/AndroidPropertiesTest.kt");
 
     @BeforeMethod
@@ -18,8 +19,10 @@ public class AndroidPropertiesTest extends BaseCompileTest {
         assertTrue(testDataFile.exists());
     }
 
-    @Test(dependsOnMethods = {"testResultExists"})
+    @Test
     public void testResultCompiles() throws Exception {
+        Generator gen = new Generator(new FileOutputStream(outFile), inputJarFile, "android.widget");
+        gen.run();
         String kotlincArgs[] = {kotlincFilename,
                 "-jar", tmpJarFile,
                 "-classpath", inputJarFile,
@@ -28,17 +31,10 @@ public class AndroidPropertiesTest extends BaseCompileTest {
         assertEquals(compile(kotlincArgs), 0);
     }
 
-    @Test
-    public void testResultExists() throws Exception {
-        Generator gen = new Generator(new FileOutputStream(outFile), inputJarFile, "android.widget");
-        gen.run();
-        assertTrue(new File(outFile).length() > 0);
-    }
-
     @AfterMethod
     public void tearDown() throws Exception {
         super.tearDown();
+        new File(outFile).delete();
     }
-
 }
 

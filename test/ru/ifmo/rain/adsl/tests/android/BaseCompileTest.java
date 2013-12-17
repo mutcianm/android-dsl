@@ -10,10 +10,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class BaseCompileTest extends Assert {
-    final String outFile = "out.kt";
     final String kotlincFilename = "lib/kotlinc/bin/kotlinc-jvm";
     final String inputJarFile = "android.jar";
-    final String tmpJarFile = "out.jar";
+    final String tmpJarFile = this.getClass() + "out.jar";
 
     @BeforeMethod
     public void setUp() throws Exception {

@@ -12,10 +12,10 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 
 public class BasicGeneratorTest extends Assert {
-    final String outFile = "out.kt";
+    final String outFile = this.getClass() + ".kt";
     final String kotlincFilename = "lib/kotlinc/bin/kotlinc-jvm";
     final String inputJarFile = "android.jar";
-    final String tmpJarFile = "out.jar";
+    final String tmpJarFile = this.getClass() + "out.jar";
 
     @BeforeMethod
     public void setUp() throws Exception {

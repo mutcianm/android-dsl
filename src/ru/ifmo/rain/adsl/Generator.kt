@@ -46,22 +46,25 @@ fun typeMap(str: String): String {
 }
 
 class Generator(val out: OutputStream, val jarPath: String, val packageName: String) {
-    val ps = BufferedWriter(OutputStreamWriter(out))
-    val settings = GeneratorSettings()
+    private val ps = BufferedWriter(OutputStreamWriter(out))
+    var settings = GeneratorSettings()
+        set(value) {
+            $settings = value
+        }
 
-    val propsCache = StringBuffer()
-    val containerCache = StringBuffer()
-    val containerClassesCache = StringBuffer()
-    val uiClassCache = StringBuffer()
+    private val propsCache = StringBuffer()
+    private val containerCache = StringBuffer()
+    private val containerClassesCache = StringBuffer()
+    private val uiClassCache = StringBuffer()
 
-    val propMap = TreeMap<String, PropertyData>()
+    private val propMap = TreeMap<String, PropertyData>()
 
-    val classBlackList = settings.getBlackListedClasses()
-    val propBlackList = settings.getBlackListedProperties()
+    private val classBlackList = settings.getBlackListedClasses()
+    private val propBlackList = settings.getBlackListedProperties()
 
-    val classTree: ClassTree = ClassTree()
+    private val classTree: ClassTree = ClassTree()
 
-    val classHooks = Arrays.asList<Hook<ClassNode>>(
+    private val classHooks = Arrays.asList<Hook<ClassNode>>(
             Hook({
                 !isBlacklistedClass(it) &&
                 !it.isAbstract() &&
@@ -78,7 +81,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
                     { genContainer(it) })
     )
 
-    val methodHooks = Arrays.asList<Hook<MethodNodeWithParent>>(
+    private val methodHooks = Arrays.asList<Hook<MethodNodeWithParent>>(
             Hook({
                 it.child.isGetter() &&
                 !it.child.isProtected() &&
@@ -133,20 +136,28 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
             }
         }
         finalizeCaches()
-        genHeader()
-        produceContainerBaseClass()
-        produceProperties()
-        produceContainerClasses()
-        produceUIClass()
-        ps.write(settings.getFooter())
+        if (settings.generatePackage) {
+            ps.write(settings.getPackage())
+            ps.newLine()
+        }
+        if (settings.generateImports) {
+            ps.write(settings.getImports())
+            ps.newLine()
+        }
+        if (settings.generateContainerBaseClass)
+            produceContainerBaseClass()
+        if (settings.generateProperties)
+            produceProperties()
+        if (settings.generateContainerClasses)
+            produceContainerClasses()
+        if (settings.generateUIClass)
+            produceUIClass()
+        if (settings.generateUIClassWrapper)
+            ps.write(settings.getFooter())
         ps.close()
     }
 
     private fun genHeader() {
-        ps.write(settings.getPackage())
-        ps.newLine()
-        ps.write(settings.getImports())
-        ps.newLine()
     }
 
     private fun produceContainerBaseClass() {
@@ -195,6 +206,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     }
 
     private fun genSetter(methodInfo: MethodNodeWithParent) {
+        if (!settings.generateSetters) return
         var className: String = methodInfo.parent.cleanInternalName()
         var setter = methodInfo.child.name
         if (isContainer(methodInfo.parent)) {
@@ -214,6 +226,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     }
 
     private fun genGetter(methodInfo: MethodNodeWithParent) {
+        if (!settings.generateGetters) return
         var className: String = methodInfo.parent.cleanInternalName()
         var getter = methodInfo.child.name
         if (isContainer(methodInfo.parent)) {

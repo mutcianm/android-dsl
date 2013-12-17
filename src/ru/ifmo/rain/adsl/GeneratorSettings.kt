@@ -7,10 +7,18 @@ import java.nio.charset.StandardCharsets
 import java.nio.ByteBuffer
 import java.util.HashSet
 
-class GeneratorSettings() {
+class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
+                        var generateProperties: Boolean = true,
+                        var generateSetters: Boolean = true,
+                        var generateGetters: Boolean = true,
+                        var generateContainerClasses: Boolean = true,
+                        var generateUIClass: Boolean = true,
+                        var generateUIClassWrapper: Boolean = true,
+                        var generateImports: Boolean = true,
+                        var generatePackage: Boolean = true) {
 
     private fun readFile(name: String): String {
-        val data = Files.readAllBytes(Paths.get(name) as Path)
+        var data = Files.readAllBytes(Paths.get(name) as Path)
         return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(data)).toString()
     }
 
@@ -35,7 +43,7 @@ class GeneratorSettings() {
     }
 
     fun getUIClassHeader(): String {
-        return "class _UI(val act: android.app.Activity) {\n"
+        return "class _UI(var act: android.app.Activity) {\n"
     }
 
     fun getFooter(): String {

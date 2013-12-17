@@ -1,7 +1,3 @@
-//class ViewGroupData(val val vg: android.view.ViewGroup,
-//                    val ctx: android.app.Activity,
-//                    val _style: ((X: Any) -> Unit))
-
 open class _Container(open val vgInstance: android.view.ViewGroup,
                  open val ctx: android.app.Activity) {
 
@@ -11,9 +7,6 @@ open class _Container(open val vgInstance: android.view.ViewGroup,
         this._style = init
     }
 
-    /**
-     * Dialog example
-     */
     fun alertDialog(title: String, func: AlertDialog.Builder.() -> Unit) {
         val builder =  AlertDialog.Builder(ctx)
         builder.setTitle(title)
