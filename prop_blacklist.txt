@@ -4,3 +4,6 @@ android.widget.AbsListView.selector
 android.widget.RemoteViews.package
 _SlidingDrawer.content
 _SlidingDrawer.handle
+_SlidingDrawer.moving
+_SlidingDrawer.opened
+android.widget.TimePicker.24HourView

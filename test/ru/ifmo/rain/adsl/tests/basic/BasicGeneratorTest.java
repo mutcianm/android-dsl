@@ -1,4 +1,4 @@
-package basic;
+package ru.ifmo.rain.adsl.tests.basic;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;

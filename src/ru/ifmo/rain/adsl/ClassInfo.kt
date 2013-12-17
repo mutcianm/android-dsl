@@ -20,7 +20,7 @@ val MethodNode.arguments: Array<Type>?
     get() = Type.getArgumentTypes(desc)
 
 fun MethodNode.isGetter(): Boolean {
-    return (name!!.startsWith("get") && arguments?.size == 0)
+    return ((name!!.startsWith("get") || name!!.startsWith("is")) && arguments?.size == 0)
 }
 
 fun MethodNode.isSetter(): Boolean {
@@ -49,7 +49,11 @@ fun MethodNode.getReturnType(): Type {
 }
 
 fun MethodNode.toProperty(): String {
-    return decapitalize(name!!.substring(3))
+    val tmp = if (name!!.startsWith("get") || name!!.startsWith("set"))
+        name!!.substring(3)
+    else
+        name!!.substring(2)
+    return decapitalize(tmp)
 }
 
 class MethodNodeWithParent(var parent: ClassNode, val child: MethodNode)

@@ -165,12 +165,13 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         propMap.values().forEach {
             if (!isBlacklistedProperty(it.className + '.' + it.propName)) {
                 if (it.getter != null) {
+                    val propType = it.propType!!.toStr()
                     propsCache append if (it.setter == null) "val " else "var "
                     propsCache append it.className
                     propsCache append '.'
                     propsCache append it.propName
                     propsCache append ": "
-                    propsCache append it.propType!!.toStr()
+                    propsCache append propType
                     propsCache append '\n'
                     propsCache append "\tget() = "
                     propsCache append it.getter
@@ -178,7 +179,11 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
                     if (it.setter != null) {
                         propsCache append "\tset(value) = "
                         propsCache append it.setter
-                        propsCache append "(value!!) \n\n"
+                        if (propType.endsWith("?")) {
+                            propsCache append "(value!!) \n\n"
+                        } else {
+                            propsCache append "(value) \n\n"
+                        }
                     } else {
                         propsCache append "\n"
                     }
