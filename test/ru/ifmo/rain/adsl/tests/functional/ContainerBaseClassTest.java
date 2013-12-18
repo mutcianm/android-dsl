@@ -6,9 +6,7 @@ import ru.ifmo.rain.adsl.Generator;
 import ru.ifmo.rain.adsl.GeneratorSettings;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Arrays;
 
 public class ContainerBaseClassTest extends BaseFunctionalTest {
 
@@ -41,8 +39,10 @@ public class ContainerBaseClassTest extends BaseFunctionalTest {
     public void testName() throws Exception {
         initSettings();
         generator.run();
-        byte[] result = getMD5(new FileInputStream(outFile));
-        byte[] pattern = getMD5(new FileInputStream(testDataFile));
-        assertTrue(Arrays.equals(result, pattern));
+
+        String actual = loadText(outFile);
+        String expected = loadText(testDataFile.getAbsolutePath());
+
+        assertEquals(actual, expected);
     }
 }

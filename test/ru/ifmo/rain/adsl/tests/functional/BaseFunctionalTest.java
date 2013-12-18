@@ -3,6 +3,7 @@ package ru.ifmo.rain.adsl.tests.functional;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import ru.ifmo.rain.adsl.AdslPackage;
 import ru.ifmo.rain.adsl.Generator;
 
 import java.io.File;
@@ -33,6 +34,10 @@ public class BaseFunctionalTest extends Assert {
         while (dis.read() > 0) {
         }
         return md.digest();
+    }
+
+    protected String loadText(String name) throws NoSuchAlgorithmException, IOException {
+        return AdslPackage.readFile(name);
     }
 
     @AfterMethod

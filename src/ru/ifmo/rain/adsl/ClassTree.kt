@@ -5,17 +5,15 @@ import org.objectweb.asm.tree.ClassNode
 import java.util.Queue
 import java.util.ArrayDeque
 
-class NoSuchClassEx : Exception()
+class NoSuchClassException : Exception()
 
-class ClassTreeNode(parent: ClassTreeNode?, data: ClassNode) {
-    val parent: ClassTreeNode? = parent
-    var children: ArrayList<ClassTreeNode> = ArrayList()
-    var data: ClassNode = data
+class ClassTreeNode(val parent: ClassTreeNode?, val data: ClassNode) {
+    val children = ArrayList<ClassTreeNode>()
 }
 
-class ClassTree : Iterable<ClassNode>{
+class ClassTree : Iterable<ClassNode> {
     private val root = ClassTreeNode(null, ClassNode())
-    private var lastQueryAncestor: ClassTreeNode = root
+    private var lastQueryAncestor = root
 
     override fun iterator(): ClassTreeIterator {
         return ClassTreeIterator(root)
@@ -49,7 +47,7 @@ class ClassTree : Iterable<ClassNode>{
         val parent = if (lastQueryAncestor.data.name == name) lastQueryAncestor
         else findNode(root, name)
         if (parent == null) {
-            throw NoSuchClassEx()
+            throw NoSuchClassException()
         } else {
             lastQueryAncestor = parent
             return parent

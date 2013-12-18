@@ -176,7 +176,14 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         propMap.values().forEach {
             if (!isBlacklistedProperty(it.className + '.' + it.propName)) {
                 if (it.getter != null) {
+                    val varPrefix = "..."
                     val propType = it.propType!!.toStr()
+                    with (it) {
+                        """
+                        $varPrefix $className.$propName: $propType
+                            get() = $getter()
+                    """
+                    }
                     propsCache append if (it.setter == null) "val " else "var "
                     propsCache append it.className
                     propsCache append '.'
@@ -305,7 +312,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     }
 
 
-    private fun processClassData(classData: InputStream?): ClassNode {
+    private fun processClassData(classData: InputStream): ClassNode {
         val cn = ClassNode()
         try {
             val cr = ClassReader(classData)
@@ -313,18 +320,20 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         } catch (e: IgnoredClassEx) {
             //optionally log something here
         } finally {
-            classData?.close()
+            classData.close()
         }
         return cn
     }
 
-    private fun extractClasses(jarPath: String, packageName: String): ArrayList<InputStream?> {
+    private fun extractClasses(jarPath: String, packageName: String): Iterator<InputStream> {
         val packageName = packageName.replace('.', '/')
         val jarFile = JarFile(jarPath)
-        var entries: jet.List<JarEntry> = Collections.list(jarFile.entries() as Enumeration<JarEntry>)
-        entries = entries.filter { it.getName().startsWith(packageName) && it.getName().endsWith(".class") }
-        var ret = arrayListOf<InputStream?>()
-        return entries.mapTo(ret) { jarFile.getInputStream(it) }
+        return Collections.list(jarFile.entries() as Enumeration<JarEntry>)
+                .iterator()
+                .filter { it.getName().startsWith(packageName) && it.getName().endsWith(".class") }
+                .map {
+            jarFile.getInputStream(it)!!
+        }
     }
 }
 

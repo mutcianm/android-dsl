@@ -17,18 +17,11 @@ class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
                         var generateImports: Boolean = true,
                         var generatePackage: Boolean = true) {
 
-    private fun readFile(name: String): String {
-        var data = Files.readAllBytes(Paths.get(name) as Path)
-        return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(data)).toString()
-    }
-
     private fun readLines(fileName: String): MutableList<String> {
         return Files.readAllLines(Paths.get(fileName)!!, StandardCharsets.UTF_8)
     }
 
-    fun getPackage(): String {
-        return "package com.example.adsl"
-    }
+    fun getPackage() = "package com.example.adsl"
 
     fun getContainerBaseClass(): String {
         return "android/view/ViewGroup"
@@ -62,3 +55,9 @@ class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
         return HashSet<String>(readLines("container_classes.txt"))
     }
 }
+
+fun readFile(name: String): String {
+    var data = Files.readAllBytes(Paths.get(name) as Path)
+    return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(data)).toString()
+}
+
