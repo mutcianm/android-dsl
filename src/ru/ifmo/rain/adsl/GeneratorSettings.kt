@@ -26,39 +26,31 @@ class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
         return Files.readAllLines(Paths.get(fileName)!!, StandardCharsets.UTF_8)
     }
 
-    fun getPackage(): String {
-        return "package com.example.adsl"
-    }
+    val _package: String
+        get() = "package com.example.adsl"
 
-    fun getContainerBaseClass(): String {
-        return "android/view/ViewGroup"
-    }
+    val containerBaseClass: String
+        get() = "android/view/ViewGroup"
 
-    fun getImports(): String {
-        return readFile("imports.txt")
-    }
+    val imports: String
+        get() = readFile("imports.txt")
 
-    fun getContainerHeader(): String {
-        return readFile("cont_header.txt")
-    }
+    val containerHeader: String
+        get() = readFile("cont_header.txt")
 
-    fun getUIClassHeader(): String {
-        return "class _UI(var act: android.app.Activity) {\n"
-    }
+    val uiClassHeader: String
+        get() = "class _UI(var act: android.app.Activity) {\n"
 
-    fun getFooter(): String {
-        return readFile("footer.txt")
-    }
+    val footer: String
+        get() = readFile("footer.txt")
 
-    fun getBlackListedClasses(): Set<String> {
-        return HashSet<String>(readLines("class_blacklist.txt"))
-    }
+    val blackListedClasses: Set<String>
+        get() = HashSet<String>(readLines("class_blacklist.txt"))
 
-    fun getBlackListedProperties(): Set<String> {
-        return HashSet<String>(readLines("prop_blacklist.txt"))
-    }
+    val blacklistedProperties: Set<String>
+        get() = HashSet<String>(readLines("prop_blacklist.txt"))
 
-    fun getContainerClasses(): Set<String> {
-        return HashSet<String>(readLines("container_classes.txt"))
-    }
+    val containerClasses: Set<String>
+        get() = HashSet<String>(readLines("container_classes.txt"))
+
 }

@@ -14,8 +14,9 @@ import java.util.TreeMap
 import java.util.Arrays
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
+import com.sun.tools.classfile.StackMapTable_attribute.append_frame
 
-class IgnoredClassEx : Exception()
+class IgnoredClassException : Exception()
 
 class Hook<T>(val predicate: ((_class: T) -> Boolean), val function: ((_class: T) -> Unit)) {
     public fun run(_class: T) {
@@ -59,8 +60,8 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
 
     private val propMap = TreeMap<String, PropertyData>()
 
-    private val classBlackList = settings.getBlackListedClasses()
-    private val propBlackList = settings.getBlackListedProperties()
+    private val classBlackList = settings.blackListedClasses
+    private val propBlackList = settings.blacklistedProperties
 
     private val classTree: ClassTree = ClassTree()
 
@@ -105,12 +106,12 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     }
 
     private fun isContainer(widget: ClassNode): Boolean {
-        return classTree.isChildOf(widget, settings.getContainerBaseClass())
+        return classTree.isChildOf(widget, settings.containerBaseClass)
     }
 
     private fun initCaches() {
-        containerCache append settings.getContainerHeader()
-        uiClassCache   append settings.getUIClassHeader()
+        containerCache append settings.containerHeader
+        uiClassCache   append settings.uiClassHeader
     }
 
     private fun finalizeCaches() {
@@ -121,7 +122,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     public fun run() {
         initCaches()
         val vg = ClassNode()
-        vg.name = settings.getContainerBaseClass()
+        vg.name = settings.containerBaseClass
         classTree.add(vg)
         for (classData in extractClasses(jarPath, packageName)) {
             classTree.add(processClassData(classData))
@@ -137,11 +138,11 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         }
         finalizeCaches()
         if (settings.generatePackage) {
-            ps.write(settings.getPackage())
+            ps.write(settings._package)
             ps.newLine()
         }
         if (settings.generateImports) {
-            ps.write(settings.getImports())
+            ps.write(settings.imports)
             ps.newLine()
         }
         if (settings.generateContainerBaseClass)
@@ -153,7 +154,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         if (settings.generateUIClass)
             produceUIClass()
         if (settings.generateUIClassWrapper)
-            ps.write(settings.getFooter())
+            ps.write(settings.footer)
         ps.close()
     }
 
@@ -172,37 +173,30 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         ps.write(uiClassCache.toString())
     }
 
-    private fun produceProperties() {
-        propMap.values().forEach {
-            if (!isBlacklistedProperty(it.className + '.' + it.propName)) {
-                if (it.getter != null) {
-                    val propType = it.propType!!.toStr()
-                    propsCache append if (it.setter == null) "val " else "var "
-                    propsCache append it.className
-                    propsCache append '.'
-                    propsCache append it.propName
-                    propsCache append ": "
-                    propsCache append propType
-                    propsCache append '\n'
-                    propsCache append "\tget() = "
-                    propsCache append it.getter
-                    propsCache append "()\n"
-                    if (it.setter != null) {
-                        propsCache append "\tset(value) = "
-                        propsCache append it.setter
-                        if (propType.endsWith("?")) {
-                            propsCache append "(value!!) \n\n"
-                        } else {
-                            propsCache append "(value) \n\n"
-                        }
-                    } else {
-                        propsCache append "\n"
-                    }
-                }
-            }
+    private fun produceProperty(prop: PropertyData) {
+        val propertyReturnType = prop.propType!!.toStr()
+        val mutability = if (prop.setter == null) "val" else "var"
+        val setterValue = if (propertyReturnType.endsWith("?")) "(value!!)" else "(value)"
+        with (prop) {
+            propsCache append "$mutability $className.$propName: $propertyReturnType\n"
+            propsCache append "    get() = $getter()\n"
+            if (setter != null)
+                propsCache append "    set(value) = $setter$setterValue\n"
+            propsCache append "\n"
         }
+    }
 
+    private fun produceProperties() {
+        for (prop in propMap.values()) {
+            if (!isBlacklistedProperty(prop.className + '.' + prop.propName))
+                if (prop.getter != null)
+                    produceProperty(prop)
+        }
         ps.write(propsCache.toString())
+    }
+
+    private fun setOrCreateProperty(prop: PropertyData) {
+
     }
 
     private fun genSetter(methodInfo: MethodNodeWithParent) {
@@ -248,14 +242,14 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     }
 
     private fun genWidget(classNode: ClassNode) {
-        containerCache append "\tfun "
-        containerCache append classNode.cleanNameDecap()
-        containerCache append "( init: " + classNode.cleanInternalName() + ".() -> Unit): " + classNode.cleanInternalName() + " {\n"
-        containerCache append "\t\tval v = " + classNode.cleanInternalName() + "(ctx)\n"
-        containerCache append "\t\tv.init()\n"
-        containerCache append "\t\tvgInstance.addView(v)\n"
-        containerCache append "\t\t_style(v)\n"
-        containerCache append "\t\treturn v\n\t}\n\n"
+        val cleanNameDecap = classNode.cleanNameDecap()
+        val cleanInternalName = classNode.cleanInternalName()
+        containerCache append "    fun $cleanNameDecap( init: $cleanInternalName.() -> Unit): $cleanInternalName {\n"
+        containerCache append "        val v = $cleanInternalName(ctx)\n"
+        containerCache append "        v.init()\n"
+        containerCache append "        vgInstance.addView(v)\n"
+        containerCache append "        _style(v)\n"
+        containerCache append "        return v\n    }\n\n"
     }
 
     private fun genContainer(classNode: ClassNode) {
@@ -265,43 +259,33 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     }
 
     private fun genContainerWidgetFun(classNode: ClassNode) {
-        containerCache append "\t//container function\n"
-        containerCache append "\tfun "
-        containerCache append classNode.cleanNameDecap()
-        containerCache append "\t( init: _"
-        containerCache append classNode.cleanName()
-        containerCache append ".() -> Unit): _"
-        containerCache append classNode.cleanName()
-        containerCache append " {\n"
-        containerCache append "\t\tval v = _"
-        containerCache append classNode.cleanName()
-        containerCache append  "("
-        containerCache append classNode.cleanInternalName()
-        containerCache append "(ctx), ctx)\n"
-        containerCache append "\t\tv.init()\n"
-        containerCache append "\t\tvgInstance.addView(v.vgInstance)\n"
-        containerCache append "\t\t_style(v)\n"
-        containerCache append "\t\treturn v\n\t}\n\n"
+        val cleanNameDecap = classNode.cleanNameDecap()
+        val cleanName = classNode.cleanName()
+        val cleanInternalName = classNode.cleanInternalName()
+        containerCache append "    //container function\n"
+        containerCache append "    fun $cleanNameDecap( init: _$cleanName.() -> Unit): _$cleanName {\n"
+        containerCache append "        val v = _$cleanName($cleanInternalName(ctx), ctx)\n"
+        containerCache append "        v.init()\n"
+        containerCache append "        vgInstance.addView(v.vgInstance)\n"
+        containerCache append "        _style(v)\n"
+        containerCache append "        return v\n    }\n\n"
     }
 
     private fun genContainerClass(classNode: ClassNode) {
-        containerClassesCache append "class _"
-        containerClassesCache append  classNode.cleanName()
+        val cleanName = classNode.cleanName()
+        containerClassesCache append "class _$cleanName"
         containerClassesCache append "(override val vgInstance: android.view.ViewGroup, override val ctx: android.app.Activity): _Container(vgInstance, ctx) {\n"
         containerClassesCache append "\n}\n\n"
     }
 
     private fun genUIWidgetFun(classNode: ClassNode) {
-        uiClassCache append "\tfun "
-        uiClassCache append classNode.cleanNameDecap()
-        uiClassCache append "(init: _"
-        uiClassCache append classNode.cleanName()
-        uiClassCache append ".() -> Unit) {\n\t\tval layout = _"
-        uiClassCache append classNode.cleanName()
-        uiClassCache append "("
-        uiClassCache append classNode.cleanInternalName()
-        uiClassCache append "(act), act)\n\t\tlayout.init()\n"
-        uiClassCache append "\t\tact.setContentView(layout.vgInstance)\n\t}\n\n"
+        val cleanNameDecap = classNode.cleanNameDecap()
+        val cleanName = classNode.cleanName()
+        val cleanInternalName = classNode.cleanInternalName()
+        uiClassCache append "    fun $cleanNameDecap(init: _$cleanName.() -> Unit) {\n"
+        uiClassCache append "        val layout = _$cleanName($cleanInternalName(act), act)\n"
+        uiClassCache append "        layout.init()\n"
+        uiClassCache append "        act.setContentView(layout.vgInstance)\n    }\n\n"
     }
 
 
@@ -310,7 +294,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         try {
             val cr = ClassReader(classData)
             cr.accept(cn, 0)
-        } catch (e: IgnoredClassEx) {
+        } catch (e: IgnoredClassException) {
             //optionally log something here
         } finally {
             classData?.close()
@@ -318,14 +302,18 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         return cn
     }
 
-    private fun extractClasses(jarPath: String, packageName: String): ArrayList<InputStream?> {
+
+    private fun extractClasses(jarPath: String, packageName: String): Iterator<InputStream> {
         val packageName = packageName.replace('.', '/')
         val jarFile = JarFile(jarPath)
-        var entries: jet.List<JarEntry> = Collections.list(jarFile.entries() as Enumeration<JarEntry>)
-        entries = entries.filter { it.getName().startsWith(packageName) && it.getName().endsWith(".class") }
-        var ret = arrayListOf<InputStream?>()
-        return entries.mapTo(ret) { jarFile.getInputStream(it) }
+        return Collections.list(jarFile.entries() as Enumeration<JarEntry>)
+                .iterator()
+                .filter { it.getName().startsWith(packageName) && it.getName().endsWith(".class") }
+                .map {
+            jarFile.getInputStream(it)!!
+        }
     }
+
 }
 
 

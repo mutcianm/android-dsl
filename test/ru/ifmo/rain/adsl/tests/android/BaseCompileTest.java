@@ -25,19 +25,32 @@ public class BaseCompileTest extends Assert {
         assertTrue(new File(kotlincFilename).exists());
     }
 
-    protected int compile(String[] args) throws IOException, InterruptedException {
+    protected ProcResult compile(String[] args) throws IOException, InterruptedException {
         Process p = Runtime.getRuntime().exec(args);
         BufferedReader br1 = new BufferedReader(new InputStreamReader(p.getInputStream()));
         BufferedReader br2 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-        while ((br1.readLine() != null) && (br2.readLine() != null)) {
-            continue;
+        StringBuilder errors = new StringBuilder();
+        String str;
+        while (((str = br1.readLine()) != null) && (br2.readLine() != null)) {
+            if (str.startsWith("ERROR"))
+                errors.append(str);
         }
         p.waitFor();
-        return p.exitValue();
+        return new ProcResult(errors.toString(), p.exitValue());
     }
 
     @AfterMethod
     public void tearDown() throws Exception {
         new File(tmpJarFile).delete();
+    }
+
+    class ProcResult {
+        public String stderr;
+        public int exitCode;
+
+        ProcResult(String stderr, int exitCode) {
+            this.stderr = stderr;
+            this.exitCode = exitCode;
+        }
     }
 }

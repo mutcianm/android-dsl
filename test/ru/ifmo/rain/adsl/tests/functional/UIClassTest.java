@@ -2,13 +2,12 @@ package ru.ifmo.rain.adsl.tests.functional;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import ru.ifmo.rain.adsl.AdslPackage;
 import ru.ifmo.rain.adsl.Generator;
 import ru.ifmo.rain.adsl.GeneratorSettings;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Arrays;
 
 public class UIClassTest extends BaseFunctionalTest {
 
@@ -19,7 +18,6 @@ public class UIClassTest extends BaseFunctionalTest {
     @BeforeMethod
     public void setUp() throws Exception {
         super.setUp();
-        assertTrue(testDataFile.exists());
         generator = new Generator(new FileOutputStream(outFile), inputJarFile, classPath);
     }
 
@@ -41,9 +39,11 @@ public class UIClassTest extends BaseFunctionalTest {
     public void testName() throws Exception {
         initSettings();
         generator.run();
-        byte[] result = getMD5(new FileInputStream(outFile));
-        byte[] pattern = getMD5(new FileInputStream(testDataFile));
-        assertTrue(Arrays.equals(result, pattern));
+
+        String actual = AdslPackage.readFile(outFile);
+        String expected = loadOrCreate(testDataFile, actual);
+
+        assertEquals(actual, expected);
     }
 }
 

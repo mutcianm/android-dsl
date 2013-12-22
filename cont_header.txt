@@ -8,7 +8,7 @@ open class _Container(open val vgInstance: android.view.ViewGroup,
     }
 
     fun alertDialog(title: String, func: AlertDialog.Builder.() -> Unit) {
-        val builder =  AlertDialog.Builder(ctx)
+        val builder = AlertDialog.Builder(ctx)
         builder.setTitle(title)
         builder.func()
         return builder.create()!!.show()

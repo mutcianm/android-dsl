@@ -1,6 +1,11 @@
 package ru.ifmo.rain.adsl
 
 import org.objectweb.asm.*
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.Path
+import java.nio.charset.StandardCharsets
+import java.nio.ByteBuffer
 
 fun Type.toStr(nullable: Boolean = true): String {
     return when (getSort()) {
@@ -27,4 +32,9 @@ fun Type.toStr(nullable: Boolean = true): String {
         }
         else -> typeMap(cleanInternalName(getInternalName()!!)) + if (nullable) "?" else ""
     }
+}
+
+fun readFile(name: String): String {
+    var data = Files.readAllBytes(Paths.get(name) as Path)
+    return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(data)).toString()
 }

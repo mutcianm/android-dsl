@@ -3,9 +3,11 @@ package ru.ifmo.rain.adsl.tests.functional;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import ru.ifmo.rain.adsl.AdslPackage;
 import ru.ifmo.rain.adsl.Generator;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
@@ -33,6 +35,19 @@ public class BaseFunctionalTest extends Assert {
         while (dis.read() > 0) {
         }
         return md.digest();
+    }
+
+    protected String loadOrCreate(File file, String data) throws IOException {
+        try {
+            return AdslPackage.readFile(file.getAbsolutePath());
+        } catch (Exception e) {
+            file.createNewFile();
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(data);
+            fileWriter.close();
+            fail("Empty expected data, creating from actual");
+            return data;
+        }
     }
 
     @AfterMethod

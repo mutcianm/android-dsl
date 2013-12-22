@@ -5,7 +5,7 @@ import org.objectweb.asm.tree.ClassNode
 import java.util.Queue
 import java.util.ArrayDeque
 
-class NoSuchClassEx : Exception()
+class NoSuchClassException : Exception()
 
 class ClassTreeNode(parent: ClassTreeNode?, data: ClassNode) {
     val parent: ClassTreeNode? = parent
@@ -47,9 +47,9 @@ class ClassTree : Iterable<ClassNode>{
     private fun findParent(name: String): ClassTreeNode {
         //use cached parent node from last call
         val parent = if (lastQueryAncestor.data.name == name) lastQueryAncestor
-        else findNode(root, name)
+                     else findNode(root, name)
         if (parent == null) {
-            throw NoSuchClassEx()
+            throw NoSuchClassException()
         } else {
             lastQueryAncestor = parent
             return parent
