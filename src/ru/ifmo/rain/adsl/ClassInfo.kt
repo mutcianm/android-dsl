@@ -8,6 +8,10 @@ public fun decapitalize(name: String): String {
     return name.substring(0, 1).toLowerCase() + name.substring(1)
 }
 
+public fun capitalize(name: String): String {
+    return name.substring(0, 1).toUpperCase() + name.substring(1)
+}
+
 fun stripClassName(name: String): String {
     return name.substring(name.lastIndexOf('.') + 1)
 }
@@ -25,6 +29,17 @@ fun MethodNode.isGetter(): Boolean {
 
 fun MethodNode.isSetter(): Boolean {
     return (name!!.startsWith("set") && arguments?.size == 1)
+}
+
+fun MethodNode.isProperty(): Boolean {
+    return (name!!.startsWith("set") || name!!.startsWith("get") || name!!.startsWith("is"))
+}
+
+fun MethodNode.isProperty(prop: String): Boolean {
+    if (!isProperty()) return false
+    return (name == "set" + capitalize(prop) ||
+    name == "get" + capitalize(prop) ||
+    name == "is" + capitalize(prop))
 }
 
 fun MethodNode.isConstructor(): Boolean {

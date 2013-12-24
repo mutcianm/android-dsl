@@ -14,7 +14,6 @@ import java.util.TreeMap
 import java.util.Arrays
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
-import com.sun.tools.classfile.StackMapTable_attribute.append_frame
 
 class IgnoredClassException : Exception()
 
@@ -34,7 +33,7 @@ class PropertyData(val className: String,
                    var propType: Type?,
                    var getter: String?,
                    var setter: String?,
-                   var arg: Type?)
+                   var valueType: Type?)
 
 fun typeMap(str: String): String {
     return when (str) {
@@ -62,6 +61,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
 
     private val classBlackList = settings.blackListedClasses
     private val propBlackList = settings.blacklistedProperties
+    private val helperConstructors = settings.helperConstructors
 
     private val classTree: ClassTree = ClassTree()
 
@@ -128,13 +128,13 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
             classTree.add(processClassData(classData))
         }
         for (classInfo in classTree) {
-            classHooks.forEach { hook -> hook(classInfo) }
             classInfo.methods!!.forEach { method ->
                 methodHooks.forEach {
                     hook ->
                     hook(MethodNodeWithParent(classInfo, method as MethodNode))
                 }
             }
+            classHooks.forEach { hook -> hook(classInfo) }
         }
         finalizeCaches()
         if (settings.generatePackage) {
@@ -195,9 +195,9 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         ps.write(propsCache.toString())
     }
 
-    private fun setOrCreateProperty(prop: PropertyData) {
-
-    }
+    //    private fun setOrCreateProperty(prop: PropertyData) {
+    //
+    //    }
 
     private fun genSetter(methodInfo: MethodNodeWithParent) {
         if (!settings.generateSetters) return
@@ -211,7 +211,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         val prop = propMap[className + methodInfo.child.toProperty()]
         if (prop != null) {
             prop.setter = setter
-            prop.arg = methodInfo.child.arguments!![0]
+            prop.valueType = methodInfo.child.arguments!![0]
         } else {
             propMap[className + methodInfo.child.toProperty()] =
             PropertyData(className, methodInfo.child.toProperty(),
@@ -241,15 +241,64 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         }
     }
 
-    private fun genWidget(classNode: ClassNode) {
-        val cleanNameDecap = classNode.cleanNameDecap()
-        val cleanInternalName = classNode.cleanInternalName()
-        containerCache append "    fun $cleanNameDecap( init: $cleanInternalName.() -> Unit): $cleanInternalName {\n"
-        containerCache append "        val v = $cleanInternalName(ctx)\n"
+    private fun getConstructors(classNode: ClassNode): List<List<PropertyData>> {
+        val constructors: List<List<String>>? = helperConstructors.get(classNode.cleanInternalName())
+        val res = ArrayList<ArrayList<PropertyData>>()
+        val emptyConstructor = ArrayList<PropertyData>()
+        res.add(emptyConstructor)
+        val className = classNode.cleanInternalName()
+        if (constructors == null || !settings.generateHelperConstructors) {
+            return res
+        } else {
+            for (constructor in constructors) {
+                val cons = ArrayList<PropertyData>()
+                for (argument in constructor) {
+                    val _class = classTree.findParentWithProperty(classNode, argument)
+                    if (_class == null)
+                        throw RuntimeException("Property $argument is not in $className hierarchy")
+                    val property = propMap.get(_class.cleanInternalName() + argument)
+                    if (property == null)
+                        throw RuntimeException("Property $argument in not a member of $className")
+                    if (property.valueType == null)
+                        throw RuntimeException("Property $argument is read-only in $className")
+                    cons.add(property)
+                }
+                res.add(cons)
+            }
+            return res
+        }
+    }
+
+    private fun makeWidget(className: String,
+                           internalName: String,
+                           arguments: List<PropertyData>) {
+        val args = StringBuilder()
+        arguments.forEach {
+            args append it.propName
+            args append ": "
+            args append it.propType!!.toStr()
+            args append ", "
+        }
+        val strArgs = args.toString()
+        containerCache append "    fun $className($strArgs init: $internalName.() -> Unit): $internalName {\n"
+        containerCache append "        val v = $internalName(ctx)\n"
+        for (arg in arguments) {
+            val argName = arg.propName
+            containerCache append "        v.$argName = $argName\n"
+        }
         containerCache append "        v.init()\n"
         containerCache append "        vgInstance.addView(v)\n"
         containerCache append "        _style(v)\n"
         containerCache append "        return v\n    }\n\n"
+    }
+
+    private fun genWidget(classNode: ClassNode) {
+        val cleanNameDecap = classNode.cleanNameDecap()
+        val cleanInternalName = classNode.cleanInternalName()
+        val constructors = getConstructors(classNode)
+        for (constructor in constructors) {
+            makeWidget(cleanNameDecap, cleanInternalName, constructor)
+        }
     }
 
     private fun genContainer(classNode: ClassNode) {
@@ -258,10 +307,10 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         genUIWidgetFun(classNode)
     }
 
-    private fun genContainerWidgetFun(classNode: ClassNode) {
-        val cleanNameDecap = classNode.cleanNameDecap()
-        val cleanName = classNode.cleanName()
-        val cleanInternalName = classNode.cleanInternalName()
+    private fun makeContainerWidgetFun(cleanNameDecap: String,
+                                       cleanName: String,
+                                       cleanInternalName: String,
+                                       args: String) {
         containerCache append "    //container function\n"
         containerCache append "    fun $cleanNameDecap( init: _$cleanName.() -> Unit): _$cleanName {\n"
         containerCache append "        val v = _$cleanName($cleanInternalName(ctx), ctx)\n"
@@ -269,6 +318,13 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         containerCache append "        vgInstance.addView(v.vgInstance)\n"
         containerCache append "        _style(v)\n"
         containerCache append "        return v\n    }\n\n"
+    }
+
+    private fun genContainerWidgetFun(classNode: ClassNode) {
+        val cleanNameDecap = classNode.cleanNameDecap()
+        val cleanName = classNode.cleanName()
+        val cleanInternalName = classNode.cleanInternalName()
+        makeContainerWidgetFun(cleanNameDecap, cleanName, cleanInternalName, "")
     }
 
     private fun genContainerClass(classNode: ClassNode) {

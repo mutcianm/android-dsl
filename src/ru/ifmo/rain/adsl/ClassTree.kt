@@ -4,6 +4,7 @@ import java.util.ArrayList
 import org.objectweb.asm.tree.ClassNode
 import java.util.Queue
 import java.util.ArrayDeque
+import org.objectweb.asm.tree.MethodNode
 
 class NoSuchClassException : Exception()
 
@@ -16,6 +17,7 @@ class ClassTreeNode(parent: ClassTreeNode?, data: ClassNode) {
 class ClassTree : Iterable<ClassNode>{
     private val root = ClassTreeNode(null, ClassNode())
     private var lastQueryAncestor: ClassTreeNode = root
+    private var cachedPropNode = root
 
     override fun iterator(): ClassTreeIterator {
         return ClassTreeIterator(root)
@@ -42,6 +44,24 @@ class ClassTree : Iterable<ClassNode>{
             return false
         else
             return true
+    }
+
+    public fun findParentWithProperty(_class: ClassNode, property: String): ClassNode? {
+        var node = if (cachedPropNode.data == _class) cachedPropNode
+        else findNode(root, _class)
+        if (node == null) {
+            throw NoSuchClassException()
+        } else {
+            cachedPropNode = node!!
+            while (node != root) {
+                for (method in node!!.data.methods as List<MethodNode>) {
+                    if (method.isProperty(property))
+                        return node!!.data
+                }
+                node = node!!.parent
+            }
+        }
+        return null
     }
 
     private fun findParent(name: String): ClassTreeNode {
@@ -72,6 +92,19 @@ class ClassTree : Iterable<ClassNode>{
                 return child
             } else {
                 val ret = findNode(child, name)
+                if (ret != null)
+                    return ret
+            }
+        }
+        return null
+    }
+
+    private fun findNode(node: ClassTreeNode, _class: ClassNode): ClassTreeNode? {
+        for (child in node.children) {
+            if (child.data == _class) {
+                return child
+            } else {
+                val ret = findNode(child, _class)
                 if (ret != null)
                     return ret
             }

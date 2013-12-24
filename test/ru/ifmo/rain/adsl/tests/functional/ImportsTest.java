@@ -32,6 +32,7 @@ public class ImportsTest extends BaseFunctionalTest {
         settings.setGenerateProperties(false);
         settings.setGenerateUIClass(false);
         settings.setGenerateUIClassWrapper(false);
+        settings.setGenerateHelperConstructors(false);
         generator.setSettings(settings);
     }
 

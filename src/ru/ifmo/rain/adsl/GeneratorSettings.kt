@@ -6,6 +6,8 @@ import java.nio.file.Path
 import java.nio.charset.StandardCharsets
 import java.nio.ByteBuffer
 import java.util.HashSet
+import java.util.HashMap
+import java.util.ArrayList
 
 class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
                         var generateProperties: Boolean = true,
@@ -25,6 +27,8 @@ class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
     private fun readLines(fileName: String): MutableList<String> {
         return Files.readAllLines(Paths.get(fileName)!!, StandardCharsets.UTF_8)
     }
+
+    var generateHelperConstructors: Boolean = true
 
     val _package: String
         get() = "package com.example.adsl"
@@ -53,4 +57,25 @@ class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
     val containerClasses: Set<String>
         get() = HashSet<String>(readLines("container_classes.txt"))
 
+    val helperConstructors: Map<String, List<List<String>>>
+        get() {
+            val res = HashMap<String, ArrayList<ArrayList<String>>>()
+            for (line in readLines("helper_constructors.txt")) {
+                try {
+                    with (line.replaceAll("\\s", "").split(':')) {
+                        val className = get(0)
+                        val constructors = res.getOrElse(className, { ArrayList<ArrayList<String>>() })
+                        val props = ArrayList<String>()
+                        for (prop in get(1).split(',')) {
+                            props.add(prop)
+                        }
+                        constructors.add(props)
+                        res.put(className, constructors)
+                    }
+                } catch (e: ArrayIndexOutOfBoundsException) {
+                    throw RuntimeException("Failed to tokenize string, malformed helper_constructors.txt")
+                }
+            }
+            return res
+        }
 }
