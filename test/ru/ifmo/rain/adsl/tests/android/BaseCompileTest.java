@@ -3,11 +3,9 @@ package ru.ifmo.rain.adsl.tests.android;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import ru.ifmo.rain.adsl.Generator;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class BaseCompileTest extends Assert {
     final String kotlincFilename = "lib/kotlinc/bin/kotlinc-jvm";
@@ -23,6 +21,22 @@ public class BaseCompileTest extends Assert {
         assertTrue(new File("prop_blacklist.txt").exists());
         assertTrue(new File("footer.txt").exists());
         assertTrue(new File(kotlincFilename).exists());
+    }
+
+    protected void runCompileTest(File testData) throws IOException, InterruptedException {
+        assertTrue(testData.exists());
+        String testFileName = testData.getName().substring(0, testData.getName().lastIndexOf("."));
+        File outFile = File.createTempFile(testFileName, ".kt");
+        Generator gen = new Generator(new FileOutputStream(outFile), inputJarFile, "android.widget");
+        gen.run();
+        String kotlincArgs[] = {kotlincFilename,
+                "-jar", tmpJarFile,
+                "-classpath", inputJarFile,
+                outFile.getAbsolutePath(), testData.getPath()
+        };
+        ProcResult res = compile(kotlincArgs);
+        assertEquals(res.stderr, "");
+        outFile.delete();
     }
 
     protected ProcResult compile(String[] args) throws IOException, InterruptedException {
