@@ -9,8 +9,8 @@ import org.objectweb.asm.tree.MethodNode
 class NoSuchClassException : Exception()
 
 class ClassTreeNode(parent: ClassTreeNode?, data: ClassNode) {
-    val parent: ClassTreeNode? = parent
-    var children: ArrayList<ClassTreeNode> = ArrayList()
+    var parent: ClassTreeNode? = parent
+    var children: MutableList<ClassTreeNode> = ArrayList()
     var data: ClassNode = data
 }
 
@@ -24,17 +24,25 @@ class ClassTree : Iterable<ClassNode>{
     }
 
     public fun add(_class: ClassNode) {
-        val node = findNode(root, _class.superName)
-        if (node != null) {
-            node.children.add(ClassTreeNode(node, _class))
+        val parent = findNode(root, _class.superName)
+        val newNode: ClassTreeNode
+        val orphans = getOrphansOf(_class.name!!)
+        if (parent != null) {
+            newNode = ClassTreeNode(parent, _class)
+            parent.children.add(newNode)
         } else {
-            root.children.add(ClassTreeNode(root, _class))
+            newNode = ClassTreeNode(root, _class)
+            root.children.add(newNode)
         }
+        newNode.children.addAll(orphans)
+        orphans.forEach { it.parent = newNode }
     }
 
     public fun isChildOf(_class: ClassNode, ancestorName: String): Boolean {
-        val parent = findParent(ancestorName)
-        return findChildByName(parent, _class.name!!)
+        val treeNode = findNode(root, _class)
+        if (treeNode == null)
+            throw NoSuchClassException()
+        return treeNode.parent?.data?.name == ancestorName
     }
 
     public fun isSuccessorOf(_class: ClassNode, ancestorName: String): Boolean {
@@ -74,6 +82,13 @@ class ClassTree : Iterable<ClassNode>{
             lastQueryAncestor = parent
             return parent
         }
+    }
+
+    private fun getOrphansOf(parentClassName: String): List<ClassTreeNode> {
+        //hack? orphans seem to be present only in root node
+        val res = root.children.partition { it.data.superName == parentClassName }
+        root.children = res.second as MutableList<ClassTreeNode>
+        return res.first
     }
 
     private fun findChildByName(parent: ClassTreeNode, childName: String): Boolean {
@@ -120,9 +135,7 @@ class ClassTreeIterator(var next: ClassTreeNode) : Iterator<ClassNode> {
     override fun next(): ClassNode {
         val node: ClassTreeNode = nodeQueue.element()
         nodeQueue.remove()
-        for (child in node.children) {
-            nodeQueue.add(child)
-        }
+        nodeQueue.addAll(node.children);
         return node.data
     }
 

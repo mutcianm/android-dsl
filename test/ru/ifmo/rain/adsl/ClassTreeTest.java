@@ -6,28 +6,32 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ClassTreeTest extends Assert {
 
     private final ArrayList<ClassNode> classes = new ArrayList<>();
+    private ArrayList<ClassNode> shuffledClasses;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        for (int i = 0; i < 4; ++i) {
-            classes.add(new ClassNode());
-        }
-        classes.get(0).name = "java.lang.Object";
-        classes.get(0).superName = null;
-        classes.get(1).name = "java.lang.Integer";
-        classes.get(1).superName = "java.lang.Object";
-        classes.get(2).name = "com.example.A";
-        classes.get(2).superName = "java.lang.Object";
-        classes.get(3).name = "com.example.B";
-        classes.get(3).superName = "com.example.A";
+        classes.clear();
+        classes.add(new SimpleClassNode("java.lang.Object", null));
+        classes.add(new SimpleClassNode("java.lang.Integer", "java.lang.Object"));
+        classes.add(new SimpleClassNode("com.example.A", "java.lang.Object"));
+        classes.add(new SimpleClassNode("com.example.B", "com.example.A"));
+        classes.add(new SimpleClassNode("com.example.C", "com.example.A"));
+        classes.add(new SimpleClassNode("com.example.D", "com.example.B"));
+        classes.add(new SimpleClassNode("com.example.E", "com.example.B"));
+        classes.add(new SimpleClassNode("com.example.F", "com.example.E"));
+        classes.add(new SimpleClassNode("com.example.G", "com.example.F"));
+        classes.add(new SimpleClassNode("com.example.H", "com.example.F"));
+        shuffledClasses = new ArrayList<>(classes);
+        Collections.shuffle(shuffledClasses);
     }
 
     private void doAdd(ClassTree target) {
-        for (ClassNode aClass : classes) {
+        for (ClassNode aClass : shuffledClasses) {
             target.add(aClass);
         }
     }
@@ -75,13 +79,18 @@ public class ClassTreeTest extends Assert {
         doAdd(tree);
         int arrayElementCount = classes.size();
         int treeElementCount = 0;
-        ClassTreeIterator it = tree.iterator();
-        while (it.hasNext()) {
-            ClassNode c = it.next();
+        for (ClassNode c : tree) {
             assertTrue(classes.contains(c));
             ++treeElementCount;
         }
         assertEquals(arrayElementCount, treeElementCount);
+    }
+
+    class SimpleClassNode extends ClassNode {
+        SimpleClassNode(String name, String superName) {
+            this.name = name;
+            this.superName = superName;
+        }
     }
 
 }

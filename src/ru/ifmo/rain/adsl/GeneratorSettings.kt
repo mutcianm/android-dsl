@@ -17,7 +17,8 @@ class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
                         var generateUIClass: Boolean = true,
                         var generateUIClassWrapper: Boolean = true,
                         var generateImports: Boolean = true,
-                        var generatePackage: Boolean = true) {
+                        var generatePackage: Boolean = true,
+                        var generateHelperConstructors: Boolean = true) {
 
     private fun readFile(name: String): String {
         var data = Files.readAllBytes(Paths.get(name) as Path)
@@ -27,8 +28,6 @@ class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
     private fun readLines(fileName: String): MutableList<String> {
         return Files.readAllLines(Paths.get(fileName)!!, StandardCharsets.UTF_8)
     }
-
-    var generateHelperConstructors: Boolean = true
 
     val _package: String
         get() = "package com.example.adsl"

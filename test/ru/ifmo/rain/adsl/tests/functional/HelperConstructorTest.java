@@ -6,10 +6,9 @@ import ru.ifmo.rain.adsl.GeneratorSettings;
 
 import java.io.File;
 
-public class PackageTest extends BaseFunctionalTest {
-
-    private final String classPath = "android.widget.Checkbox";
-    private final File testDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/functional/PackageTest.kt");
+public class HelperConstructorTest extends BaseFunctionalTest {
+    private final String classPath = "android.widget.";
+    private final File testDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/functional/HelperConstructorTest.kt");
 
     @Override
     @BeforeMethod
@@ -19,22 +18,21 @@ public class PackageTest extends BaseFunctionalTest {
 
     protected void initSettings() {
         GeneratorSettings settings = new GeneratorSettings();
-        settings.setGeneratePackage(true);
+        settings.setGeneratePackage(false);
         settings.setGenerateImports(false);
-        settings.setGenerateContainerBaseClass(false);
+        settings.setGenerateContainerBaseClass(true);
         settings.setGenerateContainerClasses(false);
-        settings.setGenerateGetters(false);
-        settings.setGenerateSetters(false);
-        settings.setGenerateProperties(false);
+        settings.setGenerateGetters(true);
+        settings.setGenerateSetters(true);
+        settings.setGenerateProperties(true);
         settings.setGenerateUIClass(false);
         settings.setGenerateUIClassWrapper(false);
-        settings.setGenerateHelperConstructors(false);
+        settings.setGenerateHelperConstructors(true);
         generator.setSettings(settings);
     }
 
     @Test
-    public void testPackage() throws Exception {
+    public void testHelperConstructors() throws Exception {
         runFunctionalTest(testDataFile, classPath);
     }
 }
-
