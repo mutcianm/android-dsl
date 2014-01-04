@@ -52,7 +52,7 @@ public class ClassTreeTest extends Assert {
     }
 
     @Test
-    public void testTree() throws Exception {
+    public void testIsSuccessorOf() throws Exception {
         ClassTree tree = new ClassTree();
         doAdd(tree);
         assertTrue(tree.isSuccessorOf(classes.get(1), "java.lang.Object"));

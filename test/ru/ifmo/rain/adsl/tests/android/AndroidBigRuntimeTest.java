@@ -12,6 +12,7 @@ public class AndroidBigRuntimeTest extends BaseCompileTest {
     private final File testPropertiesDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/android/AndroidPropertiesTest.kt");
     private final File testSimpleDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/android/AndroidSimpleTest.kt");
     private final File testWidgetsDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/android/AndroidWidgetTest.kt");
+    private final File testLayoutParamsDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/android/AndroidLayoutParamsTest.kt");
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -36,6 +37,11 @@ public class AndroidBigRuntimeTest extends BaseCompileTest {
     @Test
     public void testLayouts() throws Exception {
         runCompileTest(testLayoutsDataFile);
+    }
+
+    @Test
+    public void testLayoutParams() throws Exception {
+        runCompileTest(testLayoutParamsDataFile);
     }
 
     @AfterMethod

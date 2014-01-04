@@ -107,6 +107,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
 
     private fun isContainer(widget: ClassNode): Boolean {
         return classTree.isChildOf(widget, settings.containerBaseClass)
+        //        return classTree.isSuccessorOf(widget, settings.containerBaseClass)
     }
 
     private fun initCaches() {
@@ -331,7 +332,17 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         val cleanName = classNode.cleanName()
         containerClassesCache append "class _$cleanName"
         containerClassesCache append "(override val vgInstance: android.view.ViewGroup, override val ctx: android.app.Activity): _Container(vgInstance, ctx) {\n"
+        genLayoutParams(classNode)
         containerClassesCache append "\n}\n\n"
+    }
+
+    private fun genLayoutParams(classNode: ClassNode) {
+        val cleanName = classNode.cleanName()
+        containerClassesCache append "    fun android.view.View.layoutParams(height: Int, width: Int, init: $cleanName.LayoutParams.() -> Unit) {\n"
+        containerClassesCache append "        val lp = $cleanName.LayoutParams(height,width)\n"
+        containerClassesCache append "        lp.init()\n"
+        containerClassesCache append "        (this: View).setLayoutParams(lp)\n    }"
+
     }
 
     private fun genUIWidgetFun(classNode: ClassNode) {
