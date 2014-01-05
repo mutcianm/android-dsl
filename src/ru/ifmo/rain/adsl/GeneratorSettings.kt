@@ -56,6 +56,9 @@ class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
     val containerClasses: Set<String>
         get() = HashSet<String>(readLines("container_classes.txt"))
 
+    val explicitlyProcessedClasses: Set<String>
+        get() = HashSet<String>(readLines("explicit_classes.txt"))
+
     val helperConstructors: Map<String, List<List<String>>>
         get() {
             val res = HashMap<String, ArrayList<ArrayList<String>>>()

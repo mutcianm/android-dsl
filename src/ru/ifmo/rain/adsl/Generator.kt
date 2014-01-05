@@ -56,12 +56,14 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
     private val containerCache = StringBuffer()
     private val containerClassesCache = StringBuffer()
     private val uiClassCache = StringBuffer()
+    private val listenerFunCache = StringBuffer()
 
     private val propMap = TreeMap<String, PropertyData>()
 
     private val classBlackList = settings.blackListedClasses
     private val propBlackList = settings.blacklistedProperties
     private val helperConstructors = settings.helperConstructors
+    private val explicitlyProcessedClasses = settings.explicitlyProcessedClasses
 
     private val classTree: ClassTree = ClassTree()
 
@@ -94,7 +96,11 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
                 !it.child.isProtected() &&
                 !it.parent.isGeneric() &&
                 !it.child.isGeneric()
-            }, { genSetter(it) })
+            }, { genSetter(it) }),
+            Hook({
+                it.child.name!!.startsWith("setOn") &&
+                it.child.name!!.endsWith("Listener")
+            }, { genListenerHelper(it) })
     )
 
     private fun isBlacklistedClass(classInfo: ClassNode): Boolean {
@@ -150,6 +156,7 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
             produceContainerBaseClass()
         if (settings.generateProperties)
             produceProperties()
+        ps.write(listenerFunCache.toString())
         if (settings.generateContainerClasses)
             produceContainerClasses()
         if (settings.generateUIClass)
@@ -240,6 +247,15 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
             PropertyData(className, methodInfo.child.toProperty(),
                     methodInfo.child.getReturnType(), getter, null, null)
         }
+    }
+
+    private fun genListenerHelper(methodInfo: MethodNodeWithParent) {
+        val className = methodInfo.parent.cleanInternalName()
+        val setter = methodInfo.child.name
+        val listenerName = methodInfo.child.name!!.replace("set", "").replace("Listener", "")
+        val listenerType = methodInfo.child.arguments!![0].toStr()
+        listenerFunCache append "fun $className.$listenerName(l: $listenerType) {\n"
+        listenerFunCache append "    $setter(l)\n}\n"
     }
 
     private fun getConstructors(classNode: ClassNode): List<List<PropertyData>> {
@@ -375,7 +391,10 @@ class Generator(val out: OutputStream, val jarPath: String, val packageName: Str
         val jarFile = JarFile(jarPath)
         return Collections.list(jarFile.entries() as Enumeration<JarEntry>)
                 .iterator()
-                .filter { it.getName().startsWith(packageName) && it.getName().endsWith(".class") }
+                .filter {
+            (it.getName().startsWith(packageName) || it.getName() in explicitlyProcessedClasses)
+            && it.getName().endsWith(".class")
+        }
                 .map {
             jarFile.getInputStream(it)!!
         }
