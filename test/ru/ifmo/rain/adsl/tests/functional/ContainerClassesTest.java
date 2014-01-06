@@ -3,6 +3,7 @@ package ru.ifmo.rain.adsl.tests.functional;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import ru.ifmo.rain.adsl.BaseGeneratorSettings;
+import ru.ifmo.rain.adsl.Subsystems;
 
 import java.io.File;
 
@@ -31,7 +32,7 @@ public class ContainerClassesTest extends BaseFunctionalTest {
 
     @Test
     public void testContainerClass() throws Exception {
-        runFunctionalTest(testDataFile, classPath, "layouts");
+        runFunctionalTest(testDataFile, classPath, Subsystems.LAYOUTS);
     }
 }
 

@@ -31,7 +31,7 @@ public class BaseCompileTest extends Assert {
 
     protected void runCompileTest(File testData) throws IOException, InterruptedException {
         assertTrue(testData.exists());
-        TestGeneratorSettings settings = new TestGeneratorSettings();
+        TestGeneratorSettings settings = new AndroidTestGeneratorSettings();
         Generator gen = new Generator(inputJarFile, "android.widget", settings);
         gen.run();
         String kotlincArgs[] = {kotlincFilename,

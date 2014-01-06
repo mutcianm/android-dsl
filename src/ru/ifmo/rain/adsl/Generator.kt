@@ -74,7 +74,7 @@ class Generator(val jarPath: String, val packageName: String,
                 it.child.isSetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
             }, { genSetter(it) }),
             Hook({
-                it.child.name!!.startsWith("setOn") && it.child.name!!.endsWith("Listener")
+                it.child.name!!.startsWith("setOn") && it.child.name!!.endsWith("Listener") && !isBlacklistedClass(it.parent)
             }, { dslWriter.genListenerHelper(it) })
     )
 

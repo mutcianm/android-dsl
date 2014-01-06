@@ -23,16 +23,18 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
     public fun write() {
         finalizeCaches()
         if (settings.generateContainerBaseClass)
-            writeFile(containerCache, "containerBaseClass")
+            writeFile(containerCache, Subsystems.CONTAINER_BASE_CLASS)
         if (settings.generateContainerClasses)
-            writeFile(containerClassesCache, "layouts")
+            writeFile(containerClassesCache, Subsystems.LAYOUTS)
         if (settings.generateProperties)
-            writeFile(propsCache, "properties")
+            writeFile(propsCache, Subsystems.PROPERTIES)
         if (settings.generateUIClass)
-            writeFile(uiClassCache, "uiClasses")
+            writeFile(uiClassCache, Subsystems.UI_CLASS)
+        if (settings.generateListenerHelpers)
+            writeFile(listenerFunCache, Subsystems.LISTENER_HELPERS)
     }
 
-    private fun writeFile(buffer: StringBuffer, subsystem: String) {
+    private fun writeFile(buffer: StringBuffer, subsystem: Subsystems) {
         val out = BufferedWriter(FileWriter(settings.getOutputFile(subsystem)))
         out.append(buffer)
         out.close()

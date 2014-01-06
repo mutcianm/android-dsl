@@ -16,7 +16,9 @@ abstract class BaseGeneratorSettings(open var generateContainerBaseClass: Boolea
                                      open var generateUIClassWrapper: Boolean = true,
                                      open var generateImports: Boolean = true,
                                      open var generatePackage: Boolean = true,
-                                     open var generateHelperConstructors: Boolean = true) {
+                                     open var generateHelperConstructors: Boolean = true,
+                                     open var generateListenerHelpers: Boolean = true) {
+
 
     protected fun readFile(name: String): String {
         var data = Files.readAllBytes(Paths.get(name) as Path)
@@ -27,7 +29,7 @@ abstract class BaseGeneratorSettings(open var generateContainerBaseClass: Boolea
         return Files.readAllLines(Paths.get(fileName)!!, StandardCharsets.UTF_8)
     }
 
-    abstract public fun getOutputFile(subsystem: String): File
+    abstract public fun getOutputFile(subsystem: Subsystems): File
 
     abstract val dslPath: String
 

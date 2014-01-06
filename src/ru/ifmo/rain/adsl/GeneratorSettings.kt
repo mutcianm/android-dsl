@@ -16,12 +16,13 @@ open class GeneratorSettings(override var generateContainerBaseClass: Boolean = 
                         override var generatePackage: Boolean = true,
                         override var generateHelperConstructors: Boolean = true): BaseGeneratorSettings() {
 
-    override fun getOutputFile(subsystem: String): File {
+    override fun getOutputFile(subsystem: Subsystems): File {
         return when (subsystem) {
-            "containerBaseClass" -> File(dslPath+"Container.kt")
-            "layouts" -> File(dslPath+"Layouts.kt")
-            "properties" -> File(dslPath+"Properties.kt")
-            "uiClasses" -> File(dslPath+"UIClasses.kt")
+            Subsystems.CONTAINER_BASE_CLASS -> File(dslPath+"Container.kt")
+            Subsystems.LAYOUTS -> File(dslPath+"Layouts.kt")
+            Subsystems.PROPERTIES -> File(dslPath+"Properties.kt")
+            Subsystems.UI_CLASS -> File(dslPath+"UIClasses.kt")
+            Subsystems.LISTENER_HELPERS -> File(dslPath+"ListenerHelpers.kt")
             else -> throw RuntimeException("Unable to get output file for non-existing subsystem $subsystem")
         }
     }

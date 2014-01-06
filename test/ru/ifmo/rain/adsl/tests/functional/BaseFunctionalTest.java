@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeMethod;
 import ru.ifmo.rain.adsl.AdslPackage;
 import ru.ifmo.rain.adsl.BaseGeneratorSettings;
 import ru.ifmo.rain.adsl.Generator;
+import ru.ifmo.rain.adsl.Subsystems;
 import ru.ifmo.rain.adsl.tests.TestGeneratorSettings;
 
 import java.io.File;
@@ -51,7 +52,7 @@ public abstract class BaseFunctionalTest extends Assert {
         }
     }
 
-    protected void runFunctionalTest(File testDataFile, String classPath, String subsystem) throws IOException {
+    protected void runFunctionalTest(File testDataFile, String classPath, Subsystems subsystem) throws IOException {
         TestGeneratorSettings settings = new TestGeneratorSettings();
         initSettings(settings);
         generator = new Generator(inputJarFile, classPath, settings);
