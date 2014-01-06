@@ -1,65 +1,64 @@
 package ru.ifmo.rain.adsl
 
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.Path
-import java.nio.charset.StandardCharsets
-import java.nio.ByteBuffer
 import java.util.HashSet
 import java.util.HashMap
 import java.util.ArrayList
+import java.io.File
 
-class GeneratorSettings(var generateContainerBaseClass: Boolean = true,
-                        var generateProperties: Boolean = true,
-                        var generateSetters: Boolean = true,
-                        var generateGetters: Boolean = true,
-                        var generateContainerClasses: Boolean = true,
-                        var generateUIClass: Boolean = true,
-                        var generateUIClassWrapper: Boolean = true,
-                        var generateImports: Boolean = true,
-                        var generatePackage: Boolean = true,
-                        var generateHelperConstructors: Boolean = true) {
+open class GeneratorSettings(override var generateContainerBaseClass: Boolean = true,
+                        override var generateProperties: Boolean = true,
+                        override var generateSetters: Boolean = true,
+                        override var generateGetters: Boolean = true,
+                        override var generateContainerClasses: Boolean = true,
+                        override var generateUIClass: Boolean = true,
+                        override var generateUIClassWrapper: Boolean = true,
+                        override var generateImports: Boolean = true,
+                        override var generatePackage: Boolean = true,
+                        override var generateHelperConstructors: Boolean = true): BaseGeneratorSettings() {
 
-    private fun readFile(name: String): String {
-        var data = Files.readAllBytes(Paths.get(name) as Path)
-        return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(data)).toString()
+    override fun getOutputFile(subsystem: String): File {
+        return when (subsystem) {
+            "containerBaseClass" -> File(dslPath+"Container.kt")
+            "layouts" -> File(dslPath+"Layouts.kt")
+            "properties" -> File(dslPath+"Properties.kt")
+            "uiClasses" -> File(dslPath+"UIClasses.kt")
+            else -> throw RuntimeException("Unable to get output file for non-existing subsystem $subsystem")
+        }
     }
 
-    private fun readLines(fileName: String): MutableList<String> {
-        return Files.readAllLines(Paths.get(fileName)!!, StandardCharsets.UTF_8)
-    }
+    override val dslPath: String = "dsl_out/"
 
-    val _package: String
+    override val _package: String
         get() = "package com.example.adsl"
 
-    val containerBaseClass: String
+    override val containerBaseClass: String
         get() = "android/view/ViewGroup"
 
-    val imports: String
+    override val imports: String
         get() = readFile("imports.txt")
 
-    val containerHeader: String
+    override val containerHeader: String
         get() = readFile("cont_header.txt")
 
-    val uiClassHeader: String
+    override val uiClassHeader: String
         get() = "class _UI(var act: android.app.Activity) {\n"
 
-    val footer: String
+    override val footer: String
         get() = readFile("footer.txt")
 
-    val blackListedClasses: Set<String>
+    override val blackListedClasses: Set<String>
         get() = HashSet<String>(readLines("class_blacklist.txt"))
 
-    val blacklistedProperties: Set<String>
+    override val blacklistedProperties: Set<String>
         get() = HashSet<String>(readLines("prop_blacklist.txt"))
 
-    val containerClasses: Set<String>
+    override val containerClasses: Set<String>
         get() = HashSet<String>(readLines("container_classes.txt"))
 
-    val explicitlyProcessedClasses: Set<String>
+    override val explicitlyProcessedClasses: Set<String>
         get() = HashSet<String>(readLines("explicit_classes.txt"))
 
-    val helperConstructors: Map<String, List<List<String>>>
+    override val helperConstructors: Map<String, List<List<String>>>
         get() {
             val res = HashMap<String, ArrayList<ArrayList<String>>>()
             for (line in readLines("helper_constructors.txt")) {

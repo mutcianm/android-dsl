@@ -9,28 +9,16 @@
   <component name="ProjectPlainTextFileTypeManager">
     <file url="file://$PROJECT_DIR$/misc/MyActivity.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidLayoutParamsTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidLayoutParamsTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidLayoutsTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidLayoutsTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidPropertiesTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidPropertiesTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidSimpleTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidSimpleTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidWidgetTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidWidgetTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/ContainerBaseClassTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/ContainerBaseClassTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/ContainerClassesTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/ContainerClassesTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/HelperConstructorTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/HelperConstructorTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/ImportsTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/ImportsTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/PackageTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/PackageTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/PropertiesTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/PropertiesTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/UIClassTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/UIClassTest.kt" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">

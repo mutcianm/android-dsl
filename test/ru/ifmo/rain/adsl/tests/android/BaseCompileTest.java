@@ -4,8 +4,14 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import ru.ifmo.rain.adsl.Generator;
+import ru.ifmo.rain.adsl.tests.TestGeneratorSettings;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BaseCompileTest extends Assert {
     final String kotlincFilename = "lib/kotlinc/bin/kotlinc-jvm";
@@ -25,18 +31,23 @@ public class BaseCompileTest extends Assert {
 
     protected void runCompileTest(File testData) throws IOException, InterruptedException {
         assertTrue(testData.exists());
-        String testFileName = testData.getName().substring(0, testData.getName().lastIndexOf("."));
-        File outFile = File.createTempFile(testFileName, ".kt");
-        Generator gen = new Generator(new FileOutputStream(outFile), inputJarFile, "android.widget");
+        TestGeneratorSettings settings = new TestGeneratorSettings();
+        Generator gen = new Generator(inputJarFile, "android.widget", settings);
         gen.run();
         String kotlincArgs[] = {kotlincFilename,
                 "-jar", tmpJarFile,
                 "-classpath", inputJarFile,
-                outFile.getAbsolutePath(), testData.getPath()
+                testData.getPath()
         };
-        ProcResult res = compile(kotlincArgs);
+        ArrayList<String> args = new ArrayList<>(Arrays.asList(kotlincArgs));
+        for (File file: settings.tmpFiles.values()) {
+            args.add(file.getAbsolutePath());
+        }
+        ProcResult res = compile(args.toArray(new String[args.size()]));
         assertEquals(res.stderr, "");
-        outFile.delete();
+        for (File file: settings.tmpFiles.values()) {
+            file.delete();
+        }
     }
 
     protected ProcResult compile(String[] args) throws IOException, InterruptedException {

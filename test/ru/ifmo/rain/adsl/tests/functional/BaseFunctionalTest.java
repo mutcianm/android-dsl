@@ -4,15 +4,19 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import ru.ifmo.rain.adsl.AdslPackage;
+import ru.ifmo.rain.adsl.BaseGeneratorSettings;
 import ru.ifmo.rain.adsl.Generator;
+import ru.ifmo.rain.adsl.tests.TestGeneratorSettings;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public abstract class BaseFunctionalTest extends Assert {
-    protected File outFile;
     protected final String inputJarFile = "android.jar";
     protected Generator generator;
 
@@ -47,18 +51,16 @@ public abstract class BaseFunctionalTest extends Assert {
         }
     }
 
-    protected void runFunctionalTest(File testDataFile, String classPath) throws IOException {
-        outFile = File.createTempFile(testDataFile.getName().substring(0,
-                testDataFile.getName().lastIndexOf(".")), "kt");
-        generator = new Generator(new FileOutputStream(outFile), inputJarFile, classPath);
-        initSettings();
+    protected void runFunctionalTest(File testDataFile, String classPath, String subsystem) throws IOException {
+        TestGeneratorSettings settings = new TestGeneratorSettings();
+        initSettings(settings);
+        generator = new Generator(inputJarFile, classPath, settings);
         generator.run();
 
-        String actual = AdslPackage.readFile(outFile.getAbsolutePath());
+        String actual = AdslPackage.readFile(settings.tmpFiles.get(subsystem).getAbsolutePath());
         String expected = loadOrCreate(testDataFile, actual);
 
         assertEquals(actual, expected);
-        outFile.delete();
     }
 
     @AfterMethod
@@ -66,5 +68,5 @@ public abstract class BaseFunctionalTest extends Assert {
 
     }
 
-    protected abstract void initSettings();
+    protected abstract void initSettings(BaseGeneratorSettings settings);
 }

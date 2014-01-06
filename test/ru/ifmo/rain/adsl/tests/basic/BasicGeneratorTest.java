@@ -5,8 +5,14 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import ru.ifmo.rain.adsl.Generator;
+import ru.ifmo.rain.adsl.tests.TestGeneratorSettings;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BasicGeneratorTest extends Assert {
 
@@ -41,29 +47,35 @@ public class BasicGeneratorTest extends Assert {
 
     @Test
     public void testResultCompiles() throws Exception {
-        File outFile = File.createTempFile("testResultCompiles", ".kt");
-//        outFile.deleteOnExit();
-        Generator gen = new Generator(new FileOutputStream(outFile), inputJarFile, "android.widget");
+        TestGeneratorSettings settings = new TestGeneratorSettings();
+        Generator gen = new Generator(inputJarFile, "android.widget", settings);
         gen.run();
         String kotlincArgs[] = {kotlincFilename,
                 "-jar", tmpJarFile,
                 "-classpath", inputJarFile,
-                outFile.getAbsolutePath()
         };
-        ProcResult res = compile(kotlincArgs);
+        ArrayList<String> args = new ArrayList<>(Arrays.asList(kotlincArgs));
+        for (File file: settings.tmpFiles.values()) {
+            args.add(file.getAbsolutePath());
+        }
+        ProcResult res = compile(args.toArray(new String[args.size()]));
         assertEquals(res.stderr, "");
-//        assertEquals(res.exitCode, 0);
-        outFile.delete();
+        for (File file: settings.tmpFiles.values()) {
+            file.delete();
+        }
     }
 
     @Test
     public void testResultExists() throws Exception {
-        File outFile = File.createTempFile("testResultExists", ".kt");
-//        outFile.deleteOnExit();
-        Generator gen = new Generator(new FileOutputStream(outFile), inputJarFile, "android.widget");
+        TestGeneratorSettings settings = new TestGeneratorSettings();
+        Generator gen = new Generator(inputJarFile, "android.widget", settings);
         gen.run();
-        assertTrue(outFile.length() > 0);
-        outFile.delete();
+        for (File file: settings.tmpFiles.values()) {
+            assertTrue(file.length() > 0);
+        }
+        for (File file: settings.tmpFiles.values()) {
+            file.delete();
+        }
     }
 
     @AfterMethod

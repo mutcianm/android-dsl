@@ -23,6 +23,33 @@ fun cleanInternalName(name: String): String {
 val MethodNode.arguments: Array<Type>?
     get() = Type.getArgumentTypes(desc)
 
+fun MethodNode.fmtArguments(): String {
+    if (getArgumentCount() == 0)
+        return ""
+    val buf = StringBuffer()
+    var argNum = 0
+    for (arg in arguments!!) {
+        val argType = arg.toStr()
+        buf append "p$argNum: $argType, "
+        argNum++
+    }
+    buf.delete(buf.length-2, buf.length)
+    return buf.toString()
+}
+
+fun MethodNode.fmtArgumentsInvoke(): String {
+    if (getArgumentCount() == 0)
+        return ""
+    val buf = StringBuffer()
+    var argNum = 0
+    for (arg in arguments!!) {
+        buf append "p$argNum, "
+        argNum++
+    }
+    buf.delete(buf.length-2, buf.length)
+    return buf.toString()
+}
+
 fun MethodNode.isGetter(): Boolean {
     return ((name!!.startsWith("get") || name!!.startsWith("is")) && arguments?.size == 0)
 }
@@ -98,4 +125,8 @@ public fun ClassNode.isAbstract(): Boolean {
 
 public fun ClassNode.isGeneric(): Boolean {
     return signature != null
+}
+
+public fun ClassNode.getConstructors(): List<MethodNode> {
+    return (methods as List<MethodNode>).filter { it.isConstructor() }
 }

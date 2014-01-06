@@ -2,7 +2,7 @@ package ru.ifmo.rain.adsl.tests.functional;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import ru.ifmo.rain.adsl.GeneratorSettings;
+import ru.ifmo.rain.adsl.BaseGeneratorSettings;
 
 import java.io.File;
 
@@ -18,24 +18,22 @@ public class ImportsTest extends BaseFunctionalTest {
     }
 
     @Override
-    protected void initSettings() {
-        GeneratorSettings settings = new GeneratorSettings();
+    protected void initSettings(BaseGeneratorSettings settings) {
         settings.setGeneratePackage(false);
         settings.setGenerateImports(true);
         settings.setGenerateContainerBaseClass(false);
         settings.setGenerateContainerClasses(false);
         settings.setGenerateGetters(false);
         settings.setGenerateSetters(false);
-        settings.setGenerateProperties(false);
+        settings.setGenerateProperties(true);
         settings.setGenerateUIClass(false);
         settings.setGenerateUIClassWrapper(false);
         settings.setGenerateHelperConstructors(false);
-        generator.setSettings(settings);
     }
 
     @Test
     public void testImports() throws Exception {
-        runFunctionalTest(testDataFile, classPath);
+        runFunctionalTest(testDataFile, classPath, "properties");
     }
 }
 

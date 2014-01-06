@@ -114,6 +114,10 @@ class ClassTree : Iterable<ClassNode>{
         return null
     }
 
+    public fun findNode(name: String?): ClassTreeNode? {
+        return findNode(root, name)
+    }
+
     private fun findNode(node: ClassTreeNode, _class: ClassNode): ClassTreeNode? {
         for (child in node.children) {
             if (child.data == _class) {
