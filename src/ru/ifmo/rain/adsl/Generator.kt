@@ -28,8 +28,8 @@ class Hook<T>(val predicate: ((_class: T) -> Boolean), val function: ((_class: T
     }
 }
 
-class PropertyData(val className: String,
-                   val propName: String,
+class PropertyData(var className: String,
+                   var propName: String,
                    var propType: Type?,
                    var getter: String?,
                    var setter: String?,
@@ -142,51 +142,44 @@ class Generator(val jarPath: String, val packageName: String,
         dslWriter.genListenerHelper(methodInfo, node.data)
     }
 
+    private fun preProcessProperty(prop: PropertyData, context: MethodNodeWithParent): PropertyData {
+        if (isContainer(context.parent)) {
+            prop.className = "_" + context.parent.cleanName()
+            if (prop.setter != null)
+                prop.setter = "(vgInstance as " + context.parent.cleanInternalName() + ")." + prop.setter
+            if (prop.getter != null)
+                prop.getter = "(vgInstance as " + context.parent.cleanInternalName() + ")." + prop.getter
+        }
+        if (prop.propName in keywordSet)
+            prop.propName = "_"+ prop.propName
+        return prop
+    }
+
     private fun genSetter(methodInfo: MethodNodeWithParent) {
         if (!settings.generateSetters) return
-        var className: String = methodInfo.parent.cleanInternalName()
-        var setter = methodInfo.child.name
-        if (isContainer(methodInfo.parent)) {
-            className = "_" + methodInfo.parent.cleanName()
-            setter = "(vgInstance as " + methodInfo.parent.cleanInternalName() +
-            ")." + setter
-        }
-        var propName = methodInfo.child.toProperty()
-        if (propName in keywordSet)
-            propName = "_$propName"
-        val prop = propMap[className + propName]
-        if (prop != null) {
-            prop.setter = setter
-            prop.valueType = methodInfo.child.arguments!![0]
-        } else {
-            propMap[className + propName] =
-            PropertyData(className, propName,
-                    null, null, setter, methodInfo.child.arguments!![0])
-        }
+        val property = preProcessProperty(PropertyData(methodInfo.parent.cleanInternalName(), methodInfo.child.toProperty(), null, null,
+                    methodInfo.child.name, methodInfo.child.arguments!![0]),
+                methodInfo)
+        updateProperty(property)
     }
 
     private fun genGetter(methodInfo: MethodNodeWithParent) {
         if (!settings.generateGetters) return
-        var className: String = methodInfo.parent.cleanInternalName()
-        var getter = methodInfo.child.name
-        if (isContainer(methodInfo.parent)) {
-            className = "_" + methodInfo.parent.cleanName()
-            getter = "(vgInstance as " + methodInfo.parent.cleanInternalName() +
-            ")." + methodInfo.child.name
-        }
-        var propName = methodInfo.child.toProperty()
-        if (propName in keywordSet)
-            propName = "_$propName"
-        val prop = propMap[className + propName]
+        val property = preProcessProperty(PropertyData(methodInfo.parent.cleanInternalName(), methodInfo.child.toProperty(),
+                    methodInfo.child.getReturnType(), methodInfo.child.name, null, null),
+                methodInfo)
+        updateProperty(property)
+    }
+
+    private fun updateProperty(newProp: PropertyData) {
+        val prop = propMap[newProp.className + newProp.propName]
         if (prop != null) {
-            if (prop.getter != null)
-                return
-            prop.getter = getter
-            prop.propType = methodInfo.child.getReturnType()
+            prop.setter = if (prop.setter == null) newProp.setter else prop.setter
+            prop.getter = if (prop.getter == null) newProp.getter else prop.getter
+            prop.valueType = if (prop.valueType == null) newProp.valueType else prop.valueType
+            prop.propType = if (prop.propType == null) newProp.propType else prop.propType
         } else {
-            propMap[className + propName] =
-            PropertyData(className, propName,
-                    methodInfo.child.getReturnType(), getter, null, null)
+            propMap[newProp.className + newProp.propName] = newProp
         }
     }
 

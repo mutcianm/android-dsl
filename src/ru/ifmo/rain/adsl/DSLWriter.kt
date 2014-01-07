@@ -43,6 +43,10 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
     }
 
     public fun produceProperty(prop: PropertyData) {
+//        if ((prop.setter != null) && prop.propType != prop.valueType) {
+//            System.err.println("Property "+ prop.propName+" setter type != getter type: " + prop.propType?.toStr() + " != "+ prop.valueType?.toStr() )
+//            return
+//        }
         val propertyReturnType = prop.propType!!.toStr()
         val mutability = if (prop.setter == null) "val" else "var"
         val setterValue = if (propertyReturnType.endsWith("?")) "(value!!)" else "(value)"
@@ -58,7 +62,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
     public fun genListenerHelper(view: MethodNodeWithParent, lp: ClassNode) {
         val methods = lp.methods?.filter { (it as MethodNode).name != "<init>" }
         if (methods != null && (methods.size() != 1)) {
-            System.err.println("Unsupported number of methods in " + lp.name + ": " + lp.methods?.size)
+//            System.err.println("Unsupported number of methods in " + lp.name + ": " + lp.methods?.size)
             return
         }
         val parentClassName = view.parent.cleanInternalName()
@@ -66,7 +70,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         val listenerName = decapitalize(view.child.name!!.replace("set", "").replace("Listener", ""))
         val method = methods!![0] as MethodNode
         if (method.signature != null) {
-            System.err.println("Generic methods are unsupported: " + method.signature)
+//            System.err.println("Generic methods are unsupported: " + method.signature)
             return
         }
         val listenerArgumentTypes = method.fmtArgumentsTypes()
