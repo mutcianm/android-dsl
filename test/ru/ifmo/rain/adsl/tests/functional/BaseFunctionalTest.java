@@ -52,8 +52,7 @@ public abstract class BaseFunctionalTest extends Assert {
         }
     }
 
-    protected void runFunctionalTest(File testDataFile, String classPath, Subsystems subsystem) throws IOException {
-        TestGeneratorSettings settings = new TestGeneratorSettings();
+    protected void runFunctionalTest(File testDataFile, String classPath, Subsystems subsystem, TestGeneratorSettings settings) throws IOException {
         initSettings(settings);
         generator = new Generator(inputJarFile, classPath, settings);
         generator.run();
@@ -62,6 +61,11 @@ public abstract class BaseFunctionalTest extends Assert {
         String expected = loadOrCreate(testDataFile, actual);
 
         assertEquals(actual, expected);
+    }
+
+    protected void runFunctionalTest(File testDataFile, String classPath, Subsystems subsystem) throws IOException {
+        TestGeneratorSettings settings = new TestGeneratorSettings();
+        runFunctionalTest(testDataFile, classPath, subsystem, settings);
     }
 
     @AfterMethod

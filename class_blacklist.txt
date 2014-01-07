@@ -23,3 +23,5 @@ android.widget.ListPopupWindow
 android.widget.ShareActionProvider
 android.view.ViewGroup
 android.widget.SlidingDrawer
+android.inputmethodservice.KeyboardView
+android.widget.AdapterViewFlipper

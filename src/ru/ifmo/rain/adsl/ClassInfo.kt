@@ -43,23 +43,40 @@ fun MethodNode.fmtArgumentsInvoke(): String {
     val buf = StringBuffer()
     var argNum = 0
     for (arg in arguments!!) {
-        buf append "p$argNum, "
+        val assertion = if (arg.toStr().endsWith("?")) "!!" else ""
+        buf append "p$argNum$assertion, "
         argNum++
     }
     buf.delete(buf.length-2, buf.length)
     return buf.toString()
 }
 
+fun MethodNode.fmtArgumentsTypes(): String {
+    if (getArgumentCount() == 0)
+        return ""
+    val buf = StringBuffer()
+    for (arg in arguments!!) {
+        val argType = arg.toStr()
+        buf append "$argType, "
+    }
+    buf.delete(buf.length-2, buf.length)
+    return buf.toString()
+}
+
 fun MethodNode.isGetter(): Boolean {
-    return ((name!!.startsWith("get") || name!!.startsWith("is")) && arguments?.size == 0)
+    return (((name!!.startsWith("get") && name!!.length > 3) ||
+            (name!!.startsWith("is") && name!!.length > 2)) &&
+             arguments?.size == 0 && (getReturnType().getSort() != Type.VOID))
 }
 
 fun MethodNode.isSetter(): Boolean {
-    return (name!!.startsWith("set") && arguments?.size == 1)
+    return ((name!!.startsWith("set") && name!!.length > 3) && arguments?.size == 1)
 }
 
 fun MethodNode.isProperty(): Boolean {
-    return (name!!.startsWith("set") || name!!.startsWith("get") || name!!.startsWith("is"))
+    return ((name!!.startsWith("set") && name!!.length > 3) ||
+            (name!!.startsWith("get") && name!!.length > 3) ||
+            (name!!.startsWith("is") && name!!.length > 2))
 }
 
 fun MethodNode.isProperty(prop: String): Boolean {

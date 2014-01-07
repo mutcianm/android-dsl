@@ -59,6 +59,10 @@ public class ClassTreeTest extends Assert {
         assertTrue(tree.isSuccessorOf(classes.get(2), "java.lang.Object"));
         assertTrue(tree.isSuccessorOf(classes.get(3), "com.example.A"));
         assertTrue(tree.isSuccessorOf(classes.get(3), "java.lang.Object"));
+        assertTrue(tree.isSuccessorOf(classes.get(4), "com.example.A"));
+        assertTrue(tree.isSuccessorOf(classes.get(5), "com.example.A"));
+        assertTrue(tree.isSuccessorOf(classes.get(6), "com.example.A"));
+        assertTrue(tree.isSuccessorOf(classes.get(7), "com.example.E"));
         assertFalse(tree.isSuccessorOf(classes.get(3), "java.lang.Integer"));
         assertFalse(tree.isSuccessorOf(classes.get(2), "com.example.B"));
         assertFalse(tree.isSuccessorOf(classes.get(2), "java.lang.Integer"));

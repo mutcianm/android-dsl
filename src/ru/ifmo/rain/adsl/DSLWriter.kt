@@ -8,6 +8,8 @@ import org.objectweb.asm.tree.MethodNode
 
 class DSLWriter(val settings: BaseGeneratorSettings) {
 
+
+
     private val propsCache = StringBuffer()
     private val containerCache = StringBuffer()
     private val containerClassesCache = StringBuffer()
@@ -53,15 +55,25 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         }
     }
 
-    public fun genListenerHelper(methodInfo: MethodNodeWithParent) {
-        val className = methodInfo.parent.cleanInternalName()
-        val setter = methodInfo.child.name
-        val listenerName = methodInfo.child.name!!.replace("set", "").replace("Listener", "")
-        val listenerType = methodInfo.child.arguments!![0].toStr()
-        listenerFunCache append "fun $className.$listenerName(l: $listenerType) {\n"
-        listenerFunCache append "    $setter(l)\n}\n"
+    public fun genListenerHelper(view: MethodNodeWithParent, lp: ClassNode) {
+        val methods = lp.methods?.filter { (it as MethodNode).name != "<init>" }
+        if (methods != null && (methods.size() != 1)) {
+            System.err.println("Unsupported number of methods in " + lp.name + ": " + lp.methods?.size)
+            return
+        }
+        val parentClassName = view.parent.cleanInternalName()
+        val setter = view.child.name
+        val listenerName = decapitalize(view.child.name!!.replace("set", "").replace("Listener", ""))
+        val method = methods!![0] as MethodNode
+        if (method.signature != null) {
+            System.err.println("Generic methods are unsupported: " + method.signature)
+            return
+        }
+        val listenerArgumentTypes = method.fmtArgumentsTypes()
+        val listenerReturnType = method.getReturnType().toStr()
+                listenerFunCache append "fun $parentClassName.$listenerName(l: ($listenerArgumentTypes) -> $listenerReturnType) {\n"
+                listenerFunCache append "    $setter(l)\n}\n"
     }
-
 
     public fun makeWidget(className: String,
                            internalName: String,
@@ -98,27 +110,28 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         containerCache append "        return v\n    }\n\n"
     }
 
-    public fun genContainerClass(classNode: ClassNode, layoutParams: ClassNode) {
+    public fun genContainerClass(classNode: ClassNode, layoutParams: ClassNode?) {
         val cleanName = classNode.cleanName()
         containerClassesCache append "class _$cleanName"
         containerClassesCache append "(override val vgInstance: android.view.ViewGroup, override val ctx: android.app.Activity): _Container(vgInstance, ctx) {\n\n"
-        genLayoutParams(classNode, layoutParams)
+        if (layoutParams != null)
+            genLayoutParams(classNode, layoutParams)
         containerClassesCache append "}\n\n"
     }
 
-    private fun makeLayoutParam(classNode: ClassNode, cons: MethodNode) {
-        val cleanName = classNode.cleanName()
+    private fun makeLayoutParam(classNode: ClassNode, layoutParams: ClassNode, cons: MethodNode) {
+        val cleanName = layoutParams.cleanInternalName()
         val params = cons.fmtArguments()
         val paramsInvoke = cons.fmtArgumentsInvoke()
         val separator = if(params == "") "" else ","
-        containerClassesCache append "    fun android.view.View.layoutParams($params$separator init: $cleanName.LayoutParams.() -> Unit) {\n"
-        containerClassesCache append "        val lp = $cleanName.LayoutParams($paramsInvoke)\n"
+        containerClassesCache append "    fun android.view.View.layoutParams($params$separator init: $cleanName.() -> Unit) {\n"
+        containerClassesCache append "        val lp = $cleanName($paramsInvoke)\n"
         containerClassesCache append "        lp.init()\n"
         containerClassesCache append "        (this: View).setLayoutParams(lp)\n    }\n\n"
     }
     public fun genLayoutParams(viewGroup: ClassNode, layoutParams: ClassNode) {
         for (cons in layoutParams.getConstructors()) {
-            makeLayoutParam(viewGroup, cons)
+            makeLayoutParam(viewGroup, layoutParams, cons)
         }
     }
 

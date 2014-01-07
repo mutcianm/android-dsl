@@ -4,8 +4,10 @@ import android.app.Activity
 import android.os.Bundle
 import com.example.adsl.*
 import android.widget.LinearLayout
+import android.view.View
+import android.view.View.OnClickListener
 
-public fun android.view.View.OnClick(l: android.view.View.OnClickListener?) {
+public fun android.widget.Button.OnClick(l: android.view.View.OnClickListener?) {
     setOnClickListener(l)
 }
 

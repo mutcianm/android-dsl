@@ -12,8 +12,10 @@ import java.util.Arrays
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
 import org.objectweb.asm.tree.InnerClassNode
+import java.util.HashSet
 
 class IgnoredClassException : Exception()
+
 
 class Hook<T>(val predicate: ((_class: T) -> Boolean), val function: ((_class: T) -> Unit)) {
     public fun run(_class: T) {
@@ -46,6 +48,12 @@ fun typeMap(str: String): String {
 class Generator(val jarPath: String, val packageName: String,
                 val settings: BaseGeneratorSettings) {
 
+    val kotlin_keywords = "val var import package fun type class object super public private protected return " +
+    "trait where this namespace try catch throw if else while do for break continue return true false null " +
+    "abstract final enum open attribute override open final abstract internal in out ref lazy"
+
+    private val keywordSet = kotlin_keywords.split(" ").toSet()
+
     private val dslWriter = DSLWriter(settings)
 
     private val propMap = TreeMap<String, PropertyData>()
@@ -59,7 +67,7 @@ class Generator(val jarPath: String, val packageName: String,
 
     private val classHooks = Arrays.asList<Hook<ClassNode>>(
             Hook({
-                !isBlacklistedClass(it) && !it.isAbstract() && !it.isInner() && !isContainer(it)
+                isWidget(it) && !isBlacklistedClass(it) && !it.isAbstract() && !it.isInner() && !isContainer(it)
             }, { genWidget(it) }),
             Hook({
                 !isBlacklistedClass(it) && !it.isAbstract() && !it.isInner() && isContainer(it)
@@ -68,14 +76,14 @@ class Generator(val jarPath: String, val packageName: String,
 
     private val methodHooks = Arrays.asList<Hook<MethodNodeWithParent>>(
             Hook({
-                it.child.isGetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
+                (isWidget(it.parent) || isContainer(it.parent)) && it.child.isGetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
             }, { genGetter(it) }),
             Hook({
-                it.child.isSetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
+                (isWidget(it.parent) || isContainer(it.parent))&& it.child.isSetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
             }, { genSetter(it) }),
             Hook({
                 it.child.name!!.startsWith("setOn") && it.child.name!!.endsWith("Listener") && !isBlacklistedClass(it.parent)
-            }, { dslWriter.genListenerHelper(it) })
+                }, { genListenerHelper(it) })
     )
 
     private fun isBlacklistedClass(classInfo: ClassNode): Boolean {
@@ -87,8 +95,7 @@ class Generator(val jarPath: String, val packageName: String,
     }
 
     private fun isContainer(widget: ClassNode): Boolean {
-        return classTree.isChildOf(widget, settings.containerBaseClass)
-        //        return classTree.isSuccessorOf(widget, settings.containerBaseClass)
+        return classTree.isSuccessorOf(widget, settings.containerBaseClass)
     }
 
     public fun run() {
@@ -115,14 +122,25 @@ class Generator(val jarPath: String, val packageName: String,
     private fun produceProperties() {
         for (prop in propMap.values()) {
             if (!isBlacklistedProperty(prop.className + '.' + prop.propName))
-                if (prop.getter != null)
+                if (prop.getter != null && prop.propType?.getSort() != Type.VOID)
                     dslWriter.produceProperty(prop)
         }
     }
 
-    //    private fun setOrCreateProperty(prop: PropertyData) {
-    //
-    //    }
+
+    private fun isWidget(classNode: ClassNode): Boolean {
+        return classTree.isSuccessorOf(classNode, "android/view/View") ||
+                classNode.name in explicitlyProcessedClasses
+    }
+
+    private fun genListenerHelper(methodInfo: MethodNodeWithParent) {
+        val listenerType: Type = methodInfo.child.arguments!![0]
+        val name = listenerType.getInternalName()
+        val node = classTree.findNode(name)
+        if (node == null)
+            throw RuntimeException("Listener class $name not found")
+        dslWriter.genListenerHelper(methodInfo, node.data)
+    }
 
     private fun genSetter(methodInfo: MethodNodeWithParent) {
         if (!settings.generateSetters) return
@@ -131,15 +149,18 @@ class Generator(val jarPath: String, val packageName: String,
         if (isContainer(methodInfo.parent)) {
             className = "_" + methodInfo.parent.cleanName()
             setter = "(vgInstance as " + methodInfo.parent.cleanInternalName() +
-            ")." + methodInfo.child.name
+            ")." + setter
         }
-        val prop = propMap[className + methodInfo.child.toProperty()]
+        var propName = methodInfo.child.toProperty()
+        if (propName in keywordSet)
+            propName = "_$propName"
+        val prop = propMap[className + propName]
         if (prop != null) {
             prop.setter = setter
             prop.valueType = methodInfo.child.arguments!![0]
         } else {
-            propMap[className + methodInfo.child.toProperty()] =
-            PropertyData(className, methodInfo.child.toProperty(),
+            propMap[className + propName] =
+            PropertyData(className, propName,
                     null, null, setter, methodInfo.child.arguments!![0])
         }
     }
@@ -153,15 +174,18 @@ class Generator(val jarPath: String, val packageName: String,
             getter = "(vgInstance as " + methodInfo.parent.cleanInternalName() +
             ")." + methodInfo.child.name
         }
-        val prop = propMap[className + methodInfo.child.toProperty()]
+        var propName = methodInfo.child.toProperty()
+        if (propName in keywordSet)
+            propName = "_$propName"
+        val prop = propMap[className + propName]
         if (prop != null) {
             if (prop.getter != null)
                 return
             prop.getter = getter
             prop.propType = methodInfo.child.getReturnType()
         } else {
-            propMap[className + methodInfo.child.toProperty()] =
-            PropertyData(className, methodInfo.child.toProperty(),
+            propMap[className + propName] =
+            PropertyData(className, propName,
                     methodInfo.child.getReturnType(), getter, null, null)
         }
     }
@@ -211,12 +235,18 @@ class Generator(val jarPath: String, val packageName: String,
         dslWriter.genUIWidgetFun(classNode)
     }
 
-    private fun extractLayoutParams(viewGroup: ClassNode): ClassNode {
+    private fun extractLayoutParams(viewGroup: ClassNode): ClassNode? {
         if (viewGroup.innerClasses == null)
             throw RuntimeException("ViewGroup must have a LayoutParams inner class")
         val innerClasses = (viewGroup.innerClasses as List<InnerClassNode>)
         val lp = innerClasses.find { it.name!!.contains("LayoutParams") }
-        return classTree.findNode(lp!!.name)!!.data
+        if (lp == null) {
+//            System.err.println("ViewGroup " + viewGroup.cleanInternalName() + " has no layoutParams")
+            return null
+        } else {
+//            System.out.println(viewGroup.name + ":" + lp.name)
+            return classTree.findNode(lp.name)!!.data
+        }
     }
 
     private fun genContainerWidgetFun(classNode: ClassNode) {
@@ -246,8 +276,8 @@ class Generator(val jarPath: String, val packageName: String,
         return Collections.list(jarFile.entries() as Enumeration<JarEntry>)
                 .iterator()
                 .filter {
-            (it.getName().startsWith(packageName) || it.getName() in explicitlyProcessedClasses)
-            && it.getName().endsWith(".class")
+//            (it.getName().startsWith(packageName) || it.getName() in explicitlyProcessedClasses) &&
+            it.getName().endsWith(".class")
         }
                 .map {
             jarFile.getInputStream(it)!!

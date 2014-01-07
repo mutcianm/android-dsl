@@ -7,6 +7,8 @@ import java.nio.file.Path
 import java.nio.charset.StandardCharsets
 import java.nio.ByteBuffer
 
+class WTFException: Exception()
+
 fun Type.toStr(nullable: Boolean = true): String {
     return when (getSort()) {
         Type.BOOLEAN -> "Boolean"
@@ -14,6 +16,13 @@ fun Type.toStr(nullable: Boolean = true): String {
         Type.FLOAT -> "Float"
         Type.DOUBLE -> "Double"
         Type.LONG -> "Long"
+        Type.BYTE -> "Byte"
+        Type.CHAR -> "Char"
+        Type.SHORT -> "Short"
+        Type.METHOD -> {
+            throw WTFException()
+        }
+        Type.VOID -> "jet.Unit"
         Type.ARRAY -> {
             val innerType = getElementType()
             if (innerType != null) {
@@ -30,7 +39,13 @@ fun Type.toStr(nullable: Boolean = true): String {
                 throw RuntimeException("Type is of ArrayType, but element type is null")
             }
         }
-        else -> typeMap(cleanInternalName(getInternalName()!!)) + if (nullable) "?" else ""
+        else -> {
+            try {
+                typeMap(cleanInternalName(getInternalName()!!)) + if (nullable) "?" else ""
+            } catch (e: NullPointerException) {
+                "INVALID"
+            }
+        }
     }
 }
 

@@ -6,9 +6,7 @@ import ru.ifmo.rain.adsl.Subsystems;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class TestGeneratorSettings extends GeneratorSettings {
     public TestGeneratorSettings() throws IOException {
@@ -25,6 +23,12 @@ public class TestGeneratorSettings extends GeneratorSettings {
     @Override
     public Set<String> getExplicitlyProcessedClasses() {
         return new HashSet<>();
+    }
+
+    @NotNull
+    @Override
+    public Map<String, List<? extends List<? extends String>>> getHelperConstructors() {
+        return new HashMap<String, List<? extends List<? extends String>>>();
     }
 
     @NotNull
