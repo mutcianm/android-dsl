@@ -48,12 +48,6 @@ fun typeMap(str: String): String {
 class Generator(val jarPath: String, val packageName: String,
                 val settings: BaseGeneratorSettings) {
 
-    val kotlin_keywords = "val var import package fun type class object super public private protected return " +
-    "trait where this namespace try catch throw if else while do for break continue return true false null " +
-    "abstract final enum open attribute override open final abstract internal in out ref lazy"
-
-    private val keywordSet = kotlin_keywords.split(" ").toSet()
-
     private val dslWriter = DSLWriter(settings)
 
     private val propMap = TreeMap<String, PropertyData>()
@@ -150,8 +144,6 @@ class Generator(val jarPath: String, val packageName: String,
             if (prop.getter != null)
                 prop.getter = "(vgInstance as " + context.parent.cleanInternalName() + ")." + prop.getter
         }
-        if (prop.propName in keywordSet)
-            prop.propName = "_"+ prop.propName
         return prop
     }
 
@@ -187,9 +179,8 @@ class Generator(val jarPath: String, val packageName: String,
     private fun getConstructors(classNode: ClassNode): List<List<PropertyData>> {
         val constructors: List<List<String>>? = helperConstructors.get(classNode.cleanInternalName())
         val res = ArrayList<ArrayList<PropertyData>>()
-        val emptyConstructor = ArrayList<PropertyData>()
-        res.add(emptyConstructor)
-        classNode.innerClasses
+        val defaultConstructor = ArrayList<PropertyData>()
+        res.add(defaultConstructor)
         val className = classNode.cleanInternalName()
         if (constructors == null || !settings.generateHelperConstructors) {
             return res
@@ -271,8 +262,7 @@ class Generator(val jarPath: String, val packageName: String,
                 .filter {
 //            (it.getName().startsWith(packageName) || it.getName() in explicitlyProcessedClasses) &&
             it.getName().endsWith(".class")
-        }
-                .map {
+        }.map {
             jarFile.getInputStream(it)!!
         }
     }

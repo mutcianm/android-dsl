@@ -9,6 +9,11 @@ import org.objectweb.asm.tree.MethodNode
 class DSLWriter(val settings: BaseGeneratorSettings) {
 
 
+    val kotlin_keywords = "val var import package fun type class object super public private protected return " +
+    "trait where this namespace try catch throw if else while do for break continue return true false null " +
+    "abstract final enum open attribute override open final abstract internal in out ref lazy"
+
+    private val keywordSet = kotlin_keywords.split(" ").toSet()
 
     private val propsCache = StringBuffer()
     private val containerCache = StringBuffer()
@@ -50,6 +55,8 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         val propertyReturnType = prop.propType!!.toStr()
         val mutability = if (prop.setter == null) "val" else "var"
         val setterValue = if (propertyReturnType.endsWith("?")) "(value!!)" else "(value)"
+        if (prop.propName in keywordSet)
+            prop.propName = "_"+ prop.propName
         with (prop) {
             propsCache append "$mutability $className.$propName: $propertyReturnType\n"
             propsCache append "    get() = $getter()\n"
