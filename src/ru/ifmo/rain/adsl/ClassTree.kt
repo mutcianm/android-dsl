@@ -9,15 +9,13 @@ import org.objectweb.asm.tree.MethodNode
 class NoSuchClassException : Exception()
 
 class ClassTreeNode(parent: ClassTreeNode?, data: ClassNode) {
-    var parent: ClassTreeNode? = parent
+    var parent = parent
     var children: MutableList<ClassTreeNode> = ArrayList()
-    var data: ClassNode = data
+    var data = data
 }
 
 class ClassTree : Iterable<ClassNode>{
     private val root = ClassTreeNode(null, ClassNode())
-    private var lastQueryAncestor: ClassTreeNode = root
-    private var cachedPropNode = root
 
     override fun iterator(): ClassTreeIterator {
         return ClassTreeIterator(root)
@@ -46,7 +44,9 @@ class ClassTree : Iterable<ClassNode>{
     }
 
     public fun isSuccessorOf(_class: ClassNode, ancestorName: String): Boolean {
-        val parent = findParent(ancestorName)
+        val parent = findNode(ancestorName)
+        if (parent == null)
+            throw NoSuchClassException()
         val child = findNode(parent, _class.name!!)
         if ((child == null) || (child == parent))
             return false
@@ -54,52 +54,36 @@ class ClassTree : Iterable<ClassNode>{
             return true
     }
 
-    public fun findParentWithProperty(_class: ClassNode, property: String): ClassNode? {
-        var node = if (cachedPropNode.data == _class) cachedPropNode
-        else findNode(root, _class)
-        if (node == null) {
-            throw NoSuchClassException()
-        } else {
-            cachedPropNode = node!!
-            while (node != root) {
-                for (method in node!!.data.methods as List<MethodNode>) {
-                    if (method.isProperty(property))
-                        return node!!.data
-                }
-                node = node!!.parent
-            }
+    private fun findParentIf(node: ClassTreeNode, f: (ClassTreeNode) -> Boolean ): ClassTreeNode? {
+        var n = node
+        while (n != root) {
+            if (f(n)) return n
+            n = n.parent!!
         }
         return null
     }
 
-    private fun findParent(name: String): ClassTreeNode {
-        //use cached parent node from last call
-        val parent = if (lastQueryAncestor.data.name == name) lastQueryAncestor
-                     else findNode(root, name)
-        if (parent == null) {
+    private fun anyParentIf(node: ClassTreeNode, f: (ClassTreeNode) -> Boolean ): Boolean {
+        return findParentIf(node, f) != null
+    }
+
+    public fun findParentWithProperty(_class: ClassNode, property: String): ClassNode? {
+        val node = findNode(root, _class)
+        if (node == null)
             throw NoSuchClassException()
-        } else {
-            lastQueryAncestor = parent
-            return parent
-        }
+        return findParentIf(node, { it.data.methods!!.any { (it as MethodNode).isProperty(property) } })?.data
     }
 
     private fun getOrphansOf(parentClassName: String): List<ClassTreeNode> {
-        //hack? orphans seem to be present only in root node
         val res = root.children.partition { it.data.superName == parentClassName }
         root.children = res.second as MutableList<ClassTreeNode>
         return res.first
     }
 
     private fun findChildByName(parent: ClassTreeNode, childName: String): Boolean {
-        for (child in parent.children) {
-            if (child.data.name == childName)
-                return true
-        }
-        return false
+        return parent.children.any { it.data.name == childName }
     }
 
-    //performance: rewrite search as downtop-bfs
     private fun findNode(node: ClassTreeNode, name: String?): ClassTreeNode? {
         if (name == null) return null
         for (child in node.children) {
@@ -119,16 +103,7 @@ class ClassTree : Iterable<ClassNode>{
     }
 
     private fun findNode(node: ClassTreeNode, _class: ClassNode): ClassTreeNode? {
-        for (child in node.children) {
-            if (child.data == _class) {
-                return child
-            } else {
-                val ret = findNode(child, _class)
-                if (ret != null)
-                    return ret
-            }
-        }
-        return null
+        return findNode(node, _class.name)
     }
 }
 

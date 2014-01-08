@@ -30,7 +30,7 @@ fun MethodNode.processArguments(app: (String, Int, String) -> String): String {
     var argNum = 0
     for (arg in arguments!!) {
         val argType = arg.toStr()
-        val nullable = if (arg.toStr().endsWith("?")) "!!" else ""
+        val nullable = if (argType.endsWith("?")) "!!" else ""
         buf append app(argType, argNum, nullable)
         argNum++
     }

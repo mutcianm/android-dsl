@@ -7,7 +7,15 @@ import java.nio.file.Path
 import java.nio.charset.StandardCharsets
 import java.nio.ByteBuffer
 
-class WTFException: Exception()
+fun typeMap(str: String): String {
+    return when (str) {
+        "java.lang.CharSequence" -> "jet.CharSequence"
+        "java.lang.String" -> "jet.String"
+        "java.lang.Integer" -> "jet.Int"
+        "java.lang.Object" -> "jet.Any"
+        else -> str
+    }
+}
 
 fun Type.toStr(nullable: Boolean = true): String {
     return when (getSort()) {
@@ -19,9 +27,6 @@ fun Type.toStr(nullable: Boolean = true): String {
         Type.BYTE -> "Byte"
         Type.CHAR -> "Char"
         Type.SHORT -> "Short"
-        Type.METHOD -> {
-            throw WTFException()
-        }
         Type.VOID -> "jet.Unit"
         Type.ARRAY -> {
             val innerType = getElementType()
@@ -47,6 +52,10 @@ fun Type.toStr(nullable: Boolean = true): String {
             }
         }
     }
+}
+
+fun updateIfNotNull<T>(old: T, new: T): T {
+    return if (old == null) new else old
 }
 
 fun readFile(name: String): String {

@@ -35,15 +35,6 @@ class PropertyData(var className: String,
                    var setter: String?,
                    var valueType: Type?)
 
-fun typeMap(str: String): String {
-    return when (str) {
-        "java.lang.CharSequence" -> "jet.CharSequence"
-        "java.lang.String" -> "jet.String"
-        "java.lang.Integer" -> "jet.Int"
-        "java.lang.Object" -> "jet.Any"
-        else -> str
-    }
-}
 
 class Generator(val jarPath: String, val packageName: String,
                 val settings: BaseGeneratorSettings) {
@@ -93,6 +84,7 @@ class Generator(val jarPath: String, val packageName: String,
     }
 
     public fun run() {
+        //FIXME: explicitly adding ViewGroup class is deprecated
         val vg = ClassNode()
         vg.name = settings.containerBaseClass
         classTree.add(vg)
@@ -166,10 +158,12 @@ class Generator(val jarPath: String, val packageName: String,
     private fun updateProperty(newProp: PropertyData) {
         val prop = propMap[newProp.className + newProp.propName]
         if (prop != null) {
-            prop.setter = if (prop.setter == null) newProp.setter else prop.setter
-            prop.getter = if (prop.getter == null) newProp.getter else prop.getter
-            prop.valueType = if (prop.valueType == null) newProp.valueType else prop.valueType
-            prop.propType = if (prop.propType == null) newProp.propType else prop.propType
+            with(prop) {
+                setter = updateIfNotNull(setter, newProp.setter)
+                getter = updateIfNotNull(getter, newProp.getter)
+                valueType = updateIfNotNull(valueType, newProp.valueType)
+                propType = updateIfNotNull(propType, newProp.propType)
+            }
         } else {
             propMap[newProp.className + newProp.propName] = newProp
         }
@@ -224,13 +218,7 @@ class Generator(val jarPath: String, val packageName: String,
             throw RuntimeException("ViewGroup must have a LayoutParams inner class")
         val innerClasses = (viewGroup.innerClasses as List<InnerClassNode>)
         val lp = innerClasses.find { it.name!!.contains("LayoutParams") }
-        if (lp == null) {
-//            System.err.println("ViewGroup " + viewGroup.cleanInternalName() + " has no layoutParams")
-            return null
-        } else {
-//            System.out.println(viewGroup.name + ":" + lp.name)
-            return classTree.findNode(lp.name)!!.data
-        }
+        return classTree.findNode(lp?.name)?.data
     }
 
     private fun genContainerWidgetFun(classNode: ClassNode) {
