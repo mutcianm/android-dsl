@@ -23,44 +23,31 @@ fun cleanInternalName(name: String): String {
 val MethodNode.arguments: Array<Type>?
     get() = Type.getArgumentTypes(desc)
 
-fun MethodNode.fmtArguments(): String {
+fun MethodNode.processArguments(app: (String, Int, String) -> String): String {
     if (getArgumentCount() == 0)
         return ""
     val buf = StringBuffer()
     var argNum = 0
     for (arg in arguments!!) {
         val argType = arg.toStr()
-        buf append "p$argNum: $argType, "
+        val nullable = if (arg.toStr().endsWith("?")) "!!" else ""
+        buf append app(argType, argNum, nullable)
         argNum++
     }
     buf.delete(buf.length-2, buf.length)
     return buf.toString()
+}
+
+fun MethodNode.fmtArguments(): String {
+    return processArguments { t, num, nul -> "p$num: $t, " }
 }
 
 fun MethodNode.fmtArgumentsInvoke(): String {
-    if (getArgumentCount() == 0)
-        return ""
-    val buf = StringBuffer()
-    var argNum = 0
-    for (arg in arguments!!) {
-        val assertion = if (arg.toStr().endsWith("?")) "!!" else ""
-        buf append "p$argNum$assertion, "
-        argNum++
-    }
-    buf.delete(buf.length-2, buf.length)
-    return buf.toString()
+    return processArguments { t, num, nul -> "p$num$nul, " }
 }
 
 fun MethodNode.fmtArgumentsTypes(): String {
-    if (getArgumentCount() == 0)
-        return ""
-    val buf = StringBuffer()
-    for (arg in arguments!!) {
-        val argType = arg.toStr()
-        buf append "$argType, "
-    }
-    buf.delete(buf.length-2, buf.length)
-    return buf.toString()
+    return processArguments { t, num, nul -> "$t, " }
 }
 
 fun MethodNode.isGetter(): Boolean {
@@ -116,10 +103,6 @@ fun MethodNode.toProperty(): String {
 }
 
 class MethodNodeWithParent(var parent: ClassNode, val child: MethodNode)
-
-//fun MethodNode.getClassName(): String {
-//
-//}
 
 fun ClassNode.cleanName(): String {
     return stripClassName(cleanInternalName(name!!))

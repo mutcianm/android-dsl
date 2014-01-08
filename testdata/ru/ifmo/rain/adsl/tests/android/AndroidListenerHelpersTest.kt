@@ -7,11 +7,6 @@ import android.widget.LinearLayout
 import android.view.View
 import android.view.View.OnClickListener
 
-public fun android.widget.Button.OnClick(l: android.view.View.OnClickListener?) {
-    setOnClickListener(l)
-}
-
-
 public open class MyActivity() : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?): Unit {
         super.onCreate(savedInstanceState)
@@ -20,6 +15,13 @@ public open class MyActivity() : Activity() {
                button() {
                   onClick {
                       text = "clicked"
+                  }
+               }
+               checkBox {
+                  onCheckedChange {
+                     cb, checkstate ->
+                        if(checkstate)
+                            text = "checked"
                   }
                }
             }
