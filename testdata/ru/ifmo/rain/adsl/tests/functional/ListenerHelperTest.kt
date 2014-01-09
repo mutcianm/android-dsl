@@ -112,14 +112,26 @@ fun android.view.View.onDrag(l: (android.view.View?, android.view.DragEvent?) ->
 fun android.view.View.onSystemUiVisibilityChange(l: (Int) -> jet.Unit) {
     setOnSystemUiVisibilityChangeListener(l)
 }
-fun android.app.FragmentBreadCrumbs.onBreadCrumbClick(l: (android.app.FragmentManager.BackStackEntry?, Int) -> Boolean) {
-    setOnBreadCrumbClickListener(l)
-}
 fun android.view.ViewStub.onInflate(l: (android.view.ViewStub?, android.view.View?) -> jet.Unit) {
     setOnInflateListener(l)
 }
 fun android.widget.TextView.onEditorAction(l: (android.widget.TextView?, Int, android.view.KeyEvent?) -> Boolean) {
     setOnEditorActionListener(l)
+}
+fun android.app.FragmentBreadCrumbs.onBreadCrumbClick(l: (android.app.FragmentManager.BackStackEntry?, Int) -> Boolean) {
+    setOnBreadCrumbClickListener(l)
+}
+fun android.widget.VideoView.onPrepared(l: (android.media.MediaPlayer?) -> jet.Unit) {
+    setOnPreparedListener(l)
+}
+fun android.widget.VideoView.onCompletion(l: (android.media.MediaPlayer?) -> jet.Unit) {
+    setOnCompletionListener(l)
+}
+fun android.widget.VideoView.onError(l: (android.media.MediaPlayer?, Int, Int) -> Boolean) {
+    setOnErrorListener(l)
+}
+fun android.widget.Chronometer.onChronometerTick(l: (android.widget.Chronometer?) -> jet.Unit) {
+    setOnChronometerTickListener(l)
 }
 fun android.widget.CalendarView.onDateChange(l: (android.widget.CalendarView?, Int, Int, Int) -> jet.Unit) {
     setOnDateChangeListener(l)
@@ -153,18 +165,6 @@ fun android.widget.SearchView.onQueryTextFocusChange(l: (android.view.View?, Boo
 }
 fun android.widget.SearchView.onSearchClick(l: (android.view.View?) -> jet.Unit) {
     setOnSearchClickListener(l)
-}
-fun android.widget.VideoView.onPrepared(l: (android.media.MediaPlayer?) -> jet.Unit) {
-    setOnPreparedListener(l)
-}
-fun android.widget.VideoView.onCompletion(l: (android.media.MediaPlayer?) -> jet.Unit) {
-    setOnCompletionListener(l)
-}
-fun android.widget.VideoView.onError(l: (android.media.MediaPlayer?, Int, Int) -> Boolean) {
-    setOnErrorListener(l)
-}
-fun android.widget.Chronometer.onChronometerTick(l: (android.widget.Chronometer?) -> jet.Unit) {
-    setOnChronometerTickListener(l)
 }
 fun android.widget.CompoundButton.onCheckedChange(l: (android.widget.CompoundButton?, Boolean) -> jet.Unit) {
     setOnCheckedChangeListener(l)

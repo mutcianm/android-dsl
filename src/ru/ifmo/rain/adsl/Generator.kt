@@ -14,7 +14,10 @@ import org.objectweb.asm.tree.MethodNode
 import org.objectweb.asm.tree.InnerClassNode
 import java.util.HashSet
 
-class IgnoredClassException : Exception()
+open class DSLException(message: String = "") : Exception(message)
+open class DSLGeneratorException(message: String = ""): DSLException(message)
+class InvalidPropertyException(message: String = ""): DSLGeneratorException(message)
+class NoListenerClassException(message: String = ""): DSLGeneratorException(message)
 
 
 class Hook<T>(val predicate: ((_class: T) -> Boolean), val function: ((_class: T) -> Unit)) {
@@ -61,10 +64,10 @@ class Generator(val jarPath: String, val packageName: String,
 
     private val methodHooks = Arrays.asList<Hook<MethodNodeWithParent>>(
             Hook({
-                (isWidget(it.parent) || isContainer(it.parent)) && it.child.isGetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
+                isWidget(it.parent) && it.child.isGetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
             }, { genGetter(it) }),
             Hook({
-                (isWidget(it.parent) || isContainer(it.parent))&& it.child.isSetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
+                isWidget(it.parent) && it.child.isSetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
             }, { genSetter(it) }),
             Hook({
                 it.child.name!!.startsWith("setOn") && it.child.name!!.endsWith("Listener") && !isBlacklistedClass(it.parent)
@@ -84,10 +87,6 @@ class Generator(val jarPath: String, val packageName: String,
     }
 
     public fun run() {
-        //FIXME: explicitly adding ViewGroup class is deprecated
-        val vg = ClassNode()
-        vg.name = settings.containerBaseClass
-        classTree.add(vg)
         for (classData in extractClasses(jarPath, packageName)) {
             classTree.add(processClassData(classData))
         }
@@ -124,7 +123,7 @@ class Generator(val jarPath: String, val packageName: String,
         val name = listenerType.getInternalName()
         val node = classTree.findNode(name)
         if (node == null)
-            throw RuntimeException("Listener class $name not found")
+            throw NoListenerClassException("Listener class $name not found")
         dslWriter.genListenerHelper(methodInfo, node.data)
     }
 
@@ -184,12 +183,12 @@ class Generator(val jarPath: String, val packageName: String,
                 for (argument in constructor) {
                     val _class = classTree.findParentWithProperty(classNode, argument)
                     if (_class == null)
-                        throw RuntimeException("Property $argument is not in $className hierarchy")
+                        throw InvalidPropertyException("Property $argument is not in $className hierarchy")
                     val property = propMap.get(_class.cleanInternalName() + argument)
                     if (property == null)
-                        throw RuntimeException("Property $argument in not a member of $className")
+                        throw InvalidPropertyException("Property $argument in not a member of $className")
                     if (property.valueType == null)
-                        throw RuntimeException("Property $argument is read-only in $className")
+                        throw InvalidPropertyException("Property $argument is read-only in $className")
                     cons.add(property)
                 }
                 res.add(cons)
@@ -215,7 +214,7 @@ class Generator(val jarPath: String, val packageName: String,
 
     private fun extractLayoutParams(viewGroup: ClassNode): ClassNode? {
         if (viewGroup.innerClasses == null)
-            throw RuntimeException("ViewGroup must have a LayoutParams inner class")
+            return null
         val innerClasses = (viewGroup.innerClasses as List<InnerClassNode>)
         val lp = innerClasses.find { it.name!!.contains("LayoutParams") }
         return classTree.findNode(lp?.name)?.data
@@ -233,7 +232,7 @@ class Generator(val jarPath: String, val packageName: String,
         try {
             val cr = ClassReader(classData)
             cr.accept(cn, 0)
-        } catch (e: IgnoredClassException) {
+        } catch (e: Exception) {
             //optionally log something here
         } finally {
             classData?.close()
@@ -243,7 +242,7 @@ class Generator(val jarPath: String, val packageName: String,
 
 
     private fun extractClasses(jarPath: String, packageName: String): Iterator<InputStream> {
-        val packageName = packageName.replace('.', '/')
+//        val packageName = packageName.replace('.', '/')
         val jarFile = JarFile(jarPath)
         return Collections.list(jarFile.entries() as Enumeration<JarEntry>)
                 .iterator()

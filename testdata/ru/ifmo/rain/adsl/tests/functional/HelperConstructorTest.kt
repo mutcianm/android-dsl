@@ -14,60 +14,6 @@ open class _Container(open val vgInstance: android.view.ViewGroup,
         return builder.create()!!.show()
     }
 
-    //container function
-    fun fragmentBreadCrumbs( init: _FragmentBreadCrumbs.() -> Unit): _FragmentBreadCrumbs {
-        val v = _FragmentBreadCrumbs(android.app.FragmentBreadCrumbs(ctx), ctx)
-        v.init()
-        vgInstance.addView(v.vgInstance)
-        _style(v)
-        return v
-    }
-
-    //container function
-    fun relativeLayout( init: _RelativeLayout.() -> Unit): _RelativeLayout {
-        val v = _RelativeLayout(android.widget.RelativeLayout(ctx), ctx)
-        v.init()
-        vgInstance.addView(v.vgInstance)
-        _style(v)
-        return v
-    }
-
-    //container function
-    fun absoluteLayout( init: _AbsoluteLayout.() -> Unit): _AbsoluteLayout {
-        val v = _AbsoluteLayout(android.widget.AbsoluteLayout(ctx), ctx)
-        v.init()
-        vgInstance.addView(v.vgInstance)
-        _style(v)
-        return v
-    }
-
-    //container function
-    fun frameLayout( init: _FrameLayout.() -> Unit): _FrameLayout {
-        val v = _FrameLayout(android.widget.FrameLayout(ctx), ctx)
-        v.init()
-        vgInstance.addView(v.vgInstance)
-        _style(v)
-        return v
-    }
-
-    //container function
-    fun linearLayout( init: _LinearLayout.() -> Unit): _LinearLayout {
-        val v = _LinearLayout(android.widget.LinearLayout(ctx), ctx)
-        v.init()
-        vgInstance.addView(v.vgInstance)
-        _style(v)
-        return v
-    }
-
-    //container function
-    fun gridLayout( init: _GridLayout.() -> Unit): _GridLayout {
-        val v = _GridLayout(android.widget.GridLayout(ctx), ctx)
-        v.init()
-        vgInstance.addView(v.vgInstance)
-        _style(v)
-        return v
-    }
-
     fun mediaRouteButton( init: android.app.MediaRouteButton.() -> Unit): android.app.MediaRouteButton {
         val v = android.app.MediaRouteButton(ctx)
         v.init()
@@ -134,6 +80,148 @@ open class _Container(open val vgInstance: android.view.ViewGroup,
 
     fun space( init: android.widget.Space.() -> Unit): android.widget.Space {
         val v = android.widget.Space(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    //container function
+    fun fragmentBreadCrumbs( init: _FragmentBreadCrumbs.() -> Unit): _FragmentBreadCrumbs {
+        val v = _FragmentBreadCrumbs(android.app.FragmentBreadCrumbs(ctx), ctx)
+        v.init()
+        vgInstance.addView(v.vgInstance)
+        _style(v)
+        return v
+    }
+
+    //container function
+    fun relativeLayout( init: _RelativeLayout.() -> Unit): _RelativeLayout {
+        val v = _RelativeLayout(android.widget.RelativeLayout(ctx), ctx)
+        v.init()
+        vgInstance.addView(v.vgInstance)
+        _style(v)
+        return v
+    }
+
+    //container function
+    fun absoluteLayout( init: _AbsoluteLayout.() -> Unit): _AbsoluteLayout {
+        val v = _AbsoluteLayout(android.widget.AbsoluteLayout(ctx), ctx)
+        v.init()
+        vgInstance.addView(v.vgInstance)
+        _style(v)
+        return v
+    }
+
+    //container function
+    fun frameLayout( init: _FrameLayout.() -> Unit): _FrameLayout {
+        val v = _FrameLayout(android.widget.FrameLayout(ctx), ctx)
+        v.init()
+        vgInstance.addView(v.vgInstance)
+        _style(v)
+        return v
+    }
+
+    //container function
+    fun linearLayout( init: _LinearLayout.() -> Unit): _LinearLayout {
+        val v = _LinearLayout(android.widget.LinearLayout(ctx), ctx)
+        v.init()
+        vgInstance.addView(v.vgInstance)
+        _style(v)
+        return v
+    }
+
+    //container function
+    fun gridLayout( init: _GridLayout.() -> Unit): _GridLayout {
+        val v = _GridLayout(android.widget.GridLayout(ctx), ctx)
+        v.init()
+        vgInstance.addView(v.vgInstance)
+        _style(v)
+        return v
+    }
+
+    fun gLSurfaceView( init: android.opengl.GLSurfaceView.() -> Unit): android.opengl.GLSurfaceView {
+        val v = android.opengl.GLSurfaceView(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    fun rSSurfaceView( init: android.renderscript.RSSurfaceView.() -> Unit): android.renderscript.RSSurfaceView {
+        val v = android.renderscript.RSSurfaceView(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    fun videoView( init: android.widget.VideoView.() -> Unit): android.widget.VideoView {
+        val v = android.widget.VideoView(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    fun rSTextureView( init: android.renderscript.RSTextureView.() -> Unit): android.renderscript.RSTextureView {
+        val v = android.renderscript.RSTextureView(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    fun digitalClock( init: android.widget.DigitalClock.() -> Unit): android.widget.DigitalClock {
+        val v = android.widget.DigitalClock(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    fun checkedTextView( init: android.widget.CheckedTextView.() -> Unit): android.widget.CheckedTextView {
+        val v = android.widget.CheckedTextView(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    fun chronometer( init: android.widget.Chronometer.() -> Unit): android.widget.Chronometer {
+        val v = android.widget.Chronometer(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    fun button( init: android.widget.Button.() -> Unit): android.widget.Button {
+        val v = android.widget.Button(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    fun editText( init: android.widget.EditText.() -> Unit): android.widget.EditText {
+        val v = android.widget.EditText(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    fun imageButton( init: android.widget.ImageButton.() -> Unit): android.widget.ImageButton {
+        val v = android.widget.ImageButton(ctx)
+        v.init()
+        vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    fun quickContactBadge( init: android.widget.QuickContactBadge.() -> Unit): android.widget.QuickContactBadge {
+        val v = android.widget.QuickContactBadge(ctx)
         v.init()
         vgInstance.addView(v)
         _style(v)
@@ -320,88 +408,40 @@ open class _Container(open val vgInstance: android.view.ViewGroup,
         return v
     }
 
-    fun gLSurfaceView( init: android.opengl.GLSurfaceView.() -> Unit): android.opengl.GLSurfaceView {
-        val v = android.opengl.GLSurfaceView(ctx)
+    fun extractEditText( init: android.inputmethodservice.ExtractEditText.() -> Unit): android.inputmethodservice.ExtractEditText {
+        val v = android.inputmethodservice.ExtractEditText(ctx)
         v.init()
         vgInstance.addView(v)
         _style(v)
         return v
     }
 
-    fun rSSurfaceView( init: android.renderscript.RSSurfaceView.() -> Unit): android.renderscript.RSSurfaceView {
-        val v = android.renderscript.RSSurfaceView(ctx)
+    fun autoCompleteTextView( init: android.widget.AutoCompleteTextView.() -> Unit): android.widget.AutoCompleteTextView {
+        val v = android.widget.AutoCompleteTextView(ctx)
         v.init()
         vgInstance.addView(v)
         _style(v)
         return v
     }
 
-    fun videoView( init: android.widget.VideoView.() -> Unit): android.widget.VideoView {
-        val v = android.widget.VideoView(ctx)
+    fun zoomButton( init: android.widget.ZoomButton.() -> Unit): android.widget.ZoomButton {
+        val v = android.widget.ZoomButton(ctx)
         v.init()
         vgInstance.addView(v)
         _style(v)
         return v
     }
 
-    fun rSTextureView( init: android.renderscript.RSTextureView.() -> Unit): android.renderscript.RSTextureView {
-        val v = android.renderscript.RSTextureView(ctx)
+    fun seekBar( init: android.widget.SeekBar.() -> Unit): android.widget.SeekBar {
+        val v = android.widget.SeekBar(ctx)
         v.init()
         vgInstance.addView(v)
         _style(v)
         return v
     }
 
-    fun digitalClock( init: android.widget.DigitalClock.() -> Unit): android.widget.DigitalClock {
-        val v = android.widget.DigitalClock(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    fun checkedTextView( init: android.widget.CheckedTextView.() -> Unit): android.widget.CheckedTextView {
-        val v = android.widget.CheckedTextView(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    fun chronometer( init: android.widget.Chronometer.() -> Unit): android.widget.Chronometer {
-        val v = android.widget.Chronometer(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    fun button( init: android.widget.Button.() -> Unit): android.widget.Button {
-        val v = android.widget.Button(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    fun editText( init: android.widget.EditText.() -> Unit): android.widget.EditText {
-        val v = android.widget.EditText(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    fun imageButton( init: android.widget.ImageButton.() -> Unit): android.widget.ImageButton {
-        val v = android.widget.ImageButton(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    fun quickContactBadge( init: android.widget.QuickContactBadge.() -> Unit): android.widget.QuickContactBadge {
-        val v = android.widget.QuickContactBadge(ctx)
+    fun ratingBar( init: android.widget.RatingBar.() -> Unit): android.widget.RatingBar {
+        val v = android.widget.RatingBar(ctx)
         v.init()
         vgInstance.addView(v)
         _style(v)
@@ -471,73 +511,6 @@ open class _Container(open val vgInstance: android.view.ViewGroup,
         return v
     }
 
-    fun extractEditText( init: android.inputmethodservice.ExtractEditText.() -> Unit): android.inputmethodservice.ExtractEditText {
-        val v = android.inputmethodservice.ExtractEditText(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    fun autoCompleteTextView( init: android.widget.AutoCompleteTextView.() -> Unit): android.widget.AutoCompleteTextView {
-        val v = android.widget.AutoCompleteTextView(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    fun zoomButton( init: android.widget.ZoomButton.() -> Unit): android.widget.ZoomButton {
-        val v = android.widget.ZoomButton(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    fun seekBar( init: android.widget.SeekBar.() -> Unit): android.widget.SeekBar {
-        val v = android.widget.SeekBar(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    fun ratingBar( init: android.widget.RatingBar.() -> Unit): android.widget.RatingBar {
-        val v = android.widget.RatingBar(ctx)
-        v.init()
-        vgInstance.addView(v)
-        _style(v)
-        return v
-    }
-
-    //container function
-    fun textSwitcher( init: _TextSwitcher.() -> Unit): _TextSwitcher {
-        val v = _TextSwitcher(android.widget.TextSwitcher(ctx), ctx)
-        v.init()
-        vgInstance.addView(v.vgInstance)
-        _style(v)
-        return v
-    }
-
-    //container function
-    fun imageSwitcher( init: _ImageSwitcher.() -> Unit): _ImageSwitcher {
-        val v = _ImageSwitcher(android.widget.ImageSwitcher(ctx), ctx)
-        v.init()
-        vgInstance.addView(v.vgInstance)
-        _style(v)
-        return v
-    }
-
-    //container function
-    fun expandableListView( init: _ExpandableListView.() -> Unit): _ExpandableListView {
-        val v = _ExpandableListView(android.widget.ExpandableListView(ctx), ctx)
-        v.init()
-        vgInstance.addView(v.vgInstance)
-        _style(v)
-        return v
-    }
-
     fun checkBox( init: android.widget.CheckBox.() -> Unit): android.widget.CheckBox {
         val v = android.widget.CheckBox(ctx)
         v.init()
@@ -574,6 +547,33 @@ open class _Container(open val vgInstance: android.view.ViewGroup,
         val v = android.widget.MultiAutoCompleteTextView(ctx)
         v.init()
         vgInstance.addView(v)
+        _style(v)
+        return v
+    }
+
+    //container function
+    fun textSwitcher( init: _TextSwitcher.() -> Unit): _TextSwitcher {
+        val v = _TextSwitcher(android.widget.TextSwitcher(ctx), ctx)
+        v.init()
+        vgInstance.addView(v.vgInstance)
+        _style(v)
+        return v
+    }
+
+    //container function
+    fun imageSwitcher( init: _ImageSwitcher.() -> Unit): _ImageSwitcher {
+        val v = _ImageSwitcher(android.widget.ImageSwitcher(ctx), ctx)
+        v.init()
+        vgInstance.addView(v.vgInstance)
+        _style(v)
+        return v
+    }
+
+    //container function
+    fun expandableListView( init: _ExpandableListView.() -> Unit): _ExpandableListView {
+        val v = _ExpandableListView(android.widget.ExpandableListView(ctx), ctx)
+        v.init()
+        vgInstance.addView(v.vgInstance)
         _style(v)
         return v
     }

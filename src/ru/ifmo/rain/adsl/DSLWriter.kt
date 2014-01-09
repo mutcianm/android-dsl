@@ -6,12 +6,14 @@ import java.io.FileWriter
 import java.io.File
 import org.objectweb.asm.tree.MethodNode
 
+open class DSLWriterException(message: String): DSLException(message)
+
 class DSLWriter(val settings: BaseGeneratorSettings) {
 
 
     val kotlin_keywords = "val var import package fun type class object super public private protected return " +
     "trait where this namespace try catch throw if else while do for break continue return true false null " +
-    "abstract final enum open attribute override open final abstract internal in out ref lazy"
+    "abstract final enum open attribute override open final abstract internal in out ref lazy when"
 
     private val keywordSet = kotlin_keywords.split(" ").toSet()
 
@@ -176,6 +178,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
 
     private fun finalizeCaches() {
         uiClassCache   append "}\n\n"
+        //TODO: make UI function Activity's extension method
         if (settings.generateUIClassWrapper)
                 uiClassCache append settings.footer
         containerCache append "}\n\n"
