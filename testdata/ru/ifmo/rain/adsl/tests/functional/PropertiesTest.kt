@@ -1,570 +1,612 @@
-val _AppWidgetHostView.appWidgetId: Int
-    get() = (vgInstance as android.appwidget.AppWidgetHostView).getAppWidgetId()
+var _AdapterViewFlipper<android.widget.AdapterViewFlipper>.autoStart: Boolean
+    get() = vgInstance.isAutoStart()
+    set(value) = vgInstance.setAutoStart(value)
 
-val _AppWidgetHostView.appWidgetInfo: android.appwidget.AppWidgetProviderInfo?
-    get() = (vgInstance as android.appwidget.AppWidgetHostView).getAppWidgetInfo()
+var _AdapterViewFlipper<android.widget.AdapterViewFlipper>.flipInterval: Int
+    get() = vgInstance.getFlipInterval()
+    set(value) = vgInstance.setFlipInterval(value)
 
-var _CalendarView.date: Long
-    get() = (vgInstance as android.widget.CalendarView).getDate()
-    set(value) = (vgInstance as android.widget.CalendarView).setDate(value)
+val _AdapterViewFlipper<android.widget.AdapterViewFlipper>.flipping: Boolean
+    get() = vgInstance.isFlipping()
 
-var _CalendarView.dateTextAppearance: Int
-    get() = (vgInstance as android.widget.CalendarView).getDateTextAppearance()
-    set(value) = (vgInstance as android.widget.CalendarView).setDateTextAppearance(value)
+val _AppWidgetHostView<android.appwidget.AppWidgetHostView>.appWidgetId: Int
+    get() = vgInstance.getAppWidgetId()
 
-var _CalendarView.enabled: Boolean
-    get() = (vgInstance as android.widget.CalendarView).isEnabled()
-    set(value) = (vgInstance as android.widget.CalendarView).setEnabled(value)
+val _AppWidgetHostView<android.appwidget.AppWidgetHostView>.appWidgetInfo: android.appwidget.AppWidgetProviderInfo?
+    get() = vgInstance.getAppWidgetInfo()
 
-var _CalendarView.firstDayOfWeek: Int
-    get() = (vgInstance as android.widget.CalendarView).getFirstDayOfWeek()
-    set(value) = (vgInstance as android.widget.CalendarView).setFirstDayOfWeek(value)
+var _CalendarView<android.widget.CalendarView>.date: Long
+    get() = vgInstance.getDate()
+    set(value) = vgInstance.setDate(value)
 
-var _CalendarView.focusedMonthDateColor: Int
-    get() = (vgInstance as android.widget.CalendarView).getFocusedMonthDateColor()
-    set(value) = (vgInstance as android.widget.CalendarView).setFocusedMonthDateColor(value)
+var _CalendarView<android.widget.CalendarView>.dateTextAppearance: Int
+    get() = vgInstance.getDateTextAppearance()
+    set(value) = vgInstance.setDateTextAppearance(value)
 
-var _CalendarView.maxDate: Long
-    get() = (vgInstance as android.widget.CalendarView).getMaxDate()
-    set(value) = (vgInstance as android.widget.CalendarView).setMaxDate(value)
+var _CalendarView<android.widget.CalendarView>.enabled: Boolean
+    get() = vgInstance.isEnabled()
+    set(value) = vgInstance.setEnabled(value)
 
-var _CalendarView.minDate: Long
-    get() = (vgInstance as android.widget.CalendarView).getMinDate()
-    set(value) = (vgInstance as android.widget.CalendarView).setMinDate(value)
+var _CalendarView<android.widget.CalendarView>.firstDayOfWeek: Int
+    get() = vgInstance.getFirstDayOfWeek()
+    set(value) = vgInstance.setFirstDayOfWeek(value)
 
-var _CalendarView.selectedDateVerticalBar: android.graphics.drawable.Drawable?
-    get() = (vgInstance as android.widget.CalendarView).getSelectedDateVerticalBar()
-    set(value) = (vgInstance as android.widget.CalendarView).setSelectedDateVerticalBar(value!!)
+var _CalendarView<android.widget.CalendarView>.focusedMonthDateColor: Int
+    get() = vgInstance.getFocusedMonthDateColor()
+    set(value) = vgInstance.setFocusedMonthDateColor(value)
 
-var _CalendarView.selectedWeekBackgroundColor: Int
-    get() = (vgInstance as android.widget.CalendarView).getSelectedWeekBackgroundColor()
-    set(value) = (vgInstance as android.widget.CalendarView).setSelectedWeekBackgroundColor(value)
+var _CalendarView<android.widget.CalendarView>.maxDate: Long
+    get() = vgInstance.getMaxDate()
+    set(value) = vgInstance.setMaxDate(value)
 
-var _CalendarView.showWeekNumber: Boolean
-    get() = (vgInstance as android.widget.CalendarView).getShowWeekNumber()
-    set(value) = (vgInstance as android.widget.CalendarView).setShowWeekNumber(value)
+var _CalendarView<android.widget.CalendarView>.minDate: Long
+    get() = vgInstance.getMinDate()
+    set(value) = vgInstance.setMinDate(value)
 
-var _CalendarView.shownWeekCount: Int
-    get() = (vgInstance as android.widget.CalendarView).getShownWeekCount()
-    set(value) = (vgInstance as android.widget.CalendarView).setShownWeekCount(value)
+var _CalendarView<android.widget.CalendarView>.selectedDateVerticalBar: android.graphics.drawable.Drawable?
+    get() = vgInstance.getSelectedDateVerticalBar()
+    set(value) = vgInstance.setSelectedDateVerticalBar(value!!)
 
-var _CalendarView.unfocusedMonthDateColor: Int
-    get() = (vgInstance as android.widget.CalendarView).getUnfocusedMonthDateColor()
-    set(value) = (vgInstance as android.widget.CalendarView).setUnfocusedMonthDateColor(value)
+var _CalendarView<android.widget.CalendarView>.selectedWeekBackgroundColor: Int
+    get() = vgInstance.getSelectedWeekBackgroundColor()
+    set(value) = vgInstance.setSelectedWeekBackgroundColor(value)
 
-var _CalendarView.weekDayTextAppearance: Int
-    get() = (vgInstance as android.widget.CalendarView).getWeekDayTextAppearance()
-    set(value) = (vgInstance as android.widget.CalendarView).setWeekDayTextAppearance(value)
+var _CalendarView<android.widget.CalendarView>.showWeekNumber: Boolean
+    get() = vgInstance.getShowWeekNumber()
+    set(value) = vgInstance.setShowWeekNumber(value)
 
-var _CalendarView.weekNumberColor: Int
-    get() = (vgInstance as android.widget.CalendarView).getWeekNumberColor()
-    set(value) = (vgInstance as android.widget.CalendarView).setWeekNumberColor(value)
+var _CalendarView<android.widget.CalendarView>.shownWeekCount: Int
+    get() = vgInstance.getShownWeekCount()
+    set(value) = vgInstance.setShownWeekCount(value)
 
-var _CalendarView.weekSeparatorLineColor: Int
-    get() = (vgInstance as android.widget.CalendarView).getWeekSeparatorLineColor()
-    set(value) = (vgInstance as android.widget.CalendarView).setWeekSeparatorLineColor(value)
+var _CalendarView<android.widget.CalendarView>.unfocusedMonthDateColor: Int
+    get() = vgInstance.getUnfocusedMonthDateColor()
+    set(value) = vgInstance.setUnfocusedMonthDateColor(value)
 
-val _DatePicker.calendarView: android.widget.CalendarView?
-    get() = (vgInstance as android.widget.DatePicker).getCalendarView()
+var _CalendarView<android.widget.CalendarView>.weekDayTextAppearance: Int
+    get() = vgInstance.getWeekDayTextAppearance()
+    set(value) = vgInstance.setWeekDayTextAppearance(value)
 
-var _DatePicker.calendarViewShown: Boolean
-    get() = (vgInstance as android.widget.DatePicker).getCalendarViewShown()
-    set(value) = (vgInstance as android.widget.DatePicker).setCalendarViewShown(value)
+var _CalendarView<android.widget.CalendarView>.weekNumberColor: Int
+    get() = vgInstance.getWeekNumberColor()
+    set(value) = vgInstance.setWeekNumberColor(value)
 
-val _DatePicker.dayOfMonth: Int
-    get() = (vgInstance as android.widget.DatePicker).getDayOfMonth()
+var _CalendarView<android.widget.CalendarView>.weekSeparatorLineColor: Int
+    get() = vgInstance.getWeekSeparatorLineColor()
+    set(value) = vgInstance.setWeekSeparatorLineColor(value)
 
-var _DatePicker.enabled: Boolean
-    get() = (vgInstance as android.widget.DatePicker).isEnabled()
-    set(value) = (vgInstance as android.widget.DatePicker).setEnabled(value)
+val _DatePicker<android.widget.DatePicker>.calendarView: android.widget.CalendarView?
+    get() = vgInstance.getCalendarView()
 
-var _DatePicker.maxDate: Long
-    get() = (vgInstance as android.widget.DatePicker).getMaxDate()
-    set(value) = (vgInstance as android.widget.DatePicker).setMaxDate(value)
+var _DatePicker<android.widget.DatePicker>.calendarViewShown: Boolean
+    get() = vgInstance.getCalendarViewShown()
+    set(value) = vgInstance.setCalendarViewShown(value)
 
-var _DatePicker.minDate: Long
-    get() = (vgInstance as android.widget.DatePicker).getMinDate()
-    set(value) = (vgInstance as android.widget.DatePicker).setMinDate(value)
+val _DatePicker<android.widget.DatePicker>.dayOfMonth: Int
+    get() = vgInstance.getDayOfMonth()
 
-val _DatePicker.month: Int
-    get() = (vgInstance as android.widget.DatePicker).getMonth()
+var _DatePicker<android.widget.DatePicker>.enabled: Boolean
+    get() = vgInstance.isEnabled()
+    set(value) = vgInstance.setEnabled(value)
 
-var _DatePicker.spinnersShown: Boolean
-    get() = (vgInstance as android.widget.DatePicker).getSpinnersShown()
-    set(value) = (vgInstance as android.widget.DatePicker).setSpinnersShown(value)
+var _DatePicker<android.widget.DatePicker>.maxDate: Long
+    get() = vgInstance.getMaxDate()
+    set(value) = vgInstance.setMaxDate(value)
 
-val _DatePicker.year: Int
-    get() = (vgInstance as android.widget.DatePicker).getYear()
+var _DatePicker<android.widget.DatePicker>.minDate: Long
+    get() = vgInstance.getMinDate()
+    set(value) = vgInstance.setMinDate(value)
 
-val _DialerFilter.digits: jet.CharSequence?
-    get() = (vgInstance as android.widget.DialerFilter).getDigits()
+val _DatePicker<android.widget.DatePicker>.month: Int
+    get() = vgInstance.getMonth()
 
-val _DialerFilter.filterText: jet.CharSequence?
-    get() = (vgInstance as android.widget.DialerFilter).getFilterText()
+var _DatePicker<android.widget.DatePicker>.spinnersShown: Boolean
+    get() = vgInstance.getSpinnersShown()
+    set(value) = vgInstance.setSpinnersShown(value)
 
-val _DialerFilter.letters: jet.CharSequence?
-    get() = (vgInstance as android.widget.DialerFilter).getLetters()
+val _DatePicker<android.widget.DatePicker>.year: Int
+    get() = vgInstance.getYear()
 
-var _DialerFilter.mode: Int
-    get() = (vgInstance as android.widget.DialerFilter).getMode()
-    set(value) = (vgInstance as android.widget.DialerFilter).setMode(value)
+val _DialerFilter<android.widget.DialerFilter>.digits: jet.CharSequence?
+    get() = vgInstance.getDigits()
 
-val _DialerFilter.qwertyKeyboard: Boolean
-    get() = (vgInstance as android.widget.DialerFilter).isQwertyKeyboard()
+val _DialerFilter<android.widget.DialerFilter>.filterText: jet.CharSequence?
+    get() = vgInstance.getFilterText()
 
-var _ExpandableListView.adapter: android.widget.ListAdapter?
-    get() = (vgInstance as android.widget.ExpandableListView).getAdapter()
-    set(value) = (vgInstance as android.widget.ExpandableListView).setAdapter(value!!)
+val _DialerFilter<android.widget.DialerFilter>.letters: jet.CharSequence?
+    get() = vgInstance.getLetters()
 
-val _ExpandableListView.expandableListAdapter: android.widget.ExpandableListAdapter?
-    get() = (vgInstance as android.widget.ExpandableListView).getExpandableListAdapter()
+var _DialerFilter<android.widget.DialerFilter>.mode: Int
+    get() = vgInstance.getMode()
+    set(value) = vgInstance.setMode(value)
 
-val _ExpandableListView.selectedId: Long
-    get() = (vgInstance as android.widget.ExpandableListView).getSelectedId()
+val _DialerFilter<android.widget.DialerFilter>.qwertyKeyboard: Boolean
+    get() = vgInstance.isQwertyKeyboard()
 
-val _ExpandableListView.selectedPosition: Long
-    get() = (vgInstance as android.widget.ExpandableListView).getSelectedPosition()
+var _ExpandableListView<android.widget.ExpandableListView>.adapter: android.widget.ListAdapter?
+    get() = vgInstance.getAdapter()
+    set(value) = vgInstance.setAdapter(value!!)
 
-val _FrameLayout.considerGoneChildrenWhenMeasuring: Boolean
-    get() = (vgInstance as android.widget.FrameLayout).getConsiderGoneChildrenWhenMeasuring()
+val _ExpandableListView<android.widget.ExpandableListView>.expandableListAdapter: android.widget.ExpandableListAdapter?
+    get() = vgInstance.getExpandableListAdapter()
 
-var _FrameLayout.foreground: android.graphics.drawable.Drawable?
-    get() = (vgInstance as android.widget.FrameLayout).getForeground()
-    set(value) = (vgInstance as android.widget.FrameLayout).setForeground(value!!)
+val _ExpandableListView<android.widget.ExpandableListView>.selectedId: Long
+    get() = vgInstance.getSelectedId()
 
-var _FrameLayout.foregroundGravity: Int
-    get() = (vgInstance as android.widget.FrameLayout).getForegroundGravity()
-    set(value) = (vgInstance as android.widget.FrameLayout).setForegroundGravity(value)
+val _ExpandableListView<android.widget.ExpandableListView>.selectedPosition: Long
+    get() = vgInstance.getSelectedPosition()
 
-var _FrameLayout.measureAllChildren: Boolean
-    get() = (vgInstance as android.widget.FrameLayout).getMeasureAllChildren()
-    set(value) = (vgInstance as android.widget.FrameLayout).setMeasureAllChildren(value)
+val _FrameLayout<android.widget.FrameLayout>.considerGoneChildrenWhenMeasuring: Boolean
+    get() = vgInstance.getConsiderGoneChildrenWhenMeasuring()
 
-var _GestureOverlayView.eventsInterceptionEnabled: Boolean
-    get() = (vgInstance as android.gesture.GestureOverlayView).isEventsInterceptionEnabled()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setEventsInterceptionEnabled(value)
+var _FrameLayout<android.widget.FrameLayout>.foreground: android.graphics.drawable.Drawable?
+    get() = vgInstance.getForeground()
+    set(value) = vgInstance.setForeground(value!!)
 
-var _GestureOverlayView.fadeEnabled: Boolean
-    get() = (vgInstance as android.gesture.GestureOverlayView).isFadeEnabled()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setFadeEnabled(value)
+var _FrameLayout<android.widget.FrameLayout>.foregroundGravity: Int
+    get() = vgInstance.getForegroundGravity()
+    set(value) = vgInstance.setForegroundGravity(value)
 
-var _GestureOverlayView.fadeOffset: Long
-    get() = (vgInstance as android.gesture.GestureOverlayView).getFadeOffset()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setFadeOffset(value)
+var _FrameLayout<android.widget.FrameLayout>.measureAllChildren: Boolean
+    get() = vgInstance.getMeasureAllChildren()
+    set(value) = vgInstance.setMeasureAllChildren(value)
 
-var _GestureOverlayView.gesture: android.gesture.Gesture?
-    get() = (vgInstance as android.gesture.GestureOverlayView).getGesture()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setGesture(value!!)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.eventsInterceptionEnabled: Boolean
+    get() = vgInstance.isEventsInterceptionEnabled()
+    set(value) = vgInstance.setEventsInterceptionEnabled(value)
 
-var _GestureOverlayView.gestureColor: Int
-    get() = (vgInstance as android.gesture.GestureOverlayView).getGestureColor()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setGestureColor(value)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.fadeEnabled: Boolean
+    get() = vgInstance.isFadeEnabled()
+    set(value) = vgInstance.setFadeEnabled(value)
 
-val _GestureOverlayView.gesturePath: android.graphics.Path?
-    get() = (vgInstance as android.gesture.GestureOverlayView).getGesturePath()
+var _GestureOverlayView<android.gesture.GestureOverlayView>.fadeOffset: Long
+    get() = vgInstance.getFadeOffset()
+    set(value) = vgInstance.setFadeOffset(value)
 
-var _GestureOverlayView.gestureStrokeAngleThreshold: Float
-    get() = (vgInstance as android.gesture.GestureOverlayView).getGestureStrokeAngleThreshold()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setGestureStrokeAngleThreshold(value)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.gesture: android.gesture.Gesture?
+    get() = vgInstance.getGesture()
+    set(value) = vgInstance.setGesture(value!!)
 
-var _GestureOverlayView.gestureStrokeLengthThreshold: Float
-    get() = (vgInstance as android.gesture.GestureOverlayView).getGestureStrokeLengthThreshold()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setGestureStrokeLengthThreshold(value)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.gestureColor: Int
+    get() = vgInstance.getGestureColor()
+    set(value) = vgInstance.setGestureColor(value)
 
-var _GestureOverlayView.gestureStrokeSquarenessTreshold: Float
-    get() = (vgInstance as android.gesture.GestureOverlayView).getGestureStrokeSquarenessTreshold()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setGestureStrokeSquarenessTreshold(value)
+val _GestureOverlayView<android.gesture.GestureOverlayView>.gesturePath: android.graphics.Path?
+    get() = vgInstance.getGesturePath()
 
-var _GestureOverlayView.gestureStrokeType: Int
-    get() = (vgInstance as android.gesture.GestureOverlayView).getGestureStrokeType()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setGestureStrokeType(value)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.gestureStrokeAngleThreshold: Float
+    get() = vgInstance.getGestureStrokeAngleThreshold()
+    set(value) = vgInstance.setGestureStrokeAngleThreshold(value)
 
-var _GestureOverlayView.gestureStrokeWidth: Float
-    get() = (vgInstance as android.gesture.GestureOverlayView).getGestureStrokeWidth()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setGestureStrokeWidth(value)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.gestureStrokeLengthThreshold: Float
+    get() = vgInstance.getGestureStrokeLengthThreshold()
+    set(value) = vgInstance.setGestureStrokeLengthThreshold(value)
 
-var _GestureOverlayView.gestureVisible: Boolean
-    get() = (vgInstance as android.gesture.GestureOverlayView).isGestureVisible()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setGestureVisible(value)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.gestureStrokeSquarenessTreshold: Float
+    get() = vgInstance.getGestureStrokeSquarenessTreshold()
+    set(value) = vgInstance.setGestureStrokeSquarenessTreshold(value)
 
-val _GestureOverlayView.gesturing: Boolean
-    get() = (vgInstance as android.gesture.GestureOverlayView).isGesturing()
+var _GestureOverlayView<android.gesture.GestureOverlayView>.gestureStrokeType: Int
+    get() = vgInstance.getGestureStrokeType()
+    set(value) = vgInstance.setGestureStrokeType(value)
 
-var _GestureOverlayView.orientation: Int
-    get() = (vgInstance as android.gesture.GestureOverlayView).getOrientation()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setOrientation(value)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.gestureStrokeWidth: Float
+    get() = vgInstance.getGestureStrokeWidth()
+    set(value) = vgInstance.setGestureStrokeWidth(value)
 
-var _GestureOverlayView.uncertainGestureColor: Int
-    get() = (vgInstance as android.gesture.GestureOverlayView).getUncertainGestureColor()
-    set(value) = (vgInstance as android.gesture.GestureOverlayView).setUncertainGestureColor(value)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.gestureVisible: Boolean
+    get() = vgInstance.isGestureVisible()
+    set(value) = vgInstance.setGestureVisible(value)
 
-var _GridLayout.alignmentMode: Int
-    get() = (vgInstance as android.widget.GridLayout).getAlignmentMode()
-    set(value) = (vgInstance as android.widget.GridLayout).setAlignmentMode(value)
+val _GestureOverlayView<android.gesture.GestureOverlayView>.gesturing: Boolean
+    get() = vgInstance.isGesturing()
 
-var _GridLayout.columnCount: Int
-    get() = (vgInstance as android.widget.GridLayout).getColumnCount()
-    set(value) = (vgInstance as android.widget.GridLayout).setColumnCount(value)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.orientation: Int
+    get() = vgInstance.getOrientation()
+    set(value) = vgInstance.setOrientation(value)
 
-var _GridLayout.columnOrderPreserved: Boolean
-    get() = (vgInstance as android.widget.GridLayout).isColumnOrderPreserved()
-    set(value) = (vgInstance as android.widget.GridLayout).setColumnOrderPreserved(value)
+var _GestureOverlayView<android.gesture.GestureOverlayView>.uncertainGestureColor: Int
+    get() = vgInstance.getUncertainGestureColor()
+    set(value) = vgInstance.setUncertainGestureColor(value)
 
-var _GridLayout.orientation: Int
-    get() = (vgInstance as android.widget.GridLayout).getOrientation()
-    set(value) = (vgInstance as android.widget.GridLayout).setOrientation(value)
+var _GridLayout<android.widget.GridLayout>.alignmentMode: Int
+    get() = vgInstance.getAlignmentMode()
+    set(value) = vgInstance.setAlignmentMode(value)
 
-var _GridLayout.rowCount: Int
-    get() = (vgInstance as android.widget.GridLayout).getRowCount()
-    set(value) = (vgInstance as android.widget.GridLayout).setRowCount(value)
+var _GridLayout<android.widget.GridLayout>.columnCount: Int
+    get() = vgInstance.getColumnCount()
+    set(value) = vgInstance.setColumnCount(value)
 
-var _GridLayout.rowOrderPreserved: Boolean
-    get() = (vgInstance as android.widget.GridLayout).isRowOrderPreserved()
-    set(value) = (vgInstance as android.widget.GridLayout).setRowOrderPreserved(value)
+var _GridLayout<android.widget.GridLayout>.columnOrderPreserved: Boolean
+    get() = vgInstance.isColumnOrderPreserved()
+    set(value) = vgInstance.setColumnOrderPreserved(value)
 
-var _GridLayout.useDefaultMargins: Boolean
-    get() = (vgInstance as android.widget.GridLayout).getUseDefaultMargins()
-    set(value) = (vgInstance as android.widget.GridLayout).setUseDefaultMargins(value)
+var _GridLayout<android.widget.GridLayout>.orientation: Int
+    get() = vgInstance.getOrientation()
+    set(value) = vgInstance.setOrientation(value)
 
-var _GridView.adapter: android.widget.ListAdapter?
-    get() = (vgInstance as android.widget.GridView).getAdapter()
-    set(value) = (vgInstance as android.widget.GridView).setAdapter(value!!)
+var _GridLayout<android.widget.GridLayout>.rowCount: Int
+    get() = vgInstance.getRowCount()
+    set(value) = vgInstance.setRowCount(value)
 
-var _GridView.columnWidth: Int
-    get() = (vgInstance as android.widget.GridView).getColumnWidth()
-    set(value) = (vgInstance as android.widget.GridView).setColumnWidth(value)
+var _GridLayout<android.widget.GridLayout>.rowOrderPreserved: Boolean
+    get() = vgInstance.isRowOrderPreserved()
+    set(value) = vgInstance.setRowOrderPreserved(value)
 
-var _GridView.gravity: Int
-    get() = (vgInstance as android.widget.GridView).getGravity()
-    set(value) = (vgInstance as android.widget.GridView).setGravity(value)
+var _GridLayout<android.widget.GridLayout>.useDefaultMargins: Boolean
+    get() = vgInstance.getUseDefaultMargins()
+    set(value) = vgInstance.setUseDefaultMargins(value)
 
-var _GridView.horizontalSpacing: Int
-    get() = (vgInstance as android.widget.GridView).getHorizontalSpacing()
-    set(value) = (vgInstance as android.widget.GridView).setHorizontalSpacing(value)
+var _GridView<android.widget.GridView>.adapter: android.widget.ListAdapter?
+    get() = vgInstance.getAdapter()
+    set(value) = vgInstance.setAdapter(value!!)
 
-var _GridView.numColumns: Int
-    get() = (vgInstance as android.widget.GridView).getNumColumns()
-    set(value) = (vgInstance as android.widget.GridView).setNumColumns(value)
+var _GridView<android.widget.GridView>.columnWidth: Int
+    get() = vgInstance.getColumnWidth()
+    set(value) = vgInstance.setColumnWidth(value)
 
-val _GridView.requestedColumnWidth: Int
-    get() = (vgInstance as android.widget.GridView).getRequestedColumnWidth()
+var _GridView<android.widget.GridView>.gravity: Int
+    get() = vgInstance.getGravity()
+    set(value) = vgInstance.setGravity(value)
 
-val _GridView.requestedHorizontalSpacing: Int
-    get() = (vgInstance as android.widget.GridView).getRequestedHorizontalSpacing()
+var _GridView<android.widget.GridView>.horizontalSpacing: Int
+    get() = vgInstance.getHorizontalSpacing()
+    set(value) = vgInstance.setHorizontalSpacing(value)
 
-var _GridView.stretchMode: Int
-    get() = (vgInstance as android.widget.GridView).getStretchMode()
-    set(value) = (vgInstance as android.widget.GridView).setStretchMode(value)
+var _GridView<android.widget.GridView>.numColumns: Int
+    get() = vgInstance.getNumColumns()
+    set(value) = vgInstance.setNumColumns(value)
 
-var _GridView.verticalSpacing: Int
-    get() = (vgInstance as android.widget.GridView).getVerticalSpacing()
-    set(value) = (vgInstance as android.widget.GridView).setVerticalSpacing(value)
+val _GridView<android.widget.GridView>.requestedColumnWidth: Int
+    get() = vgInstance.getRequestedColumnWidth()
 
-var _HorizontalScrollView.fillViewport: Boolean
-    get() = (vgInstance as android.widget.HorizontalScrollView).isFillViewport()
-    set(value) = (vgInstance as android.widget.HorizontalScrollView).setFillViewport(value)
+val _GridView<android.widget.GridView>.requestedHorizontalSpacing: Int
+    get() = vgInstance.getRequestedHorizontalSpacing()
 
-val _HorizontalScrollView.maxScrollAmount: Int
-    get() = (vgInstance as android.widget.HorizontalScrollView).getMaxScrollAmount()
+var _GridView<android.widget.GridView>.stretchMode: Int
+    get() = vgInstance.getStretchMode()
+    set(value) = vgInstance.setStretchMode(value)
 
-var _HorizontalScrollView.smoothScrollingEnabled: Boolean
-    get() = (vgInstance as android.widget.HorizontalScrollView).isSmoothScrollingEnabled()
-    set(value) = (vgInstance as android.widget.HorizontalScrollView).setSmoothScrollingEnabled(value)
+var _GridView<android.widget.GridView>.verticalSpacing: Int
+    get() = vgInstance.getVerticalSpacing()
+    set(value) = vgInstance.setVerticalSpacing(value)
 
-val _LinearLayout.baseline: Int
-    get() = (vgInstance as android.widget.LinearLayout).getBaseline()
+var _HorizontalScrollView<android.widget.HorizontalScrollView>.fillViewport: Boolean
+    get() = vgInstance.isFillViewport()
+    set(value) = vgInstance.setFillViewport(value)
 
-var _LinearLayout.baselineAligned: Boolean
-    get() = (vgInstance as android.widget.LinearLayout).isBaselineAligned()
-    set(value) = (vgInstance as android.widget.LinearLayout).setBaselineAligned(value)
+val _HorizontalScrollView<android.widget.HorizontalScrollView>.maxScrollAmount: Int
+    get() = vgInstance.getMaxScrollAmount()
 
-var _LinearLayout.baselineAlignedChildIndex: Int
-    get() = (vgInstance as android.widget.LinearLayout).getBaselineAlignedChildIndex()
-    set(value) = (vgInstance as android.widget.LinearLayout).setBaselineAlignedChildIndex(value)
+var _HorizontalScrollView<android.widget.HorizontalScrollView>.smoothScrollingEnabled: Boolean
+    get() = vgInstance.isSmoothScrollingEnabled()
+    set(value) = vgInstance.setSmoothScrollingEnabled(value)
 
-var _LinearLayout.dividerDrawable: android.graphics.drawable.Drawable?
-    get() = (vgInstance as android.widget.LinearLayout).getDividerDrawable()
-    set(value) = (vgInstance as android.widget.LinearLayout).setDividerDrawable(value!!)
+val _LinearLayout<android.widget.LinearLayout>.baseline: Int
+    get() = vgInstance.getBaseline()
 
-var _LinearLayout.dividerPadding: Int
-    get() = (vgInstance as android.widget.LinearLayout).getDividerPadding()
-    set(value) = (vgInstance as android.widget.LinearLayout).setDividerPadding(value)
+var _LinearLayout<android.widget.LinearLayout>.baselineAligned: Boolean
+    get() = vgInstance.isBaselineAligned()
+    set(value) = vgInstance.setBaselineAligned(value)
 
-var _LinearLayout.measureWithLargestChildEnabled: Boolean
-    get() = (vgInstance as android.widget.LinearLayout).isMeasureWithLargestChildEnabled()
-    set(value) = (vgInstance as android.widget.LinearLayout).setMeasureWithLargestChildEnabled(value)
+var _LinearLayout<android.widget.LinearLayout>.baselineAlignedChildIndex: Int
+    get() = vgInstance.getBaselineAlignedChildIndex()
+    set(value) = vgInstance.setBaselineAlignedChildIndex(value)
 
-var _LinearLayout.orientation: Int
-    get() = (vgInstance as android.widget.LinearLayout).getOrientation()
-    set(value) = (vgInstance as android.widget.LinearLayout).setOrientation(value)
+var _LinearLayout<android.widget.LinearLayout>.dividerDrawable: android.graphics.drawable.Drawable?
+    get() = vgInstance.getDividerDrawable()
+    set(value) = vgInstance.setDividerDrawable(value!!)
 
-var _LinearLayout.showDividers: Int
-    get() = (vgInstance as android.widget.LinearLayout).getShowDividers()
-    set(value) = (vgInstance as android.widget.LinearLayout).setShowDividers(value)
+var _LinearLayout<android.widget.LinearLayout>.dividerPadding: Int
+    get() = vgInstance.getDividerPadding()
+    set(value) = vgInstance.setDividerPadding(value)
 
-var _LinearLayout.weightSum: Float
-    get() = (vgInstance as android.widget.LinearLayout).getWeightSum()
-    set(value) = (vgInstance as android.widget.LinearLayout).setWeightSum(value)
+var _LinearLayout<android.widget.LinearLayout>.measureWithLargestChildEnabled: Boolean
+    get() = vgInstance.isMeasureWithLargestChildEnabled()
+    set(value) = vgInstance.setMeasureWithLargestChildEnabled(value)
 
-var _ListView.adapter: android.widget.ListAdapter?
-    get() = (vgInstance as android.widget.ListView).getAdapter()
-    set(value) = (vgInstance as android.widget.ListView).setAdapter(value!!)
+var _LinearLayout<android.widget.LinearLayout>.orientation: Int
+    get() = vgInstance.getOrientation()
+    set(value) = vgInstance.setOrientation(value)
 
-val _ListView.checkItemIds: LongArray?
-    get() = (vgInstance as android.widget.ListView).getCheckItemIds()
+var _LinearLayout<android.widget.LinearLayout>.showDividers: Int
+    get() = vgInstance.getShowDividers()
+    set(value) = vgInstance.setShowDividers(value)
 
-var _ListView.divider: android.graphics.drawable.Drawable?
-    get() = (vgInstance as android.widget.ListView).getDivider()
-    set(value) = (vgInstance as android.widget.ListView).setDivider(value!!)
+var _LinearLayout<android.widget.LinearLayout>.weightSum: Float
+    get() = vgInstance.getWeightSum()
+    set(value) = vgInstance.setWeightSum(value)
 
-var _ListView.dividerHeight: Int
-    get() = (vgInstance as android.widget.ListView).getDividerHeight()
-    set(value) = (vgInstance as android.widget.ListView).setDividerHeight(value)
+var _ListView<android.widget.ListView>.adapter: android.widget.ListAdapter?
+    get() = vgInstance.getAdapter()
+    set(value) = vgInstance.setAdapter(value!!)
 
-val _ListView.footerViewsCount: Int
-    get() = (vgInstance as android.widget.ListView).getFooterViewsCount()
+val _ListView<android.widget.ListView>.checkItemIds: LongArray?
+    get() = vgInstance.getCheckItemIds()
 
-val _ListView.headerViewsCount: Int
-    get() = (vgInstance as android.widget.ListView).getHeaderViewsCount()
+var _ListView<android.widget.ListView>.divider: android.graphics.drawable.Drawable?
+    get() = vgInstance.getDivider()
+    set(value) = vgInstance.setDivider(value!!)
 
-var _ListView.itemsCanFocus: Boolean
-    get() = (vgInstance as android.widget.ListView).getItemsCanFocus()
-    set(value) = (vgInstance as android.widget.ListView).setItemsCanFocus(value)
+var _ListView<android.widget.ListView>.dividerHeight: Int
+    get() = vgInstance.getDividerHeight()
+    set(value) = vgInstance.setDividerHeight(value)
 
-val _ListView.maxScrollAmount: Int
-    get() = (vgInstance as android.widget.ListView).getMaxScrollAmount()
+val _ListView<android.widget.ListView>.footerViewsCount: Int
+    get() = vgInstance.getFooterViewsCount()
 
-val _ListView.opaque: Boolean
-    get() = (vgInstance as android.widget.ListView).isOpaque()
+val _ListView<android.widget.ListView>.headerViewsCount: Int
+    get() = vgInstance.getHeaderViewsCount()
 
-var _ListView.overscrollFooter: android.graphics.drawable.Drawable?
-    get() = (vgInstance as android.widget.ListView).getOverscrollFooter()
-    set(value) = (vgInstance as android.widget.ListView).setOverscrollFooter(value!!)
+var _ListView<android.widget.ListView>.itemsCanFocus: Boolean
+    get() = vgInstance.getItemsCanFocus()
+    set(value) = vgInstance.setItemsCanFocus(value)
 
-var _ListView.overscrollHeader: android.graphics.drawable.Drawable?
-    get() = (vgInstance as android.widget.ListView).getOverscrollHeader()
-    set(value) = (vgInstance as android.widget.ListView).setOverscrollHeader(value!!)
+val _ListView<android.widget.ListView>.maxScrollAmount: Int
+    get() = vgInstance.getMaxScrollAmount()
 
-val _MediaController.showing: Boolean
-    get() = (vgInstance as android.widget.MediaController).isShowing()
+val _ListView<android.widget.ListView>.opaque: Boolean
+    get() = vgInstance.isOpaque()
 
-val _NumberPicker.accessibilityNodeProvider: android.view.accessibility.AccessibilityNodeProvider?
-    get() = (vgInstance as android.widget.NumberPicker).getAccessibilityNodeProvider()
+var _ListView<android.widget.ListView>.overscrollFooter: android.graphics.drawable.Drawable?
+    get() = vgInstance.getOverscrollFooter()
+    set(value) = vgInstance.setOverscrollFooter(value!!)
 
-var _NumberPicker.displayedValues: Array<jet.String>?
-    get() = (vgInstance as android.widget.NumberPicker).getDisplayedValues()
-    set(value) = (vgInstance as android.widget.NumberPicker).setDisplayedValues(value!!)
+var _ListView<android.widget.ListView>.overscrollHeader: android.graphics.drawable.Drawable?
+    get() = vgInstance.getOverscrollHeader()
+    set(value) = vgInstance.setOverscrollHeader(value!!)
 
-var _NumberPicker.maxValue: Int
-    get() = (vgInstance as android.widget.NumberPicker).getMaxValue()
-    set(value) = (vgInstance as android.widget.NumberPicker).setMaxValue(value)
+val _MediaController<android.widget.MediaController>.showing: Boolean
+    get() = vgInstance.isShowing()
 
-var _NumberPicker.minValue: Int
-    get() = (vgInstance as android.widget.NumberPicker).getMinValue()
-    set(value) = (vgInstance as android.widget.NumberPicker).setMinValue(value)
+val _NumberPicker<android.widget.NumberPicker>.accessibilityNodeProvider: android.view.accessibility.AccessibilityNodeProvider?
+    get() = vgInstance.getAccessibilityNodeProvider()
 
-val _NumberPicker.solidColor: Int
-    get() = (vgInstance as android.widget.NumberPicker).getSolidColor()
+var _NumberPicker<android.widget.NumberPicker>.displayedValues: Array<jet.String>?
+    get() = vgInstance.getDisplayedValues()
+    set(value) = vgInstance.setDisplayedValues(value!!)
 
-var _NumberPicker.value: Int
-    get() = (vgInstance as android.widget.NumberPicker).getValue()
-    set(value) = (vgInstance as android.widget.NumberPicker).setValue(value)
+var _NumberPicker<android.widget.NumberPicker>.maxValue: Int
+    get() = vgInstance.getMaxValue()
+    set(value) = vgInstance.setMaxValue(value)
 
-var _NumberPicker.wrapSelectorWheel: Boolean
-    get() = (vgInstance as android.widget.NumberPicker).getWrapSelectorWheel()
-    set(value) = (vgInstance as android.widget.NumberPicker).setWrapSelectorWheel(value)
+var _NumberPicker<android.widget.NumberPicker>.minValue: Int
+    get() = vgInstance.getMinValue()
+    set(value) = vgInstance.setMinValue(value)
 
-val _RadioGroup.checkedRadioButtonId: Int
-    get() = (vgInstance as android.widget.RadioGroup).getCheckedRadioButtonId()
+val _NumberPicker<android.widget.NumberPicker>.solidColor: Int
+    get() = vgInstance.getSolidColor()
 
-val _RelativeLayout.baseline: Int
-    get() = (vgInstance as android.widget.RelativeLayout).getBaseline()
+var _NumberPicker<android.widget.NumberPicker>.value: Int
+    get() = vgInstance.getValue()
+    set(value) = vgInstance.setValue(value)
 
-var _RelativeLayout.gravity: Int
-    get() = (vgInstance as android.widget.RelativeLayout).getGravity()
-    set(value) = (vgInstance as android.widget.RelativeLayout).setGravity(value)
+var _NumberPicker<android.widget.NumberPicker>.wrapSelectorWheel: Boolean
+    get() = vgInstance.getWrapSelectorWheel()
+    set(value) = vgInstance.setWrapSelectorWheel(value)
 
-var _ScrollView.fillViewport: Boolean
-    get() = (vgInstance as android.widget.ScrollView).isFillViewport()
-    set(value) = (vgInstance as android.widget.ScrollView).setFillViewport(value)
+val _RadioGroup<android.widget.RadioGroup>.checkedRadioButtonId: Int
+    get() = vgInstance.getCheckedRadioButtonId()
 
-val _ScrollView.maxScrollAmount: Int
-    get() = (vgInstance as android.widget.ScrollView).getMaxScrollAmount()
+val _RelativeLayout<android.widget.RelativeLayout>.baseline: Int
+    get() = vgInstance.getBaseline()
 
-var _ScrollView.smoothScrollingEnabled: Boolean
-    get() = (vgInstance as android.widget.ScrollView).isSmoothScrollingEnabled()
-    set(value) = (vgInstance as android.widget.ScrollView).setSmoothScrollingEnabled(value)
+var _RelativeLayout<android.widget.RelativeLayout>.gravity: Int
+    get() = vgInstance.getGravity()
+    set(value) = vgInstance.setGravity(value)
 
-val _SearchView.iconfiedByDefault: Boolean
-    get() = (vgInstance as android.widget.SearchView).isIconfiedByDefault()
+var _ScrollView<android.widget.ScrollView>.fillViewport: Boolean
+    get() = vgInstance.isFillViewport()
+    set(value) = vgInstance.setFillViewport(value)
 
-var _SearchView.iconified: Boolean
-    get() = (vgInstance as android.widget.SearchView).isIconified()
-    set(value) = (vgInstance as android.widget.SearchView).setIconified(value)
+val _ScrollView<android.widget.ScrollView>.maxScrollAmount: Int
+    get() = vgInstance.getMaxScrollAmount()
 
-var _SearchView.imeOptions: Int
-    get() = (vgInstance as android.widget.SearchView).getImeOptions()
-    set(value) = (vgInstance as android.widget.SearchView).setImeOptions(value)
+var _ScrollView<android.widget.ScrollView>.smoothScrollingEnabled: Boolean
+    get() = vgInstance.isSmoothScrollingEnabled()
+    set(value) = vgInstance.setSmoothScrollingEnabled(value)
 
-var _SearchView.inputType: Int
-    get() = (vgInstance as android.widget.SearchView).getInputType()
-    set(value) = (vgInstance as android.widget.SearchView).setInputType(value)
+val _SearchView<android.widget.SearchView>.iconfiedByDefault: Boolean
+    get() = vgInstance.isIconfiedByDefault()
 
-var _SearchView.maxWidth: Int
-    get() = (vgInstance as android.widget.SearchView).getMaxWidth()
-    set(value) = (vgInstance as android.widget.SearchView).setMaxWidth(value)
+var _SearchView<android.widget.SearchView>.iconified: Boolean
+    get() = vgInstance.isIconified()
+    set(value) = vgInstance.setIconified(value)
 
-val _SearchView.query: jet.CharSequence?
-    get() = (vgInstance as android.widget.SearchView).getQuery()
+var _SearchView<android.widget.SearchView>.imeOptions: Int
+    get() = vgInstance.getImeOptions()
+    set(value) = vgInstance.setImeOptions(value)
 
-var _SearchView.queryHint: jet.CharSequence?
-    get() = (vgInstance as android.widget.SearchView).getQueryHint()
-    set(value) = (vgInstance as android.widget.SearchView).setQueryHint(value!!)
+var _SearchView<android.widget.SearchView>.inputType: Int
+    get() = vgInstance.getInputType()
+    set(value) = vgInstance.setInputType(value)
 
-var _SearchView.queryRefinementEnabled: Boolean
-    get() = (vgInstance as android.widget.SearchView).isQueryRefinementEnabled()
-    set(value) = (vgInstance as android.widget.SearchView).setQueryRefinementEnabled(value)
+var _SearchView<android.widget.SearchView>.maxWidth: Int
+    get() = vgInstance.getMaxWidth()
+    set(value) = vgInstance.setMaxWidth(value)
 
-var _SearchView.submitButtonEnabled: Boolean
-    get() = (vgInstance as android.widget.SearchView).isSubmitButtonEnabled()
-    set(value) = (vgInstance as android.widget.SearchView).setSubmitButtonEnabled(value)
+val _SearchView<android.widget.SearchView>.query: jet.CharSequence?
+    get() = vgInstance.getQuery()
 
-var _SearchView.suggestionsAdapter: android.widget.CursorAdapter?
-    get() = (vgInstance as android.widget.SearchView).getSuggestionsAdapter()
-    set(value) = (vgInstance as android.widget.SearchView).setSuggestionsAdapter(value!!)
+var _SearchView<android.widget.SearchView>.queryHint: jet.CharSequence?
+    get() = vgInstance.getQueryHint()
+    set(value) = vgInstance.setQueryHint(value!!)
 
-val _Spinner.baseline: Int
-    get() = (vgInstance as android.widget.Spinner).getBaseline()
+var _SearchView<android.widget.SearchView>.queryRefinementEnabled: Boolean
+    get() = vgInstance.isQueryRefinementEnabled()
+    set(value) = vgInstance.setQueryRefinementEnabled(value)
 
-var _Spinner.dropDownHorizontalOffset: Int
-    get() = (vgInstance as android.widget.Spinner).getDropDownHorizontalOffset()
-    set(value) = (vgInstance as android.widget.Spinner).setDropDownHorizontalOffset(value)
+var _SearchView<android.widget.SearchView>.submitButtonEnabled: Boolean
+    get() = vgInstance.isSubmitButtonEnabled()
+    set(value) = vgInstance.setSubmitButtonEnabled(value)
 
-var _Spinner.dropDownVerticalOffset: Int
-    get() = (vgInstance as android.widget.Spinner).getDropDownVerticalOffset()
-    set(value) = (vgInstance as android.widget.Spinner).setDropDownVerticalOffset(value)
+var _SearchView<android.widget.SearchView>.suggestionsAdapter: android.widget.CursorAdapter?
+    get() = vgInstance.getSuggestionsAdapter()
+    set(value) = vgInstance.setSuggestionsAdapter(value!!)
 
-var _Spinner.dropDownWidth: Int
-    get() = (vgInstance as android.widget.Spinner).getDropDownWidth()
-    set(value) = (vgInstance as android.widget.Spinner).setDropDownWidth(value)
+val _SlidingDrawer<android.widget.SlidingDrawer>.content: android.view.View?
+    get() = vgInstance.getContent()
 
-var _Spinner.gravity: Int
-    get() = (vgInstance as android.widget.Spinner).getGravity()
-    set(value) = (vgInstance as android.widget.Spinner).setGravity(value)
+val _SlidingDrawer<android.widget.SlidingDrawer>.handle: android.view.View?
+    get() = vgInstance.getHandle()
 
-val _Spinner.popupBackground: android.graphics.drawable.Drawable?
-    get() = (vgInstance as android.widget.Spinner).getPopupBackground()
+val _SlidingDrawer<android.widget.SlidingDrawer>.moving: Boolean
+    get() = vgInstance.isMoving()
 
-var _Spinner.prompt: jet.CharSequence?
-    get() = (vgInstance as android.widget.Spinner).getPrompt()
-    set(value) = (vgInstance as android.widget.Spinner).setPrompt(value!!)
+val _SlidingDrawer<android.widget.SlidingDrawer>.opened: Boolean
+    get() = vgInstance.isOpened()
 
-var _TabHost.currentTab: Int
-    get() = (vgInstance as android.widget.TabHost).getCurrentTab()
-    set(value) = (vgInstance as android.widget.TabHost).setCurrentTab(value)
+val _Spinner<android.widget.Spinner>.baseline: Int
+    get() = vgInstance.getBaseline()
 
-val _TabHost.currentTabTag: jet.String?
-    get() = (vgInstance as android.widget.TabHost).getCurrentTabTag()
+var _Spinner<android.widget.Spinner>.dropDownHorizontalOffset: Int
+    get() = vgInstance.getDropDownHorizontalOffset()
+    set(value) = vgInstance.setDropDownHorizontalOffset(value)
 
-val _TabHost.currentTabView: android.view.View?
-    get() = (vgInstance as android.widget.TabHost).getCurrentTabView()
+var _Spinner<android.widget.Spinner>.dropDownVerticalOffset: Int
+    get() = vgInstance.getDropDownVerticalOffset()
+    set(value) = vgInstance.setDropDownVerticalOffset(value)
 
-val _TabHost.currentView: android.view.View?
-    get() = (vgInstance as android.widget.TabHost).getCurrentView()
+var _Spinner<android.widget.Spinner>.dropDownWidth: Int
+    get() = vgInstance.getDropDownWidth()
+    set(value) = vgInstance.setDropDownWidth(value)
 
-val _TabHost.tabContentView: android.widget.FrameLayout?
-    get() = (vgInstance as android.widget.TabHost).getTabContentView()
+var _Spinner<android.widget.Spinner>.gravity: Int
+    get() = vgInstance.getGravity()
+    set(value) = vgInstance.setGravity(value)
 
-val _TabHost.tabWidget: android.widget.TabWidget?
-    get() = (vgInstance as android.widget.TabHost).getTabWidget()
+val _Spinner<android.widget.Spinner>.popupBackground: android.graphics.drawable.Drawable?
+    get() = vgInstance.getPopupBackground()
 
-var _TabWidget.stripEnabled: Boolean
-    get() = (vgInstance as android.widget.TabWidget).isStripEnabled()
-    set(value) = (vgInstance as android.widget.TabWidget).setStripEnabled(value)
+var _Spinner<android.widget.Spinner>.prompt: jet.CharSequence?
+    get() = vgInstance.getPrompt()
+    set(value) = vgInstance.setPrompt(value!!)
 
-val _TabWidget.tabCount: Int
-    get() = (vgInstance as android.widget.TabWidget).getTabCount()
+var _TabHost<android.widget.TabHost>.currentTab: Int
+    get() = vgInstance.getCurrentTab()
+    set(value) = vgInstance.setCurrentTab(value)
 
-var _TableLayout.shrinkAllColumns: Boolean
-    get() = (vgInstance as android.widget.TableLayout).isShrinkAllColumns()
-    set(value) = (vgInstance as android.widget.TableLayout).setShrinkAllColumns(value)
+val _TabHost<android.widget.TabHost>.currentTabTag: jet.String?
+    get() = vgInstance.getCurrentTabTag()
 
-var _TableLayout.stretchAllColumns: Boolean
-    get() = (vgInstance as android.widget.TableLayout).isStretchAllColumns()
-    set(value) = (vgInstance as android.widget.TableLayout).setStretchAllColumns(value)
+val _TabHost<android.widget.TabHost>.currentTabView: android.view.View?
+    get() = vgInstance.getCurrentTabView()
 
-val _TableRow.virtualChildCount: Int
-    get() = (vgInstance as android.widget.TableRow).getVirtualChildCount()
+val _TabHost<android.widget.TabHost>.currentView: android.view.View?
+    get() = vgInstance.getCurrentView()
 
-val _TimePicker.baseline: Int
-    get() = (vgInstance as android.widget.TimePicker).getBaseline()
+val _TabHost<android.widget.TabHost>.tabContentView: android.widget.FrameLayout?
+    get() = vgInstance.getTabContentView()
 
-var _TimePicker.currentHour: jet.Int?
-    get() = (vgInstance as android.widget.TimePicker).getCurrentHour()
-    set(value) = (vgInstance as android.widget.TimePicker).setCurrentHour(value!!)
+val _TabHost<android.widget.TabHost>.tabWidget: android.widget.TabWidget?
+    get() = vgInstance.getTabWidget()
 
-var _TimePicker.currentMinute: jet.Int?
-    get() = (vgInstance as android.widget.TimePicker).getCurrentMinute()
-    set(value) = (vgInstance as android.widget.TimePicker).setCurrentMinute(value!!)
+var _TabWidget<android.widget.TabWidget>.stripEnabled: Boolean
+    get() = vgInstance.isStripEnabled()
+    set(value) = vgInstance.setStripEnabled(value)
 
-var _TimePicker.enabled: Boolean
-    get() = (vgInstance as android.widget.TimePicker).isEnabled()
-    set(value) = (vgInstance as android.widget.TimePicker).setEnabled(value)
+val _TabWidget<android.widget.TabWidget>.tabCount: Int
+    get() = vgInstance.getTabCount()
 
-val _TwoLineListItem.text1: android.widget.TextView?
-    get() = (vgInstance as android.widget.TwoLineListItem).getText1()
+var _TableLayout<android.widget.TableLayout>.shrinkAllColumns: Boolean
+    get() = vgInstance.isShrinkAllColumns()
+    set(value) = vgInstance.setShrinkAllColumns(value)
 
-val _TwoLineListItem.text2: android.widget.TextView?
-    get() = (vgInstance as android.widget.TwoLineListItem).getText2()
+var _TableLayout<android.widget.TableLayout>.stretchAllColumns: Boolean
+    get() = vgInstance.isStretchAllColumns()
+    set(value) = vgInstance.setStretchAllColumns(value)
 
-val _ViewAnimator.baseline: Int
-    get() = (vgInstance as android.widget.ViewAnimator).getBaseline()
+val _TableRow<android.widget.TableRow>.virtualChildCount: Int
+    get() = vgInstance.getVirtualChildCount()
 
-val _ViewAnimator.currentView: android.view.View?
-    get() = (vgInstance as android.widget.ViewAnimator).getCurrentView()
+val _TimePicker<android.widget.TimePicker>._24HourView: Boolean
+    get() = vgInstance.is24HourView()
 
-var _ViewAnimator.displayedChild: Int
-    get() = (vgInstance as android.widget.ViewAnimator).getDisplayedChild()
-    set(value) = (vgInstance as android.widget.ViewAnimator).setDisplayedChild(value)
+val _TimePicker<android.widget.TimePicker>.baseline: Int
+    get() = vgInstance.getBaseline()
 
-var _ViewAnimator.inAnimation: android.view.animation.Animation?
-    get() = (vgInstance as android.widget.ViewAnimator).getInAnimation()
-    set(value) = (vgInstance as android.widget.ViewAnimator).setInAnimation(value!!)
+var _TimePicker<android.widget.TimePicker>.currentHour: jet.Int?
+    get() = vgInstance.getCurrentHour()
+    set(value) = vgInstance.setCurrentHour(value!!)
 
-var _ViewAnimator.outAnimation: android.view.animation.Animation?
-    get() = (vgInstance as android.widget.ViewAnimator).getOutAnimation()
-    set(value) = (vgInstance as android.widget.ViewAnimator).setOutAnimation(value!!)
+var _TimePicker<android.widget.TimePicker>.currentMinute: jet.Int?
+    get() = vgInstance.getCurrentMinute()
+    set(value) = vgInstance.setCurrentMinute(value!!)
 
-var _ViewFlipper.autoStart: Boolean
-    get() = (vgInstance as android.widget.ViewFlipper).isAutoStart()
-    set(value) = (vgInstance as android.widget.ViewFlipper).setAutoStart(value)
+var _TimePicker<android.widget.TimePicker>.enabled: Boolean
+    get() = vgInstance.isEnabled()
+    set(value) = vgInstance.setEnabled(value)
 
-val _ViewFlipper.flipping: Boolean
-    get() = (vgInstance as android.widget.ViewFlipper).isFlipping()
+val _TwoLineListItem<android.widget.TwoLineListItem>.text1: android.widget.TextView?
+    get() = vgInstance.getText1()
 
-val _ViewSwitcher.nextView: android.view.View?
-    get() = (vgInstance as android.widget.ViewSwitcher).getNextView()
+val _TwoLineListItem<android.widget.TwoLineListItem>.text2: android.widget.TextView?
+    get() = vgInstance.getText2()
 
-val _WebView.contentHeight: Int
-    get() = (vgInstance as android.webkit.WebView).getContentHeight()
+val _ViewAnimator<android.widget.ViewAnimator>.baseline: Int
+    get() = vgInstance.getBaseline()
 
-val _WebView.favicon: android.graphics.Bitmap?
-    get() = (vgInstance as android.webkit.WebView).getFavicon()
+val _ViewAnimator<android.widget.ViewAnimator>.currentView: android.view.View?
+    get() = vgInstance.getCurrentView()
 
-val _WebView.progress: Int
-    get() = (vgInstance as android.webkit.WebView).getProgress()
+var _ViewAnimator<android.widget.ViewAnimator>.displayedChild: Int
+    get() = vgInstance.getDisplayedChild()
+    set(value) = vgInstance.setDisplayedChild(value)
 
-val _WebView.scale: Float
-    get() = (vgInstance as android.webkit.WebView).getScale()
+var _ViewAnimator<android.widget.ViewAnimator>.inAnimation: android.view.animation.Animation?
+    get() = vgInstance.getInAnimation()
+    set(value) = vgInstance.setInAnimation(value!!)
 
-val _WebView.settings: android.webkit.WebSettings?
-    get() = (vgInstance as android.webkit.WebView).getSettings()
+var _ViewAnimator<android.widget.ViewAnimator>.outAnimation: android.view.animation.Animation?
+    get() = vgInstance.getOutAnimation()
+    set(value) = vgInstance.setOutAnimation(value!!)
 
-val _WebView.title: jet.String?
-    get() = (vgInstance as android.webkit.WebView).getTitle()
+var _ViewFlipper<android.widget.ViewFlipper>.autoStart: Boolean
+    get() = vgInstance.isAutoStart()
+    set(value) = vgInstance.setAutoStart(value)
 
-val _WebView.url: jet.String?
-    get() = (vgInstance as android.webkit.WebView).getUrl()
+val _ViewFlipper<android.widget.ViewFlipper>.flipping: Boolean
+    get() = vgInstance.isFlipping()
+
+val _ViewSwitcher<android.widget.ViewSwitcher>.nextView: android.view.View?
+    get() = vgInstance.getNextView()
+
+var _WebView<android.webkit.WebView>.certificate: android.net.http.SslCertificate?
+    get() = vgInstance.getCertificate()
+    set(value) = vgInstance.setCertificate(value!!)
+
+val _WebView<android.webkit.WebView>.contentHeight: Int
+    get() = vgInstance.getContentHeight()
+
+val _WebView<android.webkit.WebView>.favicon: android.graphics.Bitmap?
+    get() = vgInstance.getFavicon()
+
+val _WebView<android.webkit.WebView>.hitTestResult: android.webkit.WebView.HitTestResult?
+    get() = vgInstance.getHitTestResult()
+
+val _WebView<android.webkit.WebView>.originalUrl: jet.String?
+    get() = vgInstance.getOriginalUrl()
+
+val _WebView<android.webkit.WebView>.privateBrowsingEnabled: Boolean
+    get() = vgInstance.isPrivateBrowsingEnabled()
+
+val _WebView<android.webkit.WebView>.progress: Int
+    get() = vgInstance.getProgress()
+
+val _WebView<android.webkit.WebView>.scale: Float
+    get() = vgInstance.getScale()
+
+val _WebView<android.webkit.WebView>.settings: android.webkit.WebSettings?
+    get() = vgInstance.getSettings()
+
+val _WebView<android.webkit.WebView>.title: jet.String?
+    get() = vgInstance.getTitle()
+
+val _WebView<android.webkit.WebView>.url: jet.String?
+    get() = vgInstance.getUrl()
+
+val _WebView<android.webkit.WebView>.visibleTitleHeight: Int
+    get() = vgInstance.getVisibleTitleHeight()
 
 var android.app.MediaRouteButton.routeTypes: Int
     get() = getRouteTypes()

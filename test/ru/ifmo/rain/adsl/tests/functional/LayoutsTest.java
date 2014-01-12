@@ -7,10 +7,10 @@ import ru.ifmo.rain.adsl.Subsystems;
 
 import java.io.File;
 
-public class ContainerClassesTest extends BaseFunctionalTest {
+public class LayoutsTest extends BaseFunctionalTest {
 
     private final String classPath = "android.widget.GridLayout";
-    private final File testDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/functional/ContainerClassesTest.kt");
+    private final File testDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/functional/LayoutsTest.kt");
 
     @Override
     @BeforeMethod
@@ -31,7 +31,7 @@ public class ContainerClassesTest extends BaseFunctionalTest {
     }
 
     @Test
-    public void testContainerClass() throws Exception {
+    public void testLayouts() throws Exception {
         runFunctionalTest(testDataFile, classPath, Subsystems.LAYOUTS);
     }
 }

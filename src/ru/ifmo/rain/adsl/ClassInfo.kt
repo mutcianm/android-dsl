@@ -3,6 +3,9 @@ package ru.ifmo.rain.adsl
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
+import java.util.ArrayList
+import org.objectweb.asm.tree.LocalVariableNode
+import java.util.HashMap
 
 public fun decapitalize(name: String): String {
     return name.substring(0, 1).toLowerCase() + name.substring(1)
@@ -23,31 +26,43 @@ fun cleanInternalName(name: String): String {
 val MethodNode.arguments: Array<Type>?
     get() = Type.getArgumentTypes(desc)
 
-fun MethodNode.processArguments(app: (String, Int, String) -> String): String {
+fun MethodNode.processArguments(app: (argName: String, argType: String, nullable: String) -> String): String {
     if (getArgumentCount() == 0)
         return ""
+    val locals = if (localVariables == null || localVariables!!.isEmpty())
+        HashMap<Int, LocalVariableNode>()
+    else
+        localVariables!!.toMap { a -> a.index to a }
     val buf = StringBuffer()
     var argNum = 0
+    var nameIndex = if (isStatic()) 0 else 1
     for (arg in arguments!!) {
         val argType = arg.toStr()
         val nullable = if (argType.endsWith("?")) "!!" else ""
-        buf append app(argType, argNum, nullable)
+        val local = locals[nameIndex]
+        val argName = local?.name ?: "p$argNum"
+        buf append app(argName, argType, nullable)
         argNum++
+        nameIndex += arg.getSize()
     }
     buf.delete(buf.length-2, buf.length)
     return buf.toString()
 }
 
 fun MethodNode.fmtArguments(): String {
-    return processArguments { t, num, nul -> "p$num: $t, " }
+    return processArguments { name, _type, nul -> "$name: $_type, " }
 }
 
 fun MethodNode.fmtArgumentsInvoke(): String {
-    return processArguments { t, num, nul -> "p$num$nul, " }
+    return processArguments { name, _type, nul -> "$name$nul, " }
 }
 
 fun MethodNode.fmtArgumentsTypes(): String {
-    return processArguments { t, num, nul -> "$t, " }
+    return processArguments { name, _type, nul -> "$_type, " }
+}
+
+fun MethodNode.isStatic(): Boolean {
+    return (access and Opcodes.ACC_STATIC) != 0
 }
 
 fun MethodNode.isGetter(): Boolean {

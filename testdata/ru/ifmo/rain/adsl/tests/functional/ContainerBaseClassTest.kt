@@ -1,4 +1,4 @@
-open class _Container(open val vgInstance: android.view.ViewGroup,
+open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
                  open val ctx: android.app.Activity) {
 
     var _style: ((X: Any) -> Unit) = {}

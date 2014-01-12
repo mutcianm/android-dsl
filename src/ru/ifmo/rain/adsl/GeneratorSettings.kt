@@ -35,6 +35,8 @@ open class GeneratorSettings(override var generateContainerBaseClass: Boolean = 
     override val containerBaseClass: String
         get() = "android/view/ViewGroup"
 
+    override val widgetBaseClass: String = "android/view/View"
+
     override val imports: String
         get() = readFile("imports.txt")
 

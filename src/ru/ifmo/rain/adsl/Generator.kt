@@ -94,7 +94,7 @@ class Generator(val jarPath: String, val packageName: String,
             classInfo.methods!!.forEach { method ->
                 methodHooks.forEach {
                     hook ->
-                    hook(MethodNodeWithParent(classInfo, method as MethodNode))
+                    hook(MethodNodeWithParent(classInfo, method))
                 }
             }
             classHooks.forEach { hook -> hook(classInfo) }
@@ -114,7 +114,7 @@ class Generator(val jarPath: String, val packageName: String,
 
 
     private fun isWidget(classNode: ClassNode): Boolean {
-        return classTree.isSuccessorOf(classNode, "android/view/View") ||
+        return classTree.isSuccessorOf(classNode, settings.widgetBaseClass) ||
                 classNode.name in explicitlyProcessedClasses
     }
 
@@ -129,11 +129,11 @@ class Generator(val jarPath: String, val packageName: String,
 
     private fun preProcessProperty(prop: PropertyData, context: MethodNodeWithParent): PropertyData {
         if (isContainer(context.parent)) {
-            prop.className = "_" + context.parent.cleanName()
+            prop.className = "_${context.parent.cleanName()}<${context.parent.cleanInternalName()}>"
             if (prop.setter != null)
-                prop.setter = "(vgInstance as " + context.parent.cleanInternalName() + ")." + prop.setter
+                prop.setter = "vgInstance." + prop.setter
             if (prop.getter != null)
-                prop.getter = "(vgInstance as " + context.parent.cleanInternalName() + ")." + prop.getter
+                prop.getter = "vgInstance." + prop.getter
         }
         return prop
     }

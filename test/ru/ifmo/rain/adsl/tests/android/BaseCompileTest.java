@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BaseCompileTest extends Assert {
-    final String kotlincFilename = "lib/kotlinc/bin/kotlinc-jvm";
+    private final String kotlincFilename = "lib/kotlinc/bin/kotlinc-jvm";
     final String inputJarFile = "android.jar";
     final String tmpJarFile = this.getClass() + "out.jar";
 

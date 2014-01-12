@@ -71,7 +71,7 @@ class ClassTree : Iterable<ClassNode>{
         val node = findNode(root, _class)
         if (node == null)
             throw NoSuchClassException()
-        return findParentIf(node, { it.data.methods!!.any { (it as MethodNode).isProperty(property) } })?.data
+        return findParentIf(node, { it.data.methods!!.any { it.isProperty(property) } })?.data
     }
 
     private fun getOrphansOf(parentClassName: String): List<ClassTreeNode> {

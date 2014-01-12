@@ -37,6 +37,8 @@ abstract class BaseGeneratorSettings(open var generateContainerBaseClass: Boolea
 
     abstract val containerBaseClass: String
 
+    abstract val widgetBaseClass: String
+
     abstract val imports: String
 
     abstract val containerHeader: String
