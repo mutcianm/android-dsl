@@ -11,7 +11,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
         val builder = AlertDialog.Builder(ctx)
         builder.setTitle(title)
         builder.func()
-        return builder.create()!!.show()
+        return builder.create().show()
     }
 
     fun mediaRouteButton( init: android.app.MediaRouteButton.() -> Unit): android.app.MediaRouteButton {
@@ -87,7 +87,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun fragmentBreadCrumbs( init: _FragmentBreadCrumbs.() -> Unit): _FragmentBreadCrumbs {
+    fun fragmentBreadCrumbs( init: _FragmentBreadCrumbs<android.app.FragmentBreadCrumbs>.() -> Unit): _FragmentBreadCrumbs<android.app.FragmentBreadCrumbs> {
         val v = _FragmentBreadCrumbs(android.app.FragmentBreadCrumbs(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -96,7 +96,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun relativeLayout( init: _RelativeLayout.() -> Unit): _RelativeLayout {
+    fun relativeLayout( init: _RelativeLayout<android.widget.RelativeLayout>.() -> Unit): _RelativeLayout<android.widget.RelativeLayout> {
         val v = _RelativeLayout(android.widget.RelativeLayout(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -105,7 +105,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun absoluteLayout( init: _AbsoluteLayout.() -> Unit): _AbsoluteLayout {
+    fun absoluteLayout( init: _AbsoluteLayout<android.widget.AbsoluteLayout>.() -> Unit): _AbsoluteLayout<android.widget.AbsoluteLayout> {
         val v = _AbsoluteLayout(android.widget.AbsoluteLayout(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -114,7 +114,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun frameLayout( init: _FrameLayout.() -> Unit): _FrameLayout {
+    fun frameLayout( init: _FrameLayout<android.widget.FrameLayout>.() -> Unit): _FrameLayout<android.widget.FrameLayout> {
         val v = _FrameLayout(android.widget.FrameLayout(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -123,7 +123,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun linearLayout( init: _LinearLayout.() -> Unit): _LinearLayout {
+    fun linearLayout( init: _LinearLayout<android.widget.LinearLayout>.() -> Unit): _LinearLayout<android.widget.LinearLayout> {
         val v = _LinearLayout(android.widget.LinearLayout(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -132,7 +132,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun gridLayout( init: _GridLayout.() -> Unit): _GridLayout {
+    fun gridLayout( init: _GridLayout<android.widget.GridLayout>.() -> Unit): _GridLayout<android.widget.GridLayout> {
         val v = _GridLayout(android.widget.GridLayout(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -229,7 +229,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun twoLineListItem( init: _TwoLineListItem.() -> Unit): _TwoLineListItem {
+    fun twoLineListItem( init: _TwoLineListItem<android.widget.TwoLineListItem>.() -> Unit): _TwoLineListItem<android.widget.TwoLineListItem> {
         val v = _TwoLineListItem(android.widget.TwoLineListItem(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -238,7 +238,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun dialerFilter( init: _DialerFilter.() -> Unit): _DialerFilter {
+    fun dialerFilter( init: _DialerFilter<android.widget.DialerFilter>.() -> Unit): _DialerFilter<android.widget.DialerFilter> {
         val v = _DialerFilter(android.widget.DialerFilter(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -247,16 +247,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun webView( init: _WebView.() -> Unit): _WebView {
-        val v = _WebView(android.webkit.WebView(ctx), ctx)
-        v.init()
-        vgInstance.addView(v.vgInstance)
-        _style(v)
-        return v
-    }
-
-    //container function
-    fun appWidgetHostView( init: _AppWidgetHostView.() -> Unit): _AppWidgetHostView {
+    fun appWidgetHostView( init: _AppWidgetHostView<android.appwidget.AppWidgetHostView>.() -> Unit): _AppWidgetHostView<android.appwidget.AppWidgetHostView> {
         val v = _AppWidgetHostView(android.appwidget.AppWidgetHostView(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -265,7 +256,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun gestureOverlayView( init: _GestureOverlayView.() -> Unit): _GestureOverlayView {
+    fun gestureOverlayView( init: _GestureOverlayView<android.gesture.GestureOverlayView>.() -> Unit): _GestureOverlayView<android.gesture.GestureOverlayView> {
         val v = _GestureOverlayView(android.gesture.GestureOverlayView(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -274,7 +265,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun calendarView( init: _CalendarView.() -> Unit): _CalendarView {
+    fun calendarView( init: _CalendarView<android.widget.CalendarView>.() -> Unit): _CalendarView<android.widget.CalendarView> {
         val v = _CalendarView(android.widget.CalendarView(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -283,7 +274,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun horizontalScrollView( init: _HorizontalScrollView.() -> Unit): _HorizontalScrollView {
+    fun horizontalScrollView( init: _HorizontalScrollView<android.widget.HorizontalScrollView>.() -> Unit): _HorizontalScrollView<android.widget.HorizontalScrollView> {
         val v = _HorizontalScrollView(android.widget.HorizontalScrollView(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -292,7 +283,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun scrollView( init: _ScrollView.() -> Unit): _ScrollView {
+    fun scrollView( init: _ScrollView<android.widget.ScrollView>.() -> Unit): _ScrollView<android.widget.ScrollView> {
         val v = _ScrollView(android.widget.ScrollView(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -301,7 +292,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun datePicker( init: _DatePicker.() -> Unit): _DatePicker {
+    fun datePicker( init: _DatePicker<android.widget.DatePicker>.() -> Unit): _DatePicker<android.widget.DatePicker> {
         val v = _DatePicker(android.widget.DatePicker(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -310,7 +301,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun timePicker( init: _TimePicker.() -> Unit): _TimePicker {
+    fun timePicker( init: _TimePicker<android.widget.TimePicker>.() -> Unit): _TimePicker<android.widget.TimePicker> {
         val v = _TimePicker(android.widget.TimePicker(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -319,7 +310,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun tabHost( init: _TabHost.() -> Unit): _TabHost {
+    fun tabHost( init: _TabHost<android.widget.TabHost>.() -> Unit): _TabHost<android.widget.TabHost> {
         val v = _TabHost(android.widget.TabHost(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -328,7 +319,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun viewAnimator( init: _ViewAnimator.() -> Unit): _ViewAnimator {
+    fun viewAnimator( init: _ViewAnimator<android.widget.ViewAnimator>.() -> Unit): _ViewAnimator<android.widget.ViewAnimator> {
         val v = _ViewAnimator(android.widget.ViewAnimator(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -337,7 +328,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun mediaController( init: _MediaController.() -> Unit): _MediaController {
+    fun mediaController( init: _MediaController<android.widget.MediaController>.() -> Unit): _MediaController<android.widget.MediaController> {
         val v = _MediaController(android.widget.MediaController(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -346,7 +337,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun tableLayout( init: _TableLayout.() -> Unit): _TableLayout {
+    fun tableLayout( init: _TableLayout<android.widget.TableLayout>.() -> Unit): _TableLayout<android.widget.TableLayout> {
         val v = _TableLayout(android.widget.TableLayout(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -355,7 +346,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun tableRow( init: _TableRow.() -> Unit): _TableRow {
+    fun tableRow( init: _TableRow<android.widget.TableRow>.() -> Unit): _TableRow<android.widget.TableRow> {
         val v = _TableRow(android.widget.TableRow(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -364,7 +355,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun numberPicker( init: _NumberPicker.() -> Unit): _NumberPicker {
+    fun numberPicker( init: _NumberPicker<android.widget.NumberPicker>.() -> Unit): _NumberPicker<android.widget.NumberPicker> {
         val v = _NumberPicker(android.widget.NumberPicker(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -373,7 +364,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun tabWidget( init: _TabWidget.() -> Unit): _TabWidget {
+    fun tabWidget( init: _TabWidget<android.widget.TabWidget>.() -> Unit): _TabWidget<android.widget.TabWidget> {
         val v = _TabWidget(android.widget.TabWidget(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -382,7 +373,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun radioGroup( init: _RadioGroup.() -> Unit): _RadioGroup {
+    fun radioGroup( init: _RadioGroup<android.widget.RadioGroup>.() -> Unit): _RadioGroup<android.widget.RadioGroup> {
         val v = _RadioGroup(android.widget.RadioGroup(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -391,7 +382,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun zoomControls( init: _ZoomControls.() -> Unit): _ZoomControls {
+    fun zoomControls( init: _ZoomControls<android.widget.ZoomControls>.() -> Unit): _ZoomControls<android.widget.ZoomControls> {
         val v = _ZoomControls(android.widget.ZoomControls(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -400,7 +391,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun searchView( init: _SearchView.() -> Unit): _SearchView {
+    fun searchView( init: _SearchView<android.widget.SearchView>.() -> Unit): _SearchView<android.widget.SearchView> {
         val v = _SearchView(android.widget.SearchView(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -449,7 +440,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun viewSwitcher( init: _ViewSwitcher.() -> Unit): _ViewSwitcher {
+    fun viewSwitcher( init: _ViewSwitcher<android.widget.ViewSwitcher>.() -> Unit): _ViewSwitcher<android.widget.ViewSwitcher> {
         val v = _ViewSwitcher(android.widget.ViewSwitcher(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -458,7 +449,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun viewFlipper( init: _ViewFlipper.() -> Unit): _ViewFlipper {
+    fun viewFlipper( init: _ViewFlipper<android.widget.ViewFlipper>.() -> Unit): _ViewFlipper<android.widget.ViewFlipper> {
         val v = _ViewFlipper(android.widget.ViewFlipper(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -467,7 +458,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun listView( init: _ListView.() -> Unit): _ListView {
+    fun listView( init: _ListView<android.widget.ListView>.() -> Unit): _ListView<android.widget.ListView> {
         val v = _ListView(android.widget.ListView(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -476,7 +467,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun gridView( init: _GridView.() -> Unit): _GridView {
+    fun gridView( init: _GridView<android.widget.GridView>.() -> Unit): _GridView<android.widget.GridView> {
         val v = _GridView(android.widget.GridView(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -485,7 +476,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun spinner( init: _Spinner.() -> Unit): _Spinner {
+    fun spinner( init: _Spinner<android.widget.Spinner>.() -> Unit): _Spinner<android.widget.Spinner> {
         val v = _Spinner(android.widget.Spinner(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -494,7 +485,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun gallery( init: _Gallery.() -> Unit): _Gallery {
+    fun gallery( init: _Gallery<android.widget.Gallery>.() -> Unit): _Gallery<android.widget.Gallery> {
         val v = _Gallery(android.widget.Gallery(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -503,7 +494,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun stackView( init: _StackView.() -> Unit): _StackView {
+    fun stackView( init: _StackView<android.widget.StackView>.() -> Unit): _StackView<android.widget.StackView> {
         val v = _StackView(android.widget.StackView(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -552,7 +543,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun textSwitcher( init: _TextSwitcher.() -> Unit): _TextSwitcher {
+    fun textSwitcher( init: _TextSwitcher<android.widget.TextSwitcher>.() -> Unit): _TextSwitcher<android.widget.TextSwitcher> {
         val v = _TextSwitcher(android.widget.TextSwitcher(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -561,7 +552,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun imageSwitcher( init: _ImageSwitcher.() -> Unit): _ImageSwitcher {
+    fun imageSwitcher( init: _ImageSwitcher<android.widget.ImageSwitcher>.() -> Unit): _ImageSwitcher<android.widget.ImageSwitcher> {
         val v = _ImageSwitcher(android.widget.ImageSwitcher(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)
@@ -570,7 +561,7 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
     }
 
     //container function
-    fun expandableListView( init: _ExpandableListView.() -> Unit): _ExpandableListView {
+    fun expandableListView( init: _ExpandableListView<android.widget.ExpandableListView>.() -> Unit): _ExpandableListView<android.widget.ExpandableListView> {
         val v = _ExpandableListView(android.widget.ExpandableListView(ctx), ctx)
         v.init()
         vgInstance.addView(v.vgInstance)

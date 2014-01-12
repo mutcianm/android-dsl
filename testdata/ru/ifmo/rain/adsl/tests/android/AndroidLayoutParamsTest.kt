@@ -14,7 +14,7 @@ import android.view.Gravity
 public open class MyActivity() : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?): Unit {
         super.onCreate(savedInstanceState)
-        UI(this) {
+        UI {
             linearLayout {
                 editText {
                     layoutParams(-2, -2) {

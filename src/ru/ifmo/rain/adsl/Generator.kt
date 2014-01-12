@@ -31,12 +31,13 @@ class Hook<T>(val predicate: ((_class: T) -> Boolean), val function: ((_class: T
     }
 }
 
-class PropertyData(var className: String,
+class PropertyData(var parentClass: ClassNode,
                    var propName: String,
                    var propType: Type?,
                    var getter: String?,
                    var setter: String?,
-                   var valueType: Type?)
+                   var valueType: Type?,
+                   val isContainer: Boolean)
 
 
 class Generator(val jarPath: String, val packageName: String,
@@ -64,10 +65,10 @@ class Generator(val jarPath: String, val packageName: String,
 
     private val methodHooks = Arrays.asList<Hook<MethodNodeWithParent>>(
             Hook({
-                isWidget(it.parent) && it.child.isGetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
+                isWidget(it.parent) && !isBlacklistedClass(it.parent) && it.child.isGetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
             }, { genGetter(it) }),
             Hook({
-                isWidget(it.parent) && it.child.isSetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
+                isWidget(it.parent) && !isBlacklistedClass(it.parent) && it.child.isSetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
             }, { genSetter(it) }),
             Hook({
                 it.child.name!!.startsWith("setOn") && it.child.name!!.endsWith("Listener") && !isBlacklistedClass(it.parent)
@@ -106,7 +107,7 @@ class Generator(val jarPath: String, val packageName: String,
 
     private fun produceProperties() {
         for (prop in propMap.values()) {
-            if (!isBlacklistedProperty(prop.className + '.' + prop.propName))
+            if (!isBlacklistedProperty(prop.parentClass.cleanInternalName() + '.' + prop.propName))
                 if (prop.getter != null && prop.propType?.getSort() != Type.VOID)
                     dslWriter.produceProperty(prop)
         }
@@ -127,35 +128,22 @@ class Generator(val jarPath: String, val packageName: String,
         dslWriter.genListenerHelper(methodInfo, node.data)
     }
 
-    private fun preProcessProperty(prop: PropertyData, context: MethodNodeWithParent): PropertyData {
-        if (isContainer(context.parent)) {
-            prop.className = "_${context.parent.cleanName()}<${context.parent.cleanInternalName()}>"
-            if (prop.setter != null)
-                prop.setter = "vgInstance." + prop.setter
-            if (prop.getter != null)
-                prop.getter = "vgInstance." + prop.getter
-        }
-        return prop
-    }
-
     private fun genSetter(methodInfo: MethodNodeWithParent) {
         if (!settings.generateSetters) return
-        val property = preProcessProperty(PropertyData(methodInfo.parent.cleanInternalName(), methodInfo.child.toProperty(), null, null,
-                    methodInfo.child.name, methodInfo.child.arguments!![0]),
-                methodInfo)
+        val property = PropertyData(methodInfo.parent, methodInfo.child.toProperty(), null, null,
+                    methodInfo.child.name, methodInfo.child.arguments!![0],isContainer(methodInfo.parent))
         updateProperty(property)
     }
 
     private fun genGetter(methodInfo: MethodNodeWithParent) {
         if (!settings.generateGetters) return
-        val property = preProcessProperty(PropertyData(methodInfo.parent.cleanInternalName(), methodInfo.child.toProperty(),
-                    methodInfo.child.getReturnType(), methodInfo.child.name, null, null),
-                methodInfo)
+        val property = PropertyData(methodInfo.parent, methodInfo.child.toProperty(),
+                    methodInfo.child.getReturnType(), methodInfo.child.name, null, null, isContainer(methodInfo.parent))
         updateProperty(property)
     }
 
     private fun updateProperty(newProp: PropertyData) {
-        val prop = propMap[newProp.className + newProp.propName]
+        val prop = propMap[newProp.parentClass.cleanInternalName()  + newProp.propName]
         if (prop != null) {
             with(prop) {
                 setter = updateIfNotNull(setter, newProp.setter)
@@ -164,7 +152,7 @@ class Generator(val jarPath: String, val packageName: String,
                 propType = updateIfNotNull(propType, newProp.propType)
             }
         } else {
-            propMap[newProp.className + newProp.propName] = newProp
+            propMap[newProp.parentClass.cleanInternalName()  + newProp.propName] = newProp
         }
     }
 

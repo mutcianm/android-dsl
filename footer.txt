@@ -1,4 +1,4 @@
-fun UI(act: android.app.Activity, init: _UI.() -> Unit) {
-    val ui = _UI(act)
+fun android.app.Activity.UI(init: _UI.() -> Unit) {
+    val ui = _UI(this)
     ui.init()
 }

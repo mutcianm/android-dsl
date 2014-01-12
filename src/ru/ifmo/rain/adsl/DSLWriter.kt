@@ -59,10 +59,16 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
     }
 
     public fun produceProperty(prop: PropertyData) {
-//        if ((prop.setter != null) && prop.propType != prop.valueType) {
-//            System.err.println("Property "+ prop.propName+" setter type != getter type: " + prop.propType?.toStr() + " != "+ prop.valueType?.toStr() )
-//            return
-//        }
+        val className: String
+        if (prop.isContainer) {
+            className = "_${prop.parentClass.cleanName()}<${prop.parentClass.cleanInternalName()}>"
+            if (prop.setter != null)
+                prop.setter = "vgInstance." + prop.setter
+            if (prop.getter != null)
+                prop.getter = "vgInstance." + prop.getter
+        } else {
+            className = prop.parentClass.cleanInternalName()
+        }
         val propertyReturnType = prop.propType!!.toStr()
         val mutability = if (prop.setter == null) "val" else "var"
         val setterValue = if (propertyReturnType.endsWith("?")) "(value!!)" else "(value)"
@@ -79,7 +85,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
     public fun genListenerHelper(view: MethodNodeWithParent, lp: ClassNode) {
         val methods = lp.methods?.filter { it.name != "<init>" }
         if (methods != null && (methods.size() != 1)) {
-//            System.err.println("Unsupported number of methods in " + lp.name + ": " + lp.methods?.size)
+            System.err.println("Unsupported number of methods in " + lp.name + ": " + lp.methods?.size)
             return
         }
         val parentClassName = view.parent.cleanInternalName()
@@ -87,7 +93,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         val listenerName = decapitalize(view.child.name!!.replace("set", "").replace("Listener", ""))
         val method = methods!![0]
         if (method.signature != null) {
-//            System.err.println("Generic methods are unsupported: " + method.signature)
+            System.err.println("Generic methods are unsupported: " + method.signature)
             return
         }
         val listenerArgumentTypes = method.fmtArgumentsTypes()
@@ -120,7 +126,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
                                       cleanName: String,
                                       cleanInternalName: String) {
         containerCache append "    //container function\n"
-        containerCache append "    fun $cleanNameDecap( init: _$cleanName.() -> Unit): _$cleanName {\n"
+        containerCache append "    fun $cleanNameDecap( init: _$cleanName<$cleanInternalName>.() -> Unit): _$cleanName<$cleanInternalName> {\n"
         containerCache append "        val v = _$cleanName($cleanInternalName(ctx), ctx)\n"
         containerCache append "        v.init()\n"
         containerCache append "        vgInstance.addView(v.vgInstance)\n"
@@ -157,7 +163,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         val cleanNameDecap = classNode.cleanNameDecap()
         val cleanName = classNode.cleanName()
         val cleanInternalName = classNode.cleanInternalName()
-        uiClassCache append "    fun $cleanNameDecap(init: _$cleanName.() -> Unit) {\n"
+        uiClassCache append "    fun $cleanNameDecap(init: _$cleanName<$cleanInternalName>.() -> Unit) {\n"
         uiClassCache append "        val layout = _$cleanName<$cleanInternalName>($cleanInternalName(act), act)\n"
         uiClassCache append "        layout.init()\n"
         uiClassCache append "        act.setContentView(layout.vgInstance)\n    }\n\n"
@@ -183,7 +189,6 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
 
     private fun finalizeCaches() {
         uiClassCache   append "}\n\n"
-        //TODO: make UI function Activity's extension method
         if (settings.generateUIClassWrapper)
                 uiClassCache append settings.footer
         containerCache append "}\n\n"

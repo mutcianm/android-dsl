@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 public open class MyActivity() : Activity() {
     public override fun onCreate(savedInstanceState: Bundle?): Unit {
         super.onCreate(savedInstanceState)
-        UI(this) {
+        UI {
             linearLayout {
                 orientation = LinearLayout.VERTICAL
                 val tv1 = textView {

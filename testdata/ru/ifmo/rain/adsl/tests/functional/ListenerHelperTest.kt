@@ -112,6 +112,21 @@ fun android.view.View.onDrag(l: (android.view.View?, android.view.DragEvent?) ->
 fun android.view.View.onSystemUiVisibilityChange(l: (Int) -> jet.Unit) {
     setOnSystemUiVisibilityChangeListener(l)
 }
+fun android.widget.PopupMenu.onMenuItemClick(l: (android.view.MenuItem?) -> Boolean) {
+    setOnMenuItemClickListener(l)
+}
+fun android.widget.PopupMenu.onDismiss(l: (android.widget.PopupMenu?) -> jet.Unit) {
+    setOnDismissListener(l)
+}
+fun android.widget.ListPopupWindow.onDismiss(l: () -> jet.Unit) {
+    setOnDismissListener(l)
+}
+fun android.widget.PopupWindow.onDismiss(l: () -> jet.Unit) {
+    setOnDismissListener(l)
+}
+fun android.widget.ShareActionProvider.onShareTargetSelected(l: (android.widget.ShareActionProvider?, android.content.Intent?) -> Boolean) {
+    setOnShareTargetSelectedListener(l)
+}
 fun android.view.ViewStub.onInflate(l: (android.view.ViewStub?, android.view.View?) -> jet.Unit) {
     setOnInflateListener(l)
 }

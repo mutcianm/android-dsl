@@ -1,17 +1,1 @@
-android.widget.AutoCompleteTextView.adapter
-android.widget.EditText.text
-android.widget.AbsListView.selector
-_SlidingDrawer.content
-_SlidingDrawer.handle
-_SlidingDrawer.moving
-_SlidingDrawer.opened
-_TimePicker.24HourView
-_WebView.visibleTitleHeight
-_WebView.privateBrowsingEnabled
-_WebView.originalUrl
-_WebView.hitTestResult
-_WebView.certificate
-_AdapterViewFlipper.autoStart
-_AdapterViewFlipper.flipInterval
-_AdapterViewFlipper.flipping
 android.inputmethodservice.KeyboardView.shifted
