@@ -5,8 +5,13 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.File
 import org.objectweb.asm.tree.MethodNode
+import org.objectweb.asm.util.TraceSignatureVisitor
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.signature.SignatureReader
 
 open class DSLWriterException(message: String): DSLException(message)
+open class InvalidListenerException(message: String): DSLWriterException(message)
+open class InvalidIndent(num: Int): DSLWriterException("Indentation level < 0: $num")
 
 class DSLWriter(val settings: BaseGeneratorSettings) {
 
@@ -49,45 +54,48 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         out.close()
     }
 
-
-
-    private fun fixTermName(name: String): String {
+    private fun fixIdentName(name: String): String {
         if (name in keywordSet || name.charAt(0).isDigit())
             return "_$name"
         else
             return name
     }
 
+    private fun fixListenerMethodArgs(key: String, defaultArgs: String): String {
+        return when(key) {
+            "OnSeekBarChangeListeneronProgressChanged" -> "p0: android.widget.SeekBar, p1: Int, p2: Boolean"
+            "OnSeekBarChangeListeneronStopTrackingTouch" -> "p0: android.widget.SeekBar"
+            "OnScrollListeneronScroll" -> "p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int"
+            else -> defaultArgs
+        }
+    }
+
     public fun produceProperty(prop: PropertyData) {
+        var c = Context(propsCache)
         val className: String
         if (prop.isContainer) {
             className = "_${prop.parentClass.cleanName()}<${prop.parentClass.cleanInternalName()}>"
-            if (prop.setter != null)
-                prop.setter = "vgInstance." + prop.setter
-            if (prop.getter != null)
-                prop.getter = "vgInstance." + prop.getter
+            if (prop.setter != null) prop.setter = "vgInstance." + prop.setter
+            if (prop.getter != null) prop.getter = "vgInstance." + prop.getter
         } else {
             className = prop.parentClass.cleanInternalName()
         }
         val propertyReturnType = prop.propType!!.toStr()
         val mutability = if (prop.setter == null) "val" else "var"
         val setterValue = if (propertyReturnType.endsWith("?")) "(value!!)" else "(value)"
-        prop.propName = fixTermName(prop.propName)
+        prop.propName = fixIdentName(prop.propName)
         with (prop) {
-            propsCache append "$mutability $className.$propName: $propertyReturnType\n"
-            propsCache append "    get() = $getter()\n"
+            c.writeln("$mutability $className.$propName: $propertyReturnType")
+            c.incIndent()
+            c.writeln("get() = $getter()")
             if (setter != null)
-                propsCache append "    set(value) = $setter$setterValue\n"
-            propsCache append "\n"
+                c.writeln("set(value) = $setter$setterValue")
         }
+        c.newLine()
     }
 
-    public fun genListenerHelper(view: MethodNodeWithParent, lp: ClassNode) {
-        val methods = lp.methods?.filter { it.name != "<init>" }
-        if (methods != null && (methods.size() != 1)) {
-            System.err.println("Unsupported number of methods in " + lp.name + ": " + lp.methods?.size)
-            return
-        }
+    private fun makeListenerHelper(cont: Context, view: MethodNodeWithParent, listener: ClassNode) {
+        val methods = listener.methods?.filter { it.name != "<init>" }
         val parentClassName = view.parent.cleanInternalName()
         val setter = view.child.name
         val listenerName = decapitalize(view.child.name!!.replace("set", "").replace("Listener", ""))
@@ -98,75 +106,153 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         }
         val listenerArgumentTypes = method.fmtArgumentsTypes()
         val listenerReturnType = method.getReturnType().toStr()
-                listenerFunCache append "fun $parentClassName.$listenerName(l: ($listenerArgumentTypes) -> $listenerReturnType) {\n"
-                listenerFunCache append "    $setter(l)\n}\n"
+        cont.writeln("fun $parentClassName.$listenerName(l: ($listenerArgumentTypes) -> $listenerReturnType) {")
+        cont.incIndent()
+        cont.writeln("$setter(l)")
+        cont.decIndent()
+        cont.writeln("}\n")
+    }
+
+    private fun makeListenerObject(cont: Context, view: MethodNodeWithParent, listener: ClassNode) {
+        val methods = listener.methods?.filter { it.name != "<init>" }
+        val wrapperClassName = "__${view.parent.cleanName()}${listener.cleanName()}"
+        cont.writeln("class $wrapperClassName {")
+        //generate helper class
+        cont.incIndent()
+        for (method in methods!!) {
+            val propType = "(${method.fmtArguments()}) -> ${method.getReturnType().toStr()}"
+            val propInitializer = "{ ${method.fmtArgumentsNames()} -> throw RuntimeException(\"Method not overriden\") }"
+            cont.writeln("var ${method.name}: $propType = $propInitializer")
+        }
+        cont.decIndent()
+        cont.writeln("}\n")
+        //generate extension function
+        val parentClassName = view.parent.cleanInternalName()
+        val listenerName = decapitalize(view.child.name!!.replace("set", "").replace("Listener", ""))
+        val objectConsArgs = listener.methods!!.find { it.isConstructor() }?.fmtArguments()
+        val objectCons = if (objectConsArgs != null) "($objectConsArgs)" else ""
+        cont.writeln("fun $parentClassName.$listenerName(init: $wrapperClassName.() -> Unit) {")
+        cont.incIndent()
+        cont.writeln("val wrapper = $wrapperClassName()")
+        cont.writeln("wrapper.init()")
+        cont.writeln("val listener = object: ${listener.cleanInternalName()}$objectCons {")
+        cont.incIndent()
+        for (method in methods) {
+            val returnType = method.getReturnType().toStr()
+            val returnTerm = if(returnType == "jet.Unit") "" else ": $returnType"
+            val returnStmt = if(returnType == "jet.Unit") "" else "return "
+            val methodArgs = fixListenerMethodArgs(listener.cleanName()+method.name, method.fmtArguments())
+            cont.writeln("override fun ${method.name}(${methodArgs})$returnTerm {")
+            cont.incIndent()
+            cont.writeln("${returnStmt}wrapper.${method.name}(${method.fmtArgumentsInvoke()})")
+            cont.decIndent()
+            cont.writeln("}")
+        }
+        cont.decIndent()
+        cont.writeln("}")
+        cont.writeln("${view.child.name}(listener)")
+        cont.decIndent()
+        cont.writeln("}\n")
+    }
+
+    public fun genListenerHelper(view: MethodNodeWithParent, listener: ClassNode) {
+        val cont = Context(listenerFunCache)
+        val methods = listener.methods?.filter { it.name != "<init>" }
+        if (methods == null)
+            throw InvalidListenerException("Listener ${listener.name} has no listener methods")
+        if (methods.any { it.signature != null }) {
+            System.err.println("Generic methods are unsupported: ${listener.name}")
+            return
+        }
+        if (methods.size() == 1) {
+            makeListenerHelper(cont, view, listener)
+        } else {
+            makeListenerObject(cont, view, listener)
+        }
     }
 
     public fun makeWidget(className: String,
                            internalName: String,
                            arguments: List<PropertyData>) {
+        var cont = Context(containerCache, 1)
         val args = StringBuilder()
         arguments.forEach {
             args append "${it.propName}: ${it.propType!!.toStr()}, "
         }
         val strArgs = args.toString()
-        containerCache append "    fun $className($strArgs init: $internalName.() -> Unit): $internalName {\n"
-        containerCache append "        val v = $internalName(ctx)\n"
-        for (arg in arguments) {
-            val argName = arg.propName
-            containerCache append "        v.$argName = $argName\n"
-        }
-        containerCache append "        v.init()\n"
-        containerCache append "        vgInstance.addView(v)\n"
-        containerCache append "        _style(v)\n"
-        containerCache append "        return v\n    }\n\n"
+        cont.writeln("fun $className($strArgs init: $internalName.() -> Unit): $internalName {")
+        cont.incIndent()
+        cont writeln "val v = $internalName(ctx)"
+        for (arg in arguments)
+            cont.writeln("v.${arg.propName} = ${arg.propName}")
+        cont.writeln("v.init()")
+        cont.writeln("vgInstance.addView(v)")
+        cont.writeln("_style(v)")
+        cont.writeln("return v")
+        cont.decIndent()
+        cont.writeln("}\n")
     }
 
     public fun makeContainerWidgetFun(cleanNameDecap: String,
                                       cleanName: String,
                                       cleanInternalName: String) {
-        containerCache append "    //container function\n"
-        containerCache append "    fun $cleanNameDecap( init: _$cleanName<$cleanInternalName>.() -> Unit): _$cleanName<$cleanInternalName> {\n"
-        containerCache append "        val v = _$cleanName($cleanInternalName(ctx), ctx)\n"
-        containerCache append "        v.init()\n"
-        containerCache append "        vgInstance.addView(v.vgInstance)\n"
-        containerCache append "        _style(v)\n"
-        containerCache append "        return v\n    }\n\n"
+        var cont = Context(containerCache, 1)
+        cont.writeln("//container function")
+        cont.writeln("fun $cleanNameDecap( init: _$cleanName<$cleanInternalName>.() -> Unit): _$cleanName<$cleanInternalName> {")
+        cont.incIndent()
+        cont.writeln("val v = _$cleanName($cleanInternalName(ctx), ctx)")
+        cont.writeln("v.init()")
+        cont.writeln("vgInstance.addView(v.vgInstance)")
+        cont.writeln("_style(v)")
+        cont.writeln("return v")
+        cont.decIndent()
+        cont.writeln("}\n")
     }
 
     public fun genContainerClass(classNode: ClassNode, layoutParams: ClassNode?) {
+        val cont = Context(containerClassesCache)
         val cleanName = classNode.cleanName()
-        containerClassesCache append "class _$cleanName<out T: android.view.ViewGroup>"
-        containerClassesCache append "(vgInstance: T, ctx: android.app.Activity): _Container<T>(vgInstance, ctx) {\n\n"
+        cont.write("class _$cleanName<out T: android.view.ViewGroup>")
+        cont.writeln("(vgInstance: T, ctx: android.app.Activity): _Container<T>(vgInstance, ctx) {")
+        cont.newLine()
         if (layoutParams != null)
-            genLayoutParams(classNode, layoutParams)
-        containerClassesCache append "}\n\n"
+            genLayoutParams(cont, classNode, layoutParams)
+        cont.writeln("}\n")
     }
 
-    private fun makeLayoutParam(classNode: ClassNode, layoutParams: ClassNode, cons: MethodNode) {
+    private fun makeLayoutParam(c: Context, classNode: ClassNode, layoutParams: ClassNode, cons: MethodNode) {
         val cleanName = layoutParams.cleanInternalName()
         val params = cons.fmtArguments()
         val paramsInvoke = cons.fmtArgumentsInvoke()
         val separator = if (params == "") "" else ","
-        containerClassesCache append "    fun android.view.View.layoutParams($params$separator init: $cleanName.() -> Unit) {\n"
-        containerClassesCache append "        val lp = $cleanName($paramsInvoke)\n"
-        containerClassesCache append "        lp.init()\n"
-        containerClassesCache append "        this@layoutParams.setLayoutParams(lp)\n    }\n\n"
+        c.writeln("fun android.view.View.layoutParams($params$separator init: $cleanName.() -> Unit) {")
+        c.incIndent()
+        c.writeln("val lp = $cleanName($paramsInvoke)")
+        c.writeln("lp.init()")
+        c.writeln("this@layoutParams.setLayoutParams(lp)")
+        c.decIndent()
+        c.writeln("}\n")
     }
-    public fun genLayoutParams(viewGroup: ClassNode, layoutParams: ClassNode) {
+    public fun genLayoutParams(c: Context, viewGroup: ClassNode, layoutParams: ClassNode) {
+        c.incIndent()
         for (cons in layoutParams.getConstructors()) {
-            makeLayoutParam(viewGroup, layoutParams, cons)
+            makeLayoutParam(c, viewGroup, layoutParams, cons)
         }
+        c.decIndent()
     }
 
     public fun genUIWidgetFun(classNode: ClassNode) {
+        val c = Context(uiClassCache, 1)
         val cleanNameDecap = classNode.cleanNameDecap()
         val cleanName = classNode.cleanName()
         val cleanInternalName = classNode.cleanInternalName()
-        uiClassCache append "    fun $cleanNameDecap(init: _$cleanName<$cleanInternalName>.() -> Unit) {\n"
-        uiClassCache append "        val layout = _$cleanName<$cleanInternalName>($cleanInternalName(act), act)\n"
-        uiClassCache append "        layout.init()\n"
-        uiClassCache append "        act.setContentView(layout.vgInstance)\n    }\n\n"
+        c.writeln("fun $cleanNameDecap(init: _$cleanName<$cleanInternalName>.() -> Unit) {")
+        c.incIndent()
+        c.writeln("val layout = _$cleanName<$cleanInternalName>($cleanInternalName(act), act)")
+        c.writeln("layout.init()")
+        c.writeln("act.setContentView(layout.vgInstance)")
+        c.decIndent()
+        c.writeln("}\n")
     }
 
     private fun initCaches() {

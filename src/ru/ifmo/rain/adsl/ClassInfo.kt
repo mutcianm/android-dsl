@@ -61,6 +61,10 @@ fun MethodNode.fmtArgumentsTypes(): String {
     return processArguments { name, _type, nul -> "$_type, " }
 }
 
+fun MethodNode.fmtArgumentsNames(): String {
+    return processArguments { name, _type, nul -> "$name, " }
+}
+
 fun MethodNode.isStatic(): Boolean {
     return (access and Opcodes.ACC_STATIC) != 0
 }

@@ -15,7 +15,6 @@
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidSimpleTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/android/AndroidWidgetTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/ContainerBaseClassTest.kt" />
-    <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/ContainerClassesTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/HelperConstructorTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/ImportsTest.kt" />
     <file url="file://$PROJECT_DIR$/testdata/ru/ifmo/rain/adsl/tests/functional/ListenerHelperTest.kt" />
