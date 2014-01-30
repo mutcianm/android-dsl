@@ -6,6 +6,9 @@ import org.objectweb.asm.tree.MethodNode
 import java.util.ArrayList
 import org.objectweb.asm.tree.LocalVariableNode
 import java.util.HashMap
+import com.sun.tools.classfile.StackMapTable_attribute.append_frame
+
+class NoSignatureException(message: String): DSLException(message)
 
 public fun decapitalize(name: String): String {
     return name.substring(0, 1).toLowerCase() + name.substring(1)
@@ -26,6 +29,37 @@ fun cleanInternalName(name: String): String {
 val MethodNode.arguments: Array<Type>?
     get() = Type.getArgumentTypes(desc)
 
+fun genericTypeToStr(param: GenericType): String {
+    var res = StringBuilder()
+    res append when(param.classifier) {
+        is ToplevelClass -> cleanInternalName((param.classifier as ToplevelClass).internalName)
+        is BaseType -> Type.getType("${(param.classifier as BaseType).descriptor}")!!.toStr()
+        else -> "WTF"
+    }
+    if (param.arguments.size > 0) {
+        res append "<"
+        for (arg in param.arguments) {
+            res append when(arg) {
+                is UnBoundedWildcard -> "*"
+                is NoWildcard -> genericTypeToStr(arg.genericType)
+                else -> "WTFARG"
+            }
+            res append ", "
+        }
+        res.delete(res.size-2, res.size)
+        res append ">"
+    }
+    if (param.classifier is ToplevelClass) res append "?"
+    return res.toString()
+}
+
+fun MethodNode.buildKotlinSignature(): List<String> {
+    if (signature == null)
+        return ArrayList<String>()
+    val parsed = parseGenericMethodSignature(signature!!)
+    return parsed.valueParameters.map { genericTypeToStr(it.genericType) }
+}
+
 fun MethodNode.processArguments(app: (argName: String, argType: String, nullable: String) -> String): String {
     if (getArgumentCount() == 0)
         return ""
@@ -36,12 +70,13 @@ fun MethodNode.processArguments(app: (argName: String, argType: String, nullable
     val buf = StringBuffer()
     var argNum = 0
     var nameIndex = if (isStatic()) 0 else 1
+    val genericArgs = buildKotlinSignature()
     for (arg in arguments!!) {
         val argType = arg.toStr()
         val nullable = if (argType.endsWith("?")) "!!" else ""
         val local = locals[nameIndex]
         val argName = local?.name ?: "p$argNum"
-        buf append app(argName, argType, nullable)
+        buf append app(argName, if(signature != null) genericArgs[argNum] else argType, nullable)
         argNum++
         nameIndex += arg.getSize()
     }

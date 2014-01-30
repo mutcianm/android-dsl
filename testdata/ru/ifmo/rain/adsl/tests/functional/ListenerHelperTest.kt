@@ -14,6 +14,25 @@ fun android.app.AlertDialog.Builder.onKey(l: (android.content.DialogInterface?, 
     setOnKeyListener(l)
 }
 
+class __BuilderOnItemSelectedListener {
+    var onItemSelected: (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
+    var onNothingSelected: (p0: android.widget.AdapterView<*>?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+}
+
+fun android.app.AlertDialog.Builder.onItemSelected(init: __BuilderOnItemSelectedListener.() -> Unit) {
+    val wrapper = __BuilderOnItemSelectedListener()
+    wrapper.init()
+    val listener = object: android.widget.AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
+            wrapper.onItemSelected(p0!!, p1!!, p2, p3)
+        }
+        override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
+            wrapper.onNothingSelected(p0!!)
+        }
+    }
+    setOnItemSelectedListener(listener)
+}
+
 fun android.app.Dialog.onCancel(l: (android.content.DialogInterface?) -> jet.Unit) {
     setOnCancelListener(l)
 }
@@ -223,6 +242,29 @@ fun android.widget.PopupMenu.onDismiss(l: (android.widget.PopupMenu?) -> jet.Uni
     setOnDismissListener(l)
 }
 
+fun android.widget.ListPopupWindow.onItemClick(l: (android.widget.AdapterView<*>?, android.view.View?, Int, Long) -> jet.Unit) {
+    setOnItemClickListener(l)
+}
+
+class __ListPopupWindowOnItemSelectedListener {
+    var onItemSelected: (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
+    var onNothingSelected: (p0: android.widget.AdapterView<*>?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+}
+
+fun android.widget.ListPopupWindow.onItemSelected(init: __ListPopupWindowOnItemSelectedListener.() -> Unit) {
+    val wrapper = __ListPopupWindowOnItemSelectedListener()
+    wrapper.init()
+    val listener = object: android.widget.AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
+            wrapper.onItemSelected(p0!!, p1!!, p2, p3)
+        }
+        override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
+            wrapper.onNothingSelected(p0!!)
+        }
+    }
+    setOnItemSelectedListener(listener)
+}
+
 fun android.widget.ListPopupWindow.onDismiss(l: () -> jet.Unit) {
     setOnDismissListener(l)
 }
@@ -325,7 +367,7 @@ fun android.widget.AbsListView.onScroll(init: __AbsListViewOnScrollListener.() -
         override fun onScrollStateChanged(p0: android.widget.AbsListView?, p1: Int) {
             wrapper.onScrollStateChanged(p0!!, p1)
         }
-        override fun onScroll(p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int) {
+        override fun onScroll(p0: android.widget.AbsListView?, p1: Int, p2: Int, p3: Int) {
             wrapper.onScroll(p0!!, p1, p2, p3)
         }
     }
@@ -467,6 +509,29 @@ fun android.widget.AutoCompleteTextView.onClick(l: (android.view.View?) -> jet.U
     setOnClickListener(l)
 }
 
+fun android.widget.AutoCompleteTextView.onItemClick(l: (android.widget.AdapterView<*>?, android.view.View?, Int, Long) -> jet.Unit) {
+    setOnItemClickListener(l)
+}
+
+class __AutoCompleteTextViewOnItemSelectedListener {
+    var onItemSelected: (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
+    var onNothingSelected: (p0: android.widget.AdapterView<*>?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+}
+
+fun android.widget.AutoCompleteTextView.onItemSelected(init: __AutoCompleteTextViewOnItemSelectedListener.() -> Unit) {
+    val wrapper = __AutoCompleteTextViewOnItemSelectedListener()
+    wrapper.init()
+    val listener = object: android.widget.AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
+            wrapper.onItemSelected(p0!!, p1!!, p2, p3)
+        }
+        override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
+            wrapper.onNothingSelected(p0!!)
+        }
+    }
+    setOnItemSelectedListener(listener)
+}
+
 class __SeekBarOnSeekBarChangeListener {
     var onProgressChanged: (p0: android.widget.SeekBar?, p1: Int, p2: Boolean) -> jet.Unit = { p0, p1, p2 -> throw RuntimeException("Method not overriden") }
     var onStartTrackingTouch: (p0: android.widget.SeekBar?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
@@ -477,13 +542,13 @@ fun android.widget.SeekBar.onSeekBarChange(init: __SeekBarOnSeekBarChangeListene
     val wrapper = __SeekBarOnSeekBarChangeListener()
     wrapper.init()
     val listener = object: android.widget.SeekBar.OnSeekBarChangeListener {
-        override fun onProgressChanged(p0: android.widget.SeekBar, p1: Int, p2: Boolean) {
+        override fun onProgressChanged(p0: android.widget.SeekBar?, p1: Int, p2: Boolean) {
             wrapper.onProgressChanged(p0!!, p1, p2)
         }
         override fun onStartTrackingTouch(p0: android.widget.SeekBar?) {
             wrapper.onStartTrackingTouch(p0!!)
         }
-        override fun onStopTrackingTouch(p0: android.widget.SeekBar) {
+        override fun onStopTrackingTouch(p0: android.widget.SeekBar?) {
             wrapper.onStopTrackingTouch(p0!!)
         }
     }
@@ -492,6 +557,14 @@ fun android.widget.SeekBar.onSeekBarChange(init: __SeekBarOnSeekBarChangeListene
 
 fun android.widget.RatingBar.onRatingBarChange(l: (android.widget.RatingBar?, Float, Boolean) -> jet.Unit) {
     setOnRatingBarChangeListener(l)
+}
+
+fun android.widget.Spinner.onItemClick(l: (android.widget.AdapterView<*>?, android.view.View?, Int, Long) -> jet.Unit) {
+    setOnItemClickListener(l)
+}
+
+fun android.widget.ExpandableListView.onItemClick(l: (android.widget.AdapterView<*>?, android.view.View?, Int, Long) -> jet.Unit) {
+    setOnItemClickListener(l)
 }
 
 fun android.widget.ExpandableListView.onGroupCollapse(l: (Int) -> jet.Unit) {

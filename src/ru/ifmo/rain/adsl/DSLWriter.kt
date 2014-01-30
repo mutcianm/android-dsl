@@ -63,9 +63,10 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
 
     private fun fixListenerMethodArgs(key: String, defaultArgs: String): String {
         return when(key) {
-            "OnSeekBarChangeListeneronProgressChanged" -> "p0: android.widget.SeekBar, p1: Int, p2: Boolean"
-            "OnSeekBarChangeListeneronStopTrackingTouch" -> "p0: android.widget.SeekBar"
-            "OnScrollListeneronScroll" -> "p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int"
+            //FIXME: nullability inference bug in kotlinc?
+//            "OnSeekBarChangeListeneronProgressChanged" -> "p0: android.widget.SeekBar, p1: Int, p2: Boolean"
+//            "OnSeekBarChangeListeneronStopTrackingTouch" -> "p0: android.widget.SeekBar"
+//            "OnScrollListeneronScroll" -> "p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int"
             else -> defaultArgs
         }
     }
@@ -74,7 +75,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         var c = Context(propsCache)
         val className: String
         if (prop.isContainer) {
-            className = "_${prop.parentClass.cleanName()}<${prop.parentClass.cleanInternalName()}>"
+            className = "_${prop.parentClass.cleanName()}"
             if (prop.setter != null) prop.setter = "vgInstance." + prop.setter
             if (prop.getter != null) prop.getter = "vgInstance." + prop.getter
         } else {
@@ -100,10 +101,6 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         val setter = view.child.name
         val listenerName = decapitalize(view.child.name!!.replace("set", "").replace("Listener", ""))
         val method = methods!![0]
-        if (method.signature != null) {
-            System.err.println("Generic methods are unsupported: " + method.signature)
-            return
-        }
         val listenerArgumentTypes = method.fmtArgumentsTypes()
         val listenerReturnType = method.getReturnType().toStr()
         cont.writeln("fun $parentClassName.$listenerName(l: ($listenerArgumentTypes) -> $listenerReturnType) {")
@@ -160,10 +157,6 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         val methods = listener.methods?.filter { it.name != "<init>" }
         if (methods == null)
             throw InvalidListenerException("Listener ${listener.name} has no listener methods")
-        if (methods.any { it.signature != null }) {
-            System.err.println("Generic methods are unsupported: ${listener.name}")
-            return
-        }
         if (methods.size() == 1) {
             makeListenerHelper(cont, view, listener)
         } else {
@@ -198,7 +191,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
                                       cleanInternalName: String) {
         var cont = Context(containerCache, 1)
         cont.writeln("//container function")
-        cont.writeln("fun $cleanNameDecap( init: _$cleanName<$cleanInternalName>.() -> Unit): _$cleanName<$cleanInternalName> {")
+        cont.writeln("fun $cleanNameDecap( init: _$cleanName.() -> Unit): _$cleanName {")
         cont.incIndent()
         cont.writeln("val v = _$cleanName($cleanInternalName(ctx), ctx)")
         cont.writeln("v.init()")
@@ -212,8 +205,9 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
     public fun genContainerClass(classNode: ClassNode, layoutParams: ClassNode?) {
         val cont = Context(containerClassesCache)
         val cleanName = classNode.cleanName()
-        cont.write("class _$cleanName<out T: android.view.ViewGroup>")
-        cont.writeln("(vgInstance: T, ctx: android.app.Activity): _Container<T>(vgInstance, ctx) {")
+        val cleanInternalName = classNode.cleanInternalName()
+        cont.write("class _$cleanName")
+        cont.writeln("(vgInstance: $cleanInternalName, ctx: android.app.Activity): _Container<$cleanInternalName>(vgInstance, ctx) {")
         cont.newLine()
         if (layoutParams != null)
             genLayoutParams(cont, classNode, layoutParams)
@@ -246,9 +240,9 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         val cleanNameDecap = classNode.cleanNameDecap()
         val cleanName = classNode.cleanName()
         val cleanInternalName = classNode.cleanInternalName()
-        c.writeln("fun $cleanNameDecap(init: _$cleanName<$cleanInternalName>.() -> Unit) {")
+        c.writeln("fun $cleanNameDecap(init: _$cleanName.() -> Unit) {")
         c.incIndent()
-        c.writeln("val layout = _$cleanName<$cleanInternalName>($cleanInternalName(act), act)")
+        c.writeln("val layout = _$cleanName($cleanInternalName(act), act)")
         c.writeln("layout.init()")
         c.writeln("act.setContentView(layout.vgInstance)")
         c.decIndent()

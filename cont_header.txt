@@ -11,6 +11,6 @@ open class _Container<out T: android.view.ViewGroup>(open val vgInstance: T,
         val builder = AlertDialog.Builder(ctx)
         builder.setTitle(title)
         builder.func()
-        return builder.create().show()
+        return builder.create()?.show()
     }
 
