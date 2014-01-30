@@ -1,4 +1,4 @@
 android-dsl
 ===========
 
-Android UI DSL in Kotlin
+Android UI DSL generator in Kotlin
