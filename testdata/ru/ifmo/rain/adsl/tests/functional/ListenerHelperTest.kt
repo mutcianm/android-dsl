@@ -15,8 +15,10 @@ fun android.app.AlertDialog.Builder.onKey(l: (android.content.DialogInterface?, 
 }
 
 class __BuilderOnItemSelectedListener {
-    var onItemSelected: (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
-    var onNothingSelected: (p0: android.widget.AdapterView<*>?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    var _onItemSelected: (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
+    fun onItemSelected(f : (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit) { _onItemSelected = f }
+    var _onNothingSelected: (p0: android.widget.AdapterView<*>?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onNothingSelected(f : (p0: android.widget.AdapterView<*>?) -> jet.Unit) { _onNothingSelected = f }
 }
 
 fun android.app.AlertDialog.Builder.onItemSelected(init: __BuilderOnItemSelectedListener.() -> Unit) {
@@ -24,10 +26,10 @@ fun android.app.AlertDialog.Builder.onItemSelected(init: __BuilderOnItemSelected
     wrapper.init()
     val listener = object: android.widget.AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
-            wrapper.onItemSelected(p0!!, p1!!, p2, p3)
+            wrapper._onItemSelected(p0!!, p1!!, p2, p3)
         }
         override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
-            wrapper.onNothingSelected(p0!!)
+            wrapper._onNothingSelected(p0!!)
         }
     }
     setOnItemSelectedListener(listener)
@@ -70,9 +72,12 @@ fun android.speech.tts.TextToSpeech.onUtteranceCompleted(l: (jet.String?) -> jet
 }
 
 class __TextToSpeechUtteranceProgressListener {
-    var onStart: (p0: jet.String?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
-    var onDone: (p0: jet.String?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
-    var onError: (p0: jet.String?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    var _onStart: (p0: jet.String?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onStart(f : (p0: jet.String?) -> jet.Unit) { _onStart = f }
+    var _onDone: (p0: jet.String?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onDone(f : (p0: jet.String?) -> jet.Unit) { _onDone = f }
+    var _onError: (p0: jet.String?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onError(f : (p0: jet.String?) -> jet.Unit) { _onError = f }
 }
 
 fun android.speech.tts.TextToSpeech.onUtteranceProgress(init: __TextToSpeechUtteranceProgressListener.() -> Unit) {
@@ -80,13 +85,13 @@ fun android.speech.tts.TextToSpeech.onUtteranceProgress(init: __TextToSpeechUtte
     wrapper.init()
     val listener = object: android.speech.tts.UtteranceProgressListener() {
         override fun onStart(p0: jet.String?) {
-            wrapper.onStart(p0!!)
+            wrapper._onStart(p0!!)
         }
         override fun onDone(p0: jet.String?) {
-            wrapper.onDone(p0!!)
+            wrapper._onDone(p0!!)
         }
         override fun onError(p0: jet.String?) {
-            wrapper.onError(p0!!)
+            wrapper._onError(p0!!)
         }
     }
     setOnUtteranceProgressListener(listener)
@@ -153,8 +158,10 @@ fun android.view.MenuItem.onMenuItemClick(l: (android.view.MenuItem?) -> Boolean
 }
 
 class __MenuItemOnActionExpandListener {
-    var onMenuItemActionExpand: (p0: android.view.MenuItem?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
-    var onMenuItemActionCollapse: (p0: android.view.MenuItem?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    var _onMenuItemActionExpand: (p0: android.view.MenuItem?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onMenuItemActionExpand(f : (p0: android.view.MenuItem?) -> Boolean) { _onMenuItemActionExpand = f }
+    var _onMenuItemActionCollapse: (p0: android.view.MenuItem?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onMenuItemActionCollapse(f : (p0: android.view.MenuItem?) -> Boolean) { _onMenuItemActionCollapse = f }
 }
 
 fun android.view.MenuItem.onActionExpand(init: __MenuItemOnActionExpandListener.() -> Unit) {
@@ -162,10 +169,10 @@ fun android.view.MenuItem.onActionExpand(init: __MenuItemOnActionExpandListener.
     wrapper.init()
     val listener = object: android.view.MenuItem.OnActionExpandListener {
         override fun onMenuItemActionExpand(p0: android.view.MenuItem?): Boolean {
-            return wrapper.onMenuItemActionExpand(p0!!)
+            return wrapper._onMenuItemActionExpand(p0!!)
         }
         override fun onMenuItemActionCollapse(p0: android.view.MenuItem?): Boolean {
-            return wrapper.onMenuItemActionCollapse(p0!!)
+            return wrapper._onMenuItemActionCollapse(p0!!)
         }
     }
     setOnActionExpandListener(listener)
@@ -212,9 +219,12 @@ fun android.view.View.onSystemUiVisibilityChange(l: (Int) -> jet.Unit) {
 }
 
 class __GestureDetectorOnDoubleTapListener {
-    var onSingleTapConfirmed: (p0: android.view.MotionEvent?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
-    var onDoubleTap: (p0: android.view.MotionEvent?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
-    var onDoubleTapEvent: (p0: android.view.MotionEvent?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    var _onSingleTapConfirmed: (p0: android.view.MotionEvent?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onSingleTapConfirmed(f : (p0: android.view.MotionEvent?) -> Boolean) { _onSingleTapConfirmed = f }
+    var _onDoubleTap: (p0: android.view.MotionEvent?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onDoubleTap(f : (p0: android.view.MotionEvent?) -> Boolean) { _onDoubleTap = f }
+    var _onDoubleTapEvent: (p0: android.view.MotionEvent?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onDoubleTapEvent(f : (p0: android.view.MotionEvent?) -> Boolean) { _onDoubleTapEvent = f }
 }
 
 fun android.view.GestureDetector.onDoubleTap(init: __GestureDetectorOnDoubleTapListener.() -> Unit) {
@@ -222,13 +232,13 @@ fun android.view.GestureDetector.onDoubleTap(init: __GestureDetectorOnDoubleTapL
     wrapper.init()
     val listener = object: android.view.GestureDetector.OnDoubleTapListener {
         override fun onSingleTapConfirmed(p0: android.view.MotionEvent?): Boolean {
-            return wrapper.onSingleTapConfirmed(p0!!)
+            return wrapper._onSingleTapConfirmed(p0!!)
         }
         override fun onDoubleTap(p0: android.view.MotionEvent?): Boolean {
-            return wrapper.onDoubleTap(p0!!)
+            return wrapper._onDoubleTap(p0!!)
         }
         override fun onDoubleTapEvent(p0: android.view.MotionEvent?): Boolean {
-            return wrapper.onDoubleTapEvent(p0!!)
+            return wrapper._onDoubleTapEvent(p0!!)
         }
     }
     setOnDoubleTapListener(listener)
@@ -247,8 +257,10 @@ fun android.widget.ListPopupWindow.onItemClick(l: (android.widget.AdapterView<*>
 }
 
 class __ListPopupWindowOnItemSelectedListener {
-    var onItemSelected: (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
-    var onNothingSelected: (p0: android.widget.AdapterView<*>?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    var _onItemSelected: (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
+    fun onItemSelected(f : (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit) { _onItemSelected = f }
+    var _onNothingSelected: (p0: android.widget.AdapterView<*>?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onNothingSelected(f : (p0: android.widget.AdapterView<*>?) -> jet.Unit) { _onNothingSelected = f }
 }
 
 fun android.widget.ListPopupWindow.onItemSelected(init: __ListPopupWindowOnItemSelectedListener.() -> Unit) {
@@ -256,10 +268,10 @@ fun android.widget.ListPopupWindow.onItemSelected(init: __ListPopupWindowOnItemS
     wrapper.init()
     val listener = object: android.widget.AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
-            wrapper.onItemSelected(p0!!, p1!!, p2, p3)
+            wrapper._onItemSelected(p0!!, p1!!, p2, p3)
         }
         override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
-            wrapper.onNothingSelected(p0!!)
+            wrapper._onNothingSelected(p0!!)
         }
     }
     setOnItemSelectedListener(listener)
@@ -270,8 +282,10 @@ fun android.widget.ListPopupWindow.onDismiss(l: () -> jet.Unit) {
 }
 
 class __ZoomButtonsControllerOnZoomListener {
-    var onVisibilityChanged: (p0: Boolean) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
-    var onZoom: (p0: Boolean) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    var _onVisibilityChanged: (p0: Boolean) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onVisibilityChanged(f : (p0: Boolean) -> jet.Unit) { _onVisibilityChanged = f }
+    var _onZoom: (p0: Boolean) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onZoom(f : (p0: Boolean) -> jet.Unit) { _onZoom = f }
 }
 
 fun android.widget.ZoomButtonsController.onZoom(init: __ZoomButtonsControllerOnZoomListener.() -> Unit) {
@@ -279,10 +293,10 @@ fun android.widget.ZoomButtonsController.onZoom(init: __ZoomButtonsControllerOnZ
     wrapper.init()
     val listener = object: android.widget.ZoomButtonsController.OnZoomListener {
         override fun onVisibilityChanged(p0: Boolean) {
-            wrapper.onVisibilityChanged(p0)
+            wrapper._onVisibilityChanged(p0)
         }
         override fun onZoom(p0: Boolean) {
-            wrapper.onZoom(p0)
+            wrapper._onZoom(p0)
         }
     }
     setOnZoomListener(listener)
@@ -301,8 +315,10 @@ fun android.view.ViewStub.onInflate(l: (android.view.ViewStub?, android.view.Vie
 }
 
 class __ViewGroupOnHierarchyChangeListener {
-    var onChildViewAdded: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
-    var onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    var _onChildViewAdded: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    fun onChildViewAdded(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewAdded = f }
+    var _onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    fun onChildViewRemoved(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewRemoved = f }
 }
 
 fun android.view.ViewGroup.onHierarchyChange(init: __ViewGroupOnHierarchyChangeListener.() -> Unit) {
@@ -310,10 +326,10 @@ fun android.view.ViewGroup.onHierarchyChange(init: __ViewGroupOnHierarchyChangeL
     wrapper.init()
     val listener = object: android.view.ViewGroup.OnHierarchyChangeListener {
         override fun onChildViewAdded(p0: android.view.View?, p1: android.view.View?) {
-            wrapper.onChildViewAdded(p0!!, p1!!)
+            wrapper._onChildViewAdded(p0!!, p1!!)
         }
         override fun onChildViewRemoved(p0: android.view.View?, p1: android.view.View?) {
-            wrapper.onChildViewRemoved(p0!!, p1!!)
+            wrapper._onChildViewRemoved(p0!!, p1!!)
         }
     }
     setOnHierarchyChangeListener(listener)
@@ -356,8 +372,10 @@ fun android.widget.TabHost.onTabChanged(l: (jet.String?) -> jet.Unit) {
 }
 
 class __AbsListViewOnScrollListener {
-    var onScrollStateChanged: (p0: android.widget.AbsListView?, p1: Int) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
-    var onScroll: (p0: android.widget.AbsListView?, p1: Int, p2: Int, p3: Int) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
+    var _onScrollStateChanged: (p0: android.widget.AbsListView?, p1: Int) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    fun onScrollStateChanged(f : (p0: android.widget.AbsListView?, p1: Int) -> jet.Unit) { _onScrollStateChanged = f }
+    var _onScroll: (p0: android.widget.AbsListView?, p1: Int, p2: Int, p3: Int) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
+    fun onScroll(f : (p0: android.widget.AbsListView?, p1: Int, p2: Int, p3: Int) -> jet.Unit) { _onScroll = f }
 }
 
 fun android.widget.AbsListView.onScroll(init: __AbsListViewOnScrollListener.() -> Unit) {
@@ -365,18 +383,20 @@ fun android.widget.AbsListView.onScroll(init: __AbsListViewOnScrollListener.() -
     wrapper.init()
     val listener = object: android.widget.AbsListView.OnScrollListener {
         override fun onScrollStateChanged(p0: android.widget.AbsListView?, p1: Int) {
-            wrapper.onScrollStateChanged(p0!!, p1)
+            wrapper._onScrollStateChanged(p0!!, p1)
         }
         override fun onScroll(p0: android.widget.AbsListView?, p1: Int, p2: Int, p3: Int) {
-            wrapper.onScroll(p0!!, p1, p2, p3)
+            wrapper._onScroll(p0!!, p1, p2, p3)
         }
     }
     setOnScrollListener(listener)
 }
 
 class __TableLayoutOnHierarchyChangeListener {
-    var onChildViewAdded: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
-    var onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    var _onChildViewAdded: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    fun onChildViewAdded(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewAdded = f }
+    var _onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    fun onChildViewRemoved(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewRemoved = f }
 }
 
 fun android.widget.TableLayout.onHierarchyChange(init: __TableLayoutOnHierarchyChangeListener.() -> Unit) {
@@ -384,18 +404,20 @@ fun android.widget.TableLayout.onHierarchyChange(init: __TableLayoutOnHierarchyC
     wrapper.init()
     val listener = object: android.view.ViewGroup.OnHierarchyChangeListener {
         override fun onChildViewAdded(p0: android.view.View?, p1: android.view.View?) {
-            wrapper.onChildViewAdded(p0!!, p1!!)
+            wrapper._onChildViewAdded(p0!!, p1!!)
         }
         override fun onChildViewRemoved(p0: android.view.View?, p1: android.view.View?) {
-            wrapper.onChildViewRemoved(p0!!, p1!!)
+            wrapper._onChildViewRemoved(p0!!, p1!!)
         }
     }
     setOnHierarchyChangeListener(listener)
 }
 
 class __TableRowOnHierarchyChangeListener {
-    var onChildViewAdded: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
-    var onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    var _onChildViewAdded: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    fun onChildViewAdded(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewAdded = f }
+    var _onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    fun onChildViewRemoved(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewRemoved = f }
 }
 
 fun android.widget.TableRow.onHierarchyChange(init: __TableRowOnHierarchyChangeListener.() -> Unit) {
@@ -403,10 +425,10 @@ fun android.widget.TableRow.onHierarchyChange(init: __TableRowOnHierarchyChangeL
     wrapper.init()
     val listener = object: android.view.ViewGroup.OnHierarchyChangeListener {
         override fun onChildViewAdded(p0: android.view.View?, p1: android.view.View?) {
-            wrapper.onChildViewAdded(p0!!, p1!!)
+            wrapper._onChildViewAdded(p0!!, p1!!)
         }
         override fun onChildViewRemoved(p0: android.view.View?, p1: android.view.View?) {
-            wrapper.onChildViewRemoved(p0!!, p1!!)
+            wrapper._onChildViewRemoved(p0!!, p1!!)
         }
     }
     setOnHierarchyChangeListener(listener)
@@ -421,8 +443,10 @@ fun android.widget.NumberPicker.onScroll(l: (android.widget.NumberPicker?, Int) 
 }
 
 class __RadioGroupOnHierarchyChangeListener {
-    var onChildViewAdded: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
-    var onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    var _onChildViewAdded: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    fun onChildViewAdded(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewAdded = f }
+    var _onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 -> throw RuntimeException("Method not overriden") }
+    fun onChildViewRemoved(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewRemoved = f }
 }
 
 fun android.widget.RadioGroup.onHierarchyChange(init: __RadioGroupOnHierarchyChangeListener.() -> Unit) {
@@ -430,10 +454,10 @@ fun android.widget.RadioGroup.onHierarchyChange(init: __RadioGroupOnHierarchyCha
     wrapper.init()
     val listener = object: android.view.ViewGroup.OnHierarchyChangeListener {
         override fun onChildViewAdded(p0: android.view.View?, p1: android.view.View?) {
-            wrapper.onChildViewAdded(p0!!, p1!!)
+            wrapper._onChildViewAdded(p0!!, p1!!)
         }
         override fun onChildViewRemoved(p0: android.view.View?, p1: android.view.View?) {
-            wrapper.onChildViewRemoved(p0!!, p1!!)
+            wrapper._onChildViewRemoved(p0!!, p1!!)
         }
     }
     setOnHierarchyChangeListener(listener)
@@ -452,8 +476,10 @@ fun android.widget.ZoomControls.onZoomOutClick(l: (android.view.View?) -> jet.Un
 }
 
 class __SearchViewOnQueryTextListener {
-    var onQueryTextSubmit: (p0: jet.String?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
-    var onQueryTextChange: (p0: jet.String?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    var _onQueryTextSubmit: (p0: jet.String?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onQueryTextSubmit(f : (p0: jet.String?) -> Boolean) { _onQueryTextSubmit = f }
+    var _onQueryTextChange: (p0: jet.String?) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onQueryTextChange(f : (p0: jet.String?) -> Boolean) { _onQueryTextChange = f }
 }
 
 fun android.widget.SearchView.onQueryText(init: __SearchViewOnQueryTextListener.() -> Unit) {
@@ -461,10 +487,10 @@ fun android.widget.SearchView.onQueryText(init: __SearchViewOnQueryTextListener.
     wrapper.init()
     val listener = object: android.widget.SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(p0: jet.String?): Boolean {
-            return wrapper.onQueryTextSubmit(p0!!)
+            return wrapper._onQueryTextSubmit(p0!!)
         }
         override fun onQueryTextChange(p0: jet.String?): Boolean {
-            return wrapper.onQueryTextChange(p0!!)
+            return wrapper._onQueryTextChange(p0!!)
         }
     }
     setOnQueryTextListener(listener)
@@ -479,8 +505,10 @@ fun android.widget.SearchView.onQueryTextFocusChange(l: (android.view.View?, Boo
 }
 
 class __SearchViewOnSuggestionListener {
-    var onSuggestionSelect: (p0: Int) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
-    var onSuggestionClick: (p0: Int) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    var _onSuggestionSelect: (p0: Int) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onSuggestionSelect(f : (p0: Int) -> Boolean) { _onSuggestionSelect = f }
+    var _onSuggestionClick: (p0: Int) -> Boolean = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onSuggestionClick(f : (p0: Int) -> Boolean) { _onSuggestionClick = f }
 }
 
 fun android.widget.SearchView.onSuggestion(init: __SearchViewOnSuggestionListener.() -> Unit) {
@@ -488,10 +516,10 @@ fun android.widget.SearchView.onSuggestion(init: __SearchViewOnSuggestionListene
     wrapper.init()
     val listener = object: android.widget.SearchView.OnSuggestionListener {
         override fun onSuggestionSelect(p0: Int): Boolean {
-            return wrapper.onSuggestionSelect(p0)
+            return wrapper._onSuggestionSelect(p0)
         }
         override fun onSuggestionClick(p0: Int): Boolean {
-            return wrapper.onSuggestionClick(p0)
+            return wrapper._onSuggestionClick(p0)
         }
     }
     setOnSuggestionListener(listener)
@@ -514,8 +542,10 @@ fun android.widget.AutoCompleteTextView.onItemClick(l: (android.widget.AdapterVi
 }
 
 class __AutoCompleteTextViewOnItemSelectedListener {
-    var onItemSelected: (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
-    var onNothingSelected: (p0: android.widget.AdapterView<*>?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    var _onItemSelected: (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit = { p0, p1, p2, p3 -> throw RuntimeException("Method not overriden") }
+    fun onItemSelected(f : (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit) { _onItemSelected = f }
+    var _onNothingSelected: (p0: android.widget.AdapterView<*>?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onNothingSelected(f : (p0: android.widget.AdapterView<*>?) -> jet.Unit) { _onNothingSelected = f }
 }
 
 fun android.widget.AutoCompleteTextView.onItemSelected(init: __AutoCompleteTextViewOnItemSelectedListener.() -> Unit) {
@@ -523,19 +553,22 @@ fun android.widget.AutoCompleteTextView.onItemSelected(init: __AutoCompleteTextV
     wrapper.init()
     val listener = object: android.widget.AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
-            wrapper.onItemSelected(p0!!, p1!!, p2, p3)
+            wrapper._onItemSelected(p0!!, p1!!, p2, p3)
         }
         override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
-            wrapper.onNothingSelected(p0!!)
+            wrapper._onNothingSelected(p0!!)
         }
     }
     setOnItemSelectedListener(listener)
 }
 
 class __SeekBarOnSeekBarChangeListener {
-    var onProgressChanged: (p0: android.widget.SeekBar?, p1: Int, p2: Boolean) -> jet.Unit = { p0, p1, p2 -> throw RuntimeException("Method not overriden") }
-    var onStartTrackingTouch: (p0: android.widget.SeekBar?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
-    var onStopTrackingTouch: (p0: android.widget.SeekBar?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    var _onProgressChanged: (p0: android.widget.SeekBar?, p1: Int, p2: Boolean) -> jet.Unit = { p0, p1, p2 -> throw RuntimeException("Method not overriden") }
+    fun onProgressChanged(f : (p0: android.widget.SeekBar?, p1: Int, p2: Boolean) -> jet.Unit) { _onProgressChanged = f }
+    var _onStartTrackingTouch: (p0: android.widget.SeekBar?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onStartTrackingTouch(f : (p0: android.widget.SeekBar?) -> jet.Unit) { _onStartTrackingTouch = f }
+    var _onStopTrackingTouch: (p0: android.widget.SeekBar?) -> jet.Unit = { p0 -> throw RuntimeException("Method not overriden") }
+    fun onStopTrackingTouch(f : (p0: android.widget.SeekBar?) -> jet.Unit) { _onStopTrackingTouch = f }
 }
 
 fun android.widget.SeekBar.onSeekBarChange(init: __SeekBarOnSeekBarChangeListener.() -> Unit) {
@@ -543,13 +576,13 @@ fun android.widget.SeekBar.onSeekBarChange(init: __SeekBarOnSeekBarChangeListene
     wrapper.init()
     val listener = object: android.widget.SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(p0: android.widget.SeekBar?, p1: Int, p2: Boolean) {
-            wrapper.onProgressChanged(p0!!, p1, p2)
+            wrapper._onProgressChanged(p0!!, p1, p2)
         }
         override fun onStartTrackingTouch(p0: android.widget.SeekBar?) {
-            wrapper.onStartTrackingTouch(p0!!)
+            wrapper._onStartTrackingTouch(p0!!)
         }
         override fun onStopTrackingTouch(p0: android.widget.SeekBar?) {
-            wrapper.onStopTrackingTouch(p0!!)
+            wrapper._onStopTrackingTouch(p0!!)
         }
     }
     setOnSeekBarChangeListener(listener)

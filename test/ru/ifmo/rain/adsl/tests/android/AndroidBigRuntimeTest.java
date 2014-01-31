@@ -14,6 +14,7 @@ public class AndroidBigRuntimeTest extends BaseCompileTest {
     private final File testWidgetsDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/android/AndroidWidgetTest.kt");
     private final File testLayoutParamsDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/android/AndroidLayoutParamsTest.kt");
     private final File testListenerHelpersDataFile = new File("testdata/ru/ifmo/rain/adsl/tests/android/AndroidListenerHelpersTest.kt");
+    private final File testMultiMethodListenersFile = new File("testdata/ru/ifmo/rain/adsl/tests/android/AndroidMultiMethodListeners.kt");
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -48,6 +49,11 @@ public class AndroidBigRuntimeTest extends BaseCompileTest {
     @Test
     public void testListenerHelpers() throws Exception {
         runCompileTest(testListenerHelpersDataFile);
+    }
+
+    @Test
+    public void testMultiMethodListeners() throws Exception {
+        runCompileTest(testMultiMethodListenersFile);
     }
 
     @AfterMethod

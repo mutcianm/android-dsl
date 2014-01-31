@@ -119,7 +119,8 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         for (method in methods!!) {
             val propType = "(${method.fmtArguments()}) -> ${method.getReturnType().toStr()}"
             val propInitializer = "{ ${method.fmtArgumentsNames()} -> throw RuntimeException(\"Method not overriden\") }"
-            cont.writeln("var ${method.name}: $propType = $propInitializer")
+            cont.writeln("var _${method.name}: $propType = $propInitializer")
+            cont.writeln("fun ${method.name}(f : $propType) { _${method.name} = f }")
         }
         cont.decIndent()
         cont.writeln("}\n")
@@ -141,7 +142,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
             val methodArgs = fixListenerMethodArgs(listener.cleanName()+method.name, method.fmtArguments())
             cont.writeln("override fun ${method.name}(${methodArgs})$returnTerm {")
             cont.incIndent()
-            cont.writeln("${returnStmt}wrapper.${method.name}(${method.fmtArgumentsInvoke()})")
+            cont.writeln("${returnStmt}wrapper._${method.name}(${method.fmtArgumentsInvoke()})")
             cont.decIndent()
             cont.writeln("}")
         }
