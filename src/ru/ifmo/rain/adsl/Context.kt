@@ -31,6 +31,10 @@ class Context(val buffer: StringBuffer, var indentDepth: Int = 0) {
         buffer.append(what)
     }
 
+    public fun writeNoIndent(what: String) {
+        buffer.append(what)
+    }
+
     public fun writeln(what: String) {
         write(what)
         newLine()
@@ -38,6 +42,11 @@ class Context(val buffer: StringBuffer, var indentDepth: Int = 0) {
 
     public fun newLine() {
         buffer.append('\n')
+    }
+
+
+    public fun trim(num: Int) {
+        buffer.delete(buffer.length-num, buffer.length)
     }
 }
 
