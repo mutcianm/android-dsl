@@ -6,9 +6,9 @@ import org.xml.sax.helpers.*;
 import ru.ifmo.rain.adsl.Context
 import java.util.ArrayList
 
-class XmlHandler: DefaultHandler() {
+class XmlHandler(val buffer: StringBuffer): DefaultHandler() {
     private var depth = 0
-    val buffer = StringBuffer()
+//    val buffer = StringBuffer()
     val imports = StringBuffer()
     val ctx = Context(buffer)
     var lastLayout = ""
@@ -61,7 +61,6 @@ class XmlHandler: DefaultHandler() {
         ctx.writeln("}")
         ctx.decIndent()
         ctx.writeln("}")
-        println(buffer.toString())
     }
 
     private fun processAttribute(name: String?, value: String?, layoutFunc: (String?, String?) -> Unit) {

@@ -1,0 +1,36 @@
+public override fun onCreate(savedInstanceState: Bundle?): Unit {
+    super.onCreate(savedInstanceState)
+    UI {
+        frameLayout {
+            layoutParams(FrameLayout.MATCH_PARENT, FrameLayout.MATCH_PARENT) { }
+            linearLayout {
+                orientation = vertical
+                layoutParams(LinearLayout.MATCH_PARENT, LinearLayout.MATCH_PARENT) { }
+                textView {
+                    text = "Enter your password"
+                    layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.WRAP_CONTENT) { }
+                }
+                editText {
+                    inputType = textPassword
+                    layoutParams(LinearLayout.MATCH_PARENT, LinearLayout.WRAP_CONTENT) { }
+                    requestFocus {
+                    }
+                }
+                textView {
+                    text = "Repeat your password"
+                    layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.WRAP_CONTENT) { }
+                }
+                editText {
+                    inputType = textPassword
+                    layoutParams(LinearLayout.MATCH_PARENT, LinearLayout.WRAP_CONTENT) { }
+                }
+                button {
+                    text = "Sign in"
+                    layoutParams(LinearLayout.MATCH_PARENT, LinearLayout.WRAP_CONTENT) { }
+                }
+            }
+            scrollBar {
+            }
+        }
+    }
+}
