@@ -55,6 +55,42 @@ fun Type.toStr(nullable: Boolean = true): String {
     }
 }
 
+fun Type.getDefaultValue() : String {
+    return when (getSort()) {
+        Type.BOOLEAN -> "false"
+        Type.INT -> "0"
+        Type.FLOAT -> "0.0"
+        Type.DOUBLE -> "0.0"
+        Type.LONG -> "0"
+        Type.BYTE -> "0"
+        Type.CHAR -> "\'\\u0000\'" //FIXME: default value of a char?
+        Type.SHORT -> "0"
+        Type.VOID -> ""
+        Type.ARRAY -> {
+            val innerType = getElementType()
+            if (innerType != null) {
+                when (getElementType()?.getSort()) {
+                    Type.INT -> "IntArray()"
+                    Type.FLOAT -> "FloatArray()"
+                    Type.DOUBLE -> "DoubleArray()"
+                    Type.LONG -> "LongArray()"
+                    else -> {
+                        "Array<" + typeMap(innerType.toStr(nullable = false)) + ">()"
+                    }
+                }
+            } else {
+                throw RuntimeException("Type is of ArrayType, but element type is null")
+            }
+        }
+        else -> {
+            try {
+                typeMap(cleanInternalName(getInternalName()!!)) + "()"
+            } catch (e: NullPointerException) {
+                "INVALID"
+            }
+        }
+    }
+}
 fun updateIfNotNull<T>(old: T, new: T): T {
     return if (old == null) new else old
 }
