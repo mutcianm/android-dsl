@@ -113,6 +113,10 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         cont.writeln("}\n")
     }
 
+    private fun makeEmptyMethodInitializer(method: MethodNode): String {
+        return "{ ${method.fmtArgumentsNames()} -> ${method.getReturnType().getDefaultValue()} }"
+    }
+
     private fun makeListenerObject(cont: Context, view: MethodNodeWithParent, listener: ClassNode) {
         val methods = listener.methods?.filter { it.name != "<init>" }
         val parentClassName = view.parent.cleanInternalName()
@@ -122,7 +126,7 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         cont.incIndent()
         for (method in methods!!) {
             val propType = "(${method.fmtArguments()}) -> ${method.getReturnType().toStr()}"
-            val propInitializer = "{ ${method.fmtArgumentsNames()} -> throw RuntimeException(\"Method not overriden\") }"
+            val propInitializer = makeEmptyMethodInitializer(method)
             cont.writeln("var _${method.name}: $propType = $propInitializer")
             cont.writeln("fun ${method.name}(f : $propType) { _${method.name} = f }")
         }
