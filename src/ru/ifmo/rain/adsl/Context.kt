@@ -1,5 +1,7 @@
 package ru.ifmo.rain.adsl
 
+open class InvalidIndent(num: Int) : DSLWriterException("Indentation level < 0: $num")
+
 class Context(val buffer: StringBuffer, var indentDepth: Int = 0) {
     val indentUnit = "    "
     private var currentIndent = indentUnit.repeat(indentDepth)

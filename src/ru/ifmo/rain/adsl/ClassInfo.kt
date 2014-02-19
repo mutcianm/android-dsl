@@ -169,6 +169,11 @@ fun ClassNode.cleanNameDecap(): String {
 fun ClassNode.cleanInternalName(): String {
     return name!!.replace('/', '.').replace('$', '.')
 }
+
+fun ClassNode.toContainerName() = "_${cleanName()}"
+
+fun ClassNode.toContainerInternalName() = "_${cleanInternalName()}"
+
 fun ClassNode.isInner(): Boolean {
     return name!!.contains("$")
 }

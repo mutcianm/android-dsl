@@ -8,7 +8,6 @@ import org.objectweb.asm.tree.MethodNode
 
 open class DSLWriterException(message: String) : DSLException(message)
 open class InvalidListenerException(message: String) : DSLWriterException(message)
-open class InvalidIndent(num: Int) : DSLWriterException("Indentation level < 0: $num")
 
 class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
 
@@ -60,7 +59,6 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
 
     private fun fixListenerMethodArgs(key: String, defaultArgs: String): String {
         return when(key) {
-        //FIXME: nullability inference bug in kotlinc?
                     "OnSeekBarChangeListeneronProgressChanged" -> "p0: android.widget.SeekBar, p1: Int, p2: Boolean"
                     "OnSeekBarChangeListeneronStopTrackingTouch" -> "p0: android.widget.SeekBar"
                     "OnScrollListeneronScroll" -> "p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int"
@@ -72,13 +70,17 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         return classTree.isSuccessorOf(classNode, settings.widgetBaseClass)
     }
 
+    private fun isContainer(widget: ClassNode): Boolean {
+        return classTree.isSuccessorOf(widget, settings.containerBaseClass)
+    }
+
     public fun produceProperty(prop: PropertyData) {
         var c = Context(propsCache)
         val className: String
         if (prop.isContainer) {
             className = "_${prop.parentClass.cleanName()}"
-            if (prop.setter != null) prop.setter = "vgInstance." + prop.setter
-            if (prop.getter != null) prop.getter = "vgInstance." + prop.getter
+            if (prop.setter != null) prop.setter = "viewGroup." + prop.setter
+            if (prop.getter != null) prop.getter = "viewGroup." + prop.getter
         } else {
             className = prop.parentClass.cleanInternalName()
         }
@@ -217,7 +219,7 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         for (arg in arguments)
             cont.writeln("v.${arg.propName} = ${arg.propName}")
         cont.writeln("v.init()")
-        cont.writeln("vgInstance.addView(v)")
+        cont.writeln("viewGroup.addView(v)")
         cont.writeln("_style(v)")
         cont.writeln("val l = v.getTag(2) as? () -> Unit")
         cont.writeln("if (l != null) l()")
@@ -235,9 +237,9 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         cont.incIndent()
         cont.writeln("val v = _$cleanName($cleanInternalName(ctx), ctx)")
         cont.writeln("v.init()")
-        cont.writeln("vgInstance.addView(v.vgInstance)")
+        cont.writeln("viewGroup.addView(v.viewGroup)")
         cont.writeln("_style(v)")
-        cont.writeln("val l = v.vgInstance.getTag(2) as? () -> Unit")
+        cont.writeln("val l = v.viewGroup.getTag(2) as? () -> Unit")
         cont.writeln("if (l != null) l()")
         cont.writeln("return v")
         cont.decIndent()
@@ -249,7 +251,7 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         val cleanName = classNode.cleanName()
         val cleanInternalName = classNode.cleanInternalName()
         cont.write("class _$cleanName")
-        cont.writeln("(vgInstance: $cleanInternalName, ctx: android.app.Activity): _Container<$cleanInternalName>(vgInstance, ctx) {")
+        cont.writeln("(viewGroup: $cleanInternalName, ctx: android.app.Activity): _Container<$cleanInternalName>(viewGroup, ctx) {")
         cont.newLine()
         if (layoutParams != null)
             genLayoutParams(cont, classNode, layoutParams)
@@ -261,7 +263,7 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         val params = cons.fmtArguments()
         val paramsInvoke = cons.fmtArgumentsInvoke()
         val separator = if (params == "") "" else ","
-        c.writeln("fun android.view.View.layoutParams($params$separator init: $cleanName.() -> Unit) {")
+        c.writeln("fun android.view.View.layoutParams($params$separator init: $cleanName.() -> Unit = { }) {")
         c.incIndent()
         c.writeln("val lp = $cleanName($paramsInvoke)")
         c.writeln("lp.init()")
@@ -278,15 +280,15 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
     }
 
     public fun genUIWidgetFun(classNode: ClassNode) {
-        val c = Context(uiClassCache, 1)
+        val c = Context(uiClassCache)
         val cleanNameDecap = classNode.cleanNameDecap()
         val cleanName = classNode.cleanName()
         val cleanInternalName = classNode.cleanInternalName()
-        c.writeln("fun $cleanNameDecap(init: _$cleanName.() -> Unit) {")
+        c.writeln("fun android.app.Activity.$cleanNameDecap(init: _$cleanName.() -> Unit) {")
         c.incIndent()
-        c.writeln("val layout = _$cleanName($cleanInternalName(act), act)")
+        c.writeln("val layout = _$cleanName($cleanInternalName(this), this)")
         c.writeln("layout.init()")
-        c.writeln("act.setContentView(layout.vgInstance)")
+        c.writeln("setContentView(layout.viewGroup)")
         c.decIndent()
         c.writeln("}\n")
     }
@@ -306,11 +308,9 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
             }
         }
         containerCache append settings.containerHeader
-        uiClassCache   append settings.uiClassHeader
     }
 
     private fun finalizeCaches() {
-        uiClassCache   append "}\n\n"
         if (settings.generateUIClassWrapper)
             uiClassCache append settings.footer
         containerCache append "}\n\n"
