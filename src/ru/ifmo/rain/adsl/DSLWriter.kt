@@ -5,15 +5,11 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.File
 import org.objectweb.asm.tree.MethodNode
-import org.objectweb.asm.util.TraceSignatureVisitor
-import org.objectweb.asm.Opcodes
-import org.objectweb.asm.signature.SignatureReader
 
-open class DSLWriterException(message: String): DSLException(message)
-open class InvalidListenerException(message: String): DSLWriterException(message)
-open class InvalidIndent(num: Int): DSLWriterException("Indentation level < 0: $num")
+open class DSLWriterException(message: String) : DSLException(message)
+open class InvalidListenerException(message: String) : DSLWriterException(message)
 
-class DSLWriter(val settings: BaseGeneratorSettings) {
+class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
 
 
     private val kotlin_keywords = "val var import package fun type class object super public private protected return " +
@@ -63,12 +59,19 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
 
     private fun fixListenerMethodArgs(key: String, defaultArgs: String): String {
         return when(key) {
-            //FIXME: nullability inference bug in kotlinc?
-//            "OnSeekBarChangeListeneronProgressChanged" -> "p0: android.widget.SeekBar, p1: Int, p2: Boolean"
-//            "OnSeekBarChangeListeneronStopTrackingTouch" -> "p0: android.widget.SeekBar"
-//            "OnScrollListeneronScroll" -> "p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int"
+//                    "OnSeekBarChangeListeneronProgressChanged" -> "p0: android.widget.SeekBar, p1: Int, p2: Boolean"
+//                    "OnSeekBarChangeListeneronStopTrackingTouch" -> "p0: android.widget.SeekBar"
+//                    "OnScrollListeneronScroll" -> "p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int"
             else -> defaultArgs
         }
+    }
+
+    private fun isWidget(classNode: ClassNode): Boolean {
+        return classTree.isSuccessorOf(classNode, settings.widgetBaseClass)
+    }
+
+    private fun isContainer(widget: ClassNode): Boolean {
+        return classTree.isSuccessorOf(widget, settings.containerBaseClass)
     }
 
     public fun produceProperty(prop: PropertyData) {
@@ -76,8 +79,8 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         val className: String
         if (prop.isContainer) {
             className = "_${prop.parentClass.cleanName()}"
-            if (prop.setter != null) prop.setter = "vgInstance." + prop.setter
-            if (prop.getter != null) prop.getter = "vgInstance." + prop.getter
+            if (prop.setter != null) prop.setter = "viewGroup." + prop.setter
+            if (prop.getter != null) prop.getter = "viewGroup." + prop.getter
         } else {
             className = prop.parentClass.cleanInternalName()
         }
@@ -116,6 +119,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
 
     private fun makeListenerObject(cont: Context, view: MethodNodeWithParent, listener: ClassNode) {
         val methods = listener.methods?.filter { it.name != "<init>" }
+        val parentClassName = view.parent.cleanInternalName()
         val wrapperClassName = "__${view.parent.cleanName()}${listener.cleanName()}"
         cont.writeln("class $wrapperClassName {")
         //generate helper class
@@ -129,32 +133,71 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         cont.decIndent()
         cont.writeln("}\n")
         //generate extension function
-        val parentClassName = view.parent.cleanInternalName()
-        val listenerName = decapitalize(view.child.name!!.replace("set", "").replace("Listener", ""))
+
+        // get/set Tag is available in View children only
+        if (isWidget(view.parent)) {
+            for (method in methods) {
+                val containerContext = Context(containerCache, 1)
+                val listenerArgumentTypes = method.fmtArgumentsTypes()
+                val listenerReturnType = method.getReturnType().toStr()
+                val listenerMethodName = decapitalize(method.name!!.replace("set", "").replace("Listener", ""))
+                val listenerKey = "$parentClassName${listener.cleanName()}"
+                containerContext.writeln("fun $parentClassName.$listenerMethodName(l: ($listenerArgumentTypes) -> $listenerReturnType) {")
+                containerContext.incIndent()
+                containerContext.writeln("var listenerClass = listenerMap.get(\"$listenerKey\") as? $wrapperClassName")
+                containerContext.writeln("if (listenerClass == null) {")
+                containerContext.incIndent()
+                containerContext.writeln("listenerClass = $wrapperClassName()")
+                containerContext.decIndent()
+                containerContext.writeln("}") //if
+                containerContext.writeln("listenerClass!!._${method.name} = l")
+                containerContext.writeln("listenerMap.put(\"$listenerKey\", listenerClass)")
+                containerContext.writeln("val lambdas = listenerLambdasMap.getOrPut(\"$parentClassName\", { ArrayList() })")
+                containerContext.writeln("lambdas.add({")
+                containerContext.incIndent()
+                containerContext.writeln("val wrapper = listenerMap.get(\"$listenerKey\") as? $wrapperClassName")
+                containerContext.writeln("if (wrapper != null) {")
+                containerContext.incIndent()
+                genListenerHelperWrapper(containerContext, listener, methods)
+                containerContext.writeln("${view.child.name}(listener)")
+                containerContext.writeln("}") // if
+                containerContext.decIndent()
+                containerContext.writeln("})") //setTag(2, ...
+                containerContext.decIndent()
+                containerContext.writeln("}\n")
+            }
+        } else {
+            val listenerName = decapitalize(view.child.name!!.replace("set", "").replace("Listener", ""))
+            cont.writeln("fun $parentClassName.$listenerName(init: $wrapperClassName.() -> Unit) {")
+            cont.incIndent()
+            cont.writeln("val wrapper = $wrapperClassName()")
+            cont.writeln("wrapper.init()")
+            genListenerHelperWrapper(cont, listener, methods)
+            cont.writeln("${view.child.name}(listener)")
+            cont.decIndent()
+            cont.writeln("}\n")
+        }
+    }
+
+    private fun genListenerHelperWrapper(cont: Context, listener: ClassNode, methods: List<MethodNode>) {
         val objectConsArgs = listener.methods!!.find { it.isConstructor() }?.fmtArguments()
         val objectCons = if (objectConsArgs != null) "($objectConsArgs)" else ""
-        cont.writeln("fun $parentClassName.$listenerName(init: $wrapperClassName.() -> Unit) {")
-        cont.incIndent()
-        cont.writeln("val wrapper = $wrapperClassName()")
-        cont.writeln("wrapper.init()")
         cont.writeln("val listener = object: ${listener.cleanInternalName()}$objectCons {")
         cont.incIndent()
         for (method in methods) {
             val returnType = method.getReturnType().toStr()
-            val returnTerm = if(returnType == "jet.Unit") "" else ": $returnType"
-            val returnStmt = if(returnType == "jet.Unit") "" else "return "
-            val methodArgs = fixListenerMethodArgs(listener.cleanName()+method.name, method.fmtArguments())
+            val returnTerm = if (returnType == "jet.Unit") "" else ": $returnType"
+            val returnStmt = if (returnType == "jet.Unit") "" else "return "
+            val methodArgs = fixListenerMethodArgs(listener.cleanName() + method.name, method.fmtArguments())
             cont.writeln("override fun ${method.name}(${methodArgs})$returnTerm {")
             cont.incIndent()
-            cont.writeln("${returnStmt}wrapper._${method.name}(${method.fmtArgumentsInvoke()})")
+            //FIXME: incorrect assertion checks, again
+            cont.writeln("${returnStmt}wrapper!!._${method.name}(${method.fmtArgumentsInvoke()})")
             cont.decIndent()
             cont.writeln("}")
         }
         cont.decIndent()
         cont.writeln("}")
-        cont.writeln("${view.child.name}(listener)")
-        cont.decIndent()
-        cont.writeln("}\n")
     }
 
     public fun genListenerHelper(view: MethodNodeWithParent, listener: ClassNode) {
@@ -170,8 +213,8 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
     }
 
     public fun makeWidget(className: String,
-                           internalName: String,
-                           arguments: List<PropertyData>) {
+                          internalName: String,
+                          arguments: List<PropertyData>) {
         var cont = Context(containerCache, 1)
         val args = StringBuilder()
         arguments.forEach {
@@ -184,8 +227,9 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         for (arg in arguments)
             cont.writeln("v.${arg.propName} = ${arg.propName}")
         cont.writeln("v.init()")
-        cont.writeln("vgInstance.addView(v)")
+        cont.writeln("viewGroup.addView(v)")
         cont.writeln("_style(v)")
+        cont.writeln("listenerLambdasMap.get(\"$internalName\")?.forEach { it() }")
         cont.writeln("return v")
         cont.decIndent()
         cont.writeln("}\n")
@@ -200,8 +244,11 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         cont.incIndent()
         cont.writeln("val v = _$cleanName($cleanInternalName(ctx), ctx)")
         cont.writeln("v.init()")
-        cont.writeln("vgInstance.addView(v.vgInstance)")
+        cont.writeln("viewGroup.addView(v.viewGroup)")
         cont.writeln("_style(v)")
+        cont.writeln("listenerLambdasMap.get(\"$cleanInternalName\")?.forEach { it() }")
+        cont.writeln("listenerMap.clear()")
+        cont.writeln("listenerLambdasMap.clear()")
         cont.writeln("return v")
         cont.decIndent()
         cont.writeln("}\n")
@@ -212,7 +259,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         val cleanName = classNode.cleanName()
         val cleanInternalName = classNode.cleanInternalName()
         cont.write("class _$cleanName")
-        cont.writeln("(vgInstance: $cleanInternalName, ctx: android.app.Activity): _Container<$cleanInternalName>(vgInstance, ctx) {")
+        cont.writeln("(viewGroup: $cleanInternalName, ctx: android.app.Activity): _Container<$cleanInternalName>(viewGroup, ctx) {")
         cont.newLine()
         if (layoutParams != null)
             genLayoutParams(cont, classNode, layoutParams)
@@ -224,7 +271,7 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
         val params = cons.fmtArguments()
         val paramsInvoke = cons.fmtArgumentsInvoke()
         val separator = if (params == "") "" else ","
-        c.writeln("fun android.view.View.layoutParams($params$separator init: $cleanName.() -> Unit) {")
+        c.writeln("fun android.view.View.layoutParams($params$separator init: $cleanName.() -> Unit = { }) {")
         c.incIndent()
         c.writeln("val lp = $cleanName($paramsInvoke)")
         c.writeln("lp.init()")
@@ -241,15 +288,15 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
     }
 
     public fun genUIWidgetFun(classNode: ClassNode) {
-        val c = Context(uiClassCache, 1)
+        val c = Context(uiClassCache)
         val cleanNameDecap = classNode.cleanNameDecap()
         val cleanName = classNode.cleanName()
         val cleanInternalName = classNode.cleanInternalName()
-        c.writeln("fun $cleanNameDecap(init: _$cleanName.() -> Unit) {")
+        c.writeln("fun android.app.Activity.$cleanNameDecap(init: _$cleanName.() -> Unit) {")
         c.incIndent()
-        c.writeln("val layout = _$cleanName($cleanInternalName(act), act)")
+        c.writeln("val layout = _$cleanName($cleanInternalName(this), this)")
         c.writeln("layout.init()")
-        c.writeln("act.setContentView(layout.vgInstance)")
+        c.writeln("setContentView(layout.viewGroup)")
         c.decIndent()
         c.writeln("}\n")
     }
@@ -263,19 +310,17 @@ class DSLWriter(val settings: BaseGeneratorSettings) {
                 cache append settings._package
                 cache append "\n\n"
             }
-            if (settings.generateImports){
+            if (settings.generateImports) {
                 cache append settings.imports
                 cache append "\n\n"
             }
         }
         containerCache append settings.containerHeader
-        uiClassCache   append settings.uiClassHeader
     }
 
     private fun finalizeCaches() {
-        uiClassCache   append "}\n\n"
         if (settings.generateUIClassWrapper)
-                uiClassCache append settings.footer
+            uiClassCache append settings.footer
         containerCache append "}\n\n"
     }
 }

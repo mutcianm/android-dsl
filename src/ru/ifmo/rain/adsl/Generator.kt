@@ -43,8 +43,6 @@ class PropertyData(var parentClass: ClassNode,
 class Generator(val jarPath: String, val packageName: String,
                 val settings: BaseGeneratorSettings) {
 
-    private val dslWriter = DSLWriter(settings)
-
     private val propMap = TreeMap<String, PropertyData>()
 
     private val classBlackList = settings.blackListedClasses
@@ -53,6 +51,8 @@ class Generator(val jarPath: String, val packageName: String,
     private val explicitlyProcessedClasses = settings.explicitlyProcessedClasses
 
     private val classTree: ClassTree = ClassTree()
+
+    private val dslWriter = DSLWriter(settings, classTree)
 
     private val classHooks = Arrays.asList<Hook<ClassNode>>(
             Hook({

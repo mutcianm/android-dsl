@@ -26,10 +26,10 @@ fun android.app.AlertDialog.Builder.onItemSelected(init: __BuilderOnItemSelected
     wrapper.init()
     val listener = object: android.widget.AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
-            wrapper._onItemSelected(p0!!, p1!!, p2, p3)
+            wrapper!!._onItemSelected(p0!!, p1!!, p2, p3)
         }
         override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
-            wrapper._onNothingSelected(p0!!)
+            wrapper!!._onNothingSelected(p0!!)
         }
     }
     setOnItemSelectedListener(listener)
@@ -85,13 +85,13 @@ fun android.speech.tts.TextToSpeech.onUtteranceProgress(init: __TextToSpeechUtte
     wrapper.init()
     val listener = object: android.speech.tts.UtteranceProgressListener() {
         override fun onStart(p0: jet.String?) {
-            wrapper._onStart(p0!!)
+            wrapper!!._onStart(p0!!)
         }
         override fun onDone(p0: jet.String?) {
-            wrapper._onDone(p0!!)
+            wrapper!!._onDone(p0!!)
         }
         override fun onError(p0: jet.String?) {
-            wrapper._onError(p0!!)
+            wrapper!!._onError(p0!!)
         }
     }
     setOnUtteranceProgressListener(listener)
@@ -169,10 +169,10 @@ fun android.view.MenuItem.onActionExpand(init: __MenuItemOnActionExpandListener.
     wrapper.init()
     val listener = object: android.view.MenuItem.OnActionExpandListener {
         override fun onMenuItemActionExpand(p0: android.view.MenuItem?): Boolean {
-            return wrapper._onMenuItemActionExpand(p0!!)
+            return wrapper!!._onMenuItemActionExpand(p0!!)
         }
         override fun onMenuItemActionCollapse(p0: android.view.MenuItem?): Boolean {
-            return wrapper._onMenuItemActionCollapse(p0!!)
+            return wrapper!!._onMenuItemActionCollapse(p0!!)
         }
     }
     setOnActionExpandListener(listener)
@@ -232,13 +232,13 @@ fun android.view.GestureDetector.onDoubleTap(init: __GestureDetectorOnDoubleTapL
     wrapper.init()
     val listener = object: android.view.GestureDetector.OnDoubleTapListener {
         override fun onSingleTapConfirmed(p0: android.view.MotionEvent?): Boolean {
-            return wrapper._onSingleTapConfirmed(p0!!)
+            return wrapper!!._onSingleTapConfirmed(p0!!)
         }
         override fun onDoubleTap(p0: android.view.MotionEvent?): Boolean {
-            return wrapper._onDoubleTap(p0!!)
+            return wrapper!!._onDoubleTap(p0!!)
         }
         override fun onDoubleTapEvent(p0: android.view.MotionEvent?): Boolean {
-            return wrapper._onDoubleTapEvent(p0!!)
+            return wrapper!!._onDoubleTapEvent(p0!!)
         }
     }
     setOnDoubleTapListener(listener)
@@ -268,10 +268,10 @@ fun android.widget.ListPopupWindow.onItemSelected(init: __ListPopupWindowOnItemS
     wrapper.init()
     val listener = object: android.widget.AdapterView.OnItemSelectedListener {
         override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
-            wrapper._onItemSelected(p0!!, p1!!, p2, p3)
+            wrapper!!._onItemSelected(p0!!, p1!!, p2, p3)
         }
         override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
-            wrapper._onNothingSelected(p0!!)
+            wrapper!!._onNothingSelected(p0!!)
         }
     }
     setOnItemSelectedListener(listener)
@@ -293,10 +293,10 @@ fun android.widget.ZoomButtonsController.onZoom(init: __ZoomButtonsControllerOnZ
     wrapper.init()
     val listener = object: android.widget.ZoomButtonsController.OnZoomListener {
         override fun onVisibilityChanged(p0: Boolean) {
-            wrapper._onVisibilityChanged(p0)
+            wrapper!!._onVisibilityChanged(p0)
         }
         override fun onZoom(p0: Boolean) {
-            wrapper._onZoom(p0)
+            wrapper!!._onZoom(p0)
         }
     }
     setOnZoomListener(listener)
@@ -319,20 +319,6 @@ class __ViewGroupOnHierarchyChangeListener {
     fun onChildViewAdded(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewAdded = f }
     var _onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 ->  }
     fun onChildViewRemoved(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewRemoved = f }
-}
-
-fun android.view.ViewGroup.onHierarchyChange(init: __ViewGroupOnHierarchyChangeListener.() -> Unit) {
-    val wrapper = __ViewGroupOnHierarchyChangeListener()
-    wrapper.init()
-    val listener = object: android.view.ViewGroup.OnHierarchyChangeListener {
-        override fun onChildViewAdded(p0: android.view.View?, p1: android.view.View?) {
-            wrapper._onChildViewAdded(p0!!, p1!!)
-        }
-        override fun onChildViewRemoved(p0: android.view.View?, p1: android.view.View?) {
-            wrapper._onChildViewRemoved(p0!!, p1!!)
-        }
-    }
-    setOnHierarchyChangeListener(listener)
 }
 
 fun android.widget.TextView.onEditorAction(l: (android.widget.TextView?, Int, android.view.KeyEvent?) -> Boolean) {
@@ -378,20 +364,6 @@ class __AbsListViewOnScrollListener {
     fun onScroll(f : (p0: android.widget.AbsListView?, p1: Int, p2: Int, p3: Int) -> jet.Unit) { _onScroll = f }
 }
 
-fun android.widget.AbsListView.onScroll(init: __AbsListViewOnScrollListener.() -> Unit) {
-    val wrapper = __AbsListViewOnScrollListener()
-    wrapper.init()
-    val listener = object: android.widget.AbsListView.OnScrollListener {
-        override fun onScrollStateChanged(p0: android.widget.AbsListView?, p1: Int) {
-            wrapper._onScrollStateChanged(p0!!, p1)
-        }
-        override fun onScroll(p0: android.widget.AbsListView?, p1: Int, p2: Int, p3: Int) {
-            wrapper._onScroll(p0!!, p1, p2, p3)
-        }
-    }
-    setOnScrollListener(listener)
-}
-
 class __TableLayoutOnHierarchyChangeListener {
     var _onChildViewAdded: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 ->  }
     fun onChildViewAdded(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewAdded = f }
@@ -399,39 +371,11 @@ class __TableLayoutOnHierarchyChangeListener {
     fun onChildViewRemoved(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewRemoved = f }
 }
 
-fun android.widget.TableLayout.onHierarchyChange(init: __TableLayoutOnHierarchyChangeListener.() -> Unit) {
-    val wrapper = __TableLayoutOnHierarchyChangeListener()
-    wrapper.init()
-    val listener = object: android.view.ViewGroup.OnHierarchyChangeListener {
-        override fun onChildViewAdded(p0: android.view.View?, p1: android.view.View?) {
-            wrapper._onChildViewAdded(p0!!, p1!!)
-        }
-        override fun onChildViewRemoved(p0: android.view.View?, p1: android.view.View?) {
-            wrapper._onChildViewRemoved(p0!!, p1!!)
-        }
-    }
-    setOnHierarchyChangeListener(listener)
-}
-
 class __TableRowOnHierarchyChangeListener {
     var _onChildViewAdded: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 ->  }
     fun onChildViewAdded(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewAdded = f }
     var _onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 ->  }
     fun onChildViewRemoved(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewRemoved = f }
-}
-
-fun android.widget.TableRow.onHierarchyChange(init: __TableRowOnHierarchyChangeListener.() -> Unit) {
-    val wrapper = __TableRowOnHierarchyChangeListener()
-    wrapper.init()
-    val listener = object: android.view.ViewGroup.OnHierarchyChangeListener {
-        override fun onChildViewAdded(p0: android.view.View?, p1: android.view.View?) {
-            wrapper._onChildViewAdded(p0!!, p1!!)
-        }
-        override fun onChildViewRemoved(p0: android.view.View?, p1: android.view.View?) {
-            wrapper._onChildViewRemoved(p0!!, p1!!)
-        }
-    }
-    setOnHierarchyChangeListener(listener)
 }
 
 fun android.widget.NumberPicker.onValueChanged(l: (android.widget.NumberPicker?, Int, Int) -> jet.Unit) {
@@ -447,20 +391,6 @@ class __RadioGroupOnHierarchyChangeListener {
     fun onChildViewAdded(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewAdded = f }
     var _onChildViewRemoved: (p0: android.view.View?, p1: android.view.View?) -> jet.Unit = { p0, p1 ->  }
     fun onChildViewRemoved(f : (p0: android.view.View?, p1: android.view.View?) -> jet.Unit) { _onChildViewRemoved = f }
-}
-
-fun android.widget.RadioGroup.onHierarchyChange(init: __RadioGroupOnHierarchyChangeListener.() -> Unit) {
-    val wrapper = __RadioGroupOnHierarchyChangeListener()
-    wrapper.init()
-    val listener = object: android.view.ViewGroup.OnHierarchyChangeListener {
-        override fun onChildViewAdded(p0: android.view.View?, p1: android.view.View?) {
-            wrapper._onChildViewAdded(p0!!, p1!!)
-        }
-        override fun onChildViewRemoved(p0: android.view.View?, p1: android.view.View?) {
-            wrapper._onChildViewRemoved(p0!!, p1!!)
-        }
-    }
-    setOnHierarchyChangeListener(listener)
 }
 
 fun android.widget.RadioGroup.onCheckedChange(l: (android.widget.RadioGroup?, Int) -> jet.Unit) {
@@ -482,20 +412,6 @@ class __SearchViewOnQueryTextListener {
     fun onQueryTextChange(f : (p0: jet.String?) -> Boolean) { _onQueryTextChange = f }
 }
 
-fun android.widget.SearchView.onQueryText(init: __SearchViewOnQueryTextListener.() -> Unit) {
-    val wrapper = __SearchViewOnQueryTextListener()
-    wrapper.init()
-    val listener = object: android.widget.SearchView.OnQueryTextListener {
-        override fun onQueryTextSubmit(p0: jet.String?): Boolean {
-            return wrapper._onQueryTextSubmit(p0!!)
-        }
-        override fun onQueryTextChange(p0: jet.String?): Boolean {
-            return wrapper._onQueryTextChange(p0!!)
-        }
-    }
-    setOnQueryTextListener(listener)
-}
-
 fun android.widget.SearchView.onClose(l: () -> Boolean) {
     setOnCloseListener(l)
 }
@@ -509,20 +425,6 @@ class __SearchViewOnSuggestionListener {
     fun onSuggestionSelect(f : (p0: Int) -> Boolean) { _onSuggestionSelect = f }
     var _onSuggestionClick: (p0: Int) -> Boolean = { p0 -> false }
     fun onSuggestionClick(f : (p0: Int) -> Boolean) { _onSuggestionClick = f }
-}
-
-fun android.widget.SearchView.onSuggestion(init: __SearchViewOnSuggestionListener.() -> Unit) {
-    val wrapper = __SearchViewOnSuggestionListener()
-    wrapper.init()
-    val listener = object: android.widget.SearchView.OnSuggestionListener {
-        override fun onSuggestionSelect(p0: Int): Boolean {
-            return wrapper._onSuggestionSelect(p0)
-        }
-        override fun onSuggestionClick(p0: Int): Boolean {
-            return wrapper._onSuggestionClick(p0)
-        }
-    }
-    setOnSuggestionListener(listener)
 }
 
 fun android.widget.SearchView.onSearchClick(l: (android.view.View?) -> jet.Unit) {
@@ -548,20 +450,6 @@ class __AutoCompleteTextViewOnItemSelectedListener {
     fun onNothingSelected(f : (p0: android.widget.AdapterView<*>?) -> jet.Unit) { _onNothingSelected = f }
 }
 
-fun android.widget.AutoCompleteTextView.onItemSelected(init: __AutoCompleteTextViewOnItemSelectedListener.() -> Unit) {
-    val wrapper = __AutoCompleteTextViewOnItemSelectedListener()
-    wrapper.init()
-    val listener = object: android.widget.AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
-            wrapper._onItemSelected(p0!!, p1!!, p2, p3)
-        }
-        override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
-            wrapper._onNothingSelected(p0!!)
-        }
-    }
-    setOnItemSelectedListener(listener)
-}
-
 class __SeekBarOnSeekBarChangeListener {
     var _onProgressChanged: (p0: android.widget.SeekBar?, p1: Int, p2: Boolean) -> jet.Unit = { p0, p1, p2 ->  }
     fun onProgressChanged(f : (p0: android.widget.SeekBar?, p1: Int, p2: Boolean) -> jet.Unit) { _onProgressChanged = f }
@@ -569,23 +457,6 @@ class __SeekBarOnSeekBarChangeListener {
     fun onStartTrackingTouch(f : (p0: android.widget.SeekBar?) -> jet.Unit) { _onStartTrackingTouch = f }
     var _onStopTrackingTouch: (p0: android.widget.SeekBar?) -> jet.Unit = { p0 ->  }
     fun onStopTrackingTouch(f : (p0: android.widget.SeekBar?) -> jet.Unit) { _onStopTrackingTouch = f }
-}
-
-fun android.widget.SeekBar.onSeekBarChange(init: __SeekBarOnSeekBarChangeListener.() -> Unit) {
-    val wrapper = __SeekBarOnSeekBarChangeListener()
-    wrapper.init()
-    val listener = object: android.widget.SeekBar.OnSeekBarChangeListener {
-        override fun onProgressChanged(p0: android.widget.SeekBar?, p1: Int, p2: Boolean) {
-            wrapper._onProgressChanged(p0!!, p1, p2)
-        }
-        override fun onStartTrackingTouch(p0: android.widget.SeekBar?) {
-            wrapper._onStartTrackingTouch(p0!!)
-        }
-        override fun onStopTrackingTouch(p0: android.widget.SeekBar?) {
-            wrapper._onStopTrackingTouch(p0!!)
-        }
-    }
-    setOnSeekBarChangeListener(listener)
 }
 
 fun android.widget.RatingBar.onRatingBarChange(l: (android.widget.RatingBar?, Float, Boolean) -> jet.Unit) {
