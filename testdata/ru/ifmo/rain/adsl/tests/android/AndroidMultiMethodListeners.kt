@@ -13,23 +13,17 @@ public open class MyActivity() : Activity() {
         UI {
             linearLayout {
                 listView {
-                    vgInstance.onScroll {
-                        onScroll { a,b,c,d ->  }
-                        onScrollStateChanged { a,b -> }
-                    }
+                    viewGroup onScroll { a,b,c,d ->  }
+                    viewGroup onScrollStateChanged { a,b -> }
                 }
                 searchView {
-                    vgInstance.onQueryText {
-                        onQueryTextChange { a -> true }
-                        onQueryTextSubmit { a -> true }
-                    }
+                    viewGroup onQueryTextChange { a -> true }
+                    viewGroup onQueryTextSubmit { a -> true }
                 }
                 seekBar {
-                    onSeekBarChange {
-                        onProgressChanged { a,b,c -> }
-                        onStartTrackingTouch { a -> }
-                        onStopTrackingTouch { a -> }
-                    }
+                    onProgressChanged { a,b,c -> }
+                    onStartTrackingTouch { a -> }
+                    onStopTrackingTouch { a -> }
                 }
             }
         }

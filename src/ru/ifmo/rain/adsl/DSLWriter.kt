@@ -59,9 +59,9 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
 
     private fun fixListenerMethodArgs(key: String, defaultArgs: String): String {
         return when(key) {
-                    "OnSeekBarChangeListeneronProgressChanged" -> "p0: android.widget.SeekBar, p1: Int, p2: Boolean"
-                    "OnSeekBarChangeListeneronStopTrackingTouch" -> "p0: android.widget.SeekBar"
-                    "OnScrollListeneronScroll" -> "p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int"
+//                    "OnSeekBarChangeListeneronProgressChanged" -> "p0: android.widget.SeekBar, p1: Int, p2: Boolean"
+//                    "OnSeekBarChangeListeneronStopTrackingTouch" -> "p0: android.widget.SeekBar"
+//                    "OnScrollListeneronScroll" -> "p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int"
             else -> defaultArgs
         }
     }
@@ -191,7 +191,8 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
             val methodArgs = fixListenerMethodArgs(listener.cleanName() + method.name, method.fmtArguments())
             cont.writeln("override fun ${method.name}(${methodArgs})$returnTerm {")
             cont.incIndent()
-            cont.writeln("${returnStmt}wrapper._${method.name}(${method.fmtArgumentsInvoke()})")
+            //FIXME: incorrect assertion checks, again
+            cont.writeln("${returnStmt}wrapper!!._${method.name}(${method.fmtArgumentsInvoke()})")
             cont.decIndent()
             cont.writeln("}")
         }
@@ -246,6 +247,8 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         cont.writeln("viewGroup.addView(v.viewGroup)")
         cont.writeln("_style(v)")
         cont.writeln("listenerLambdasMap.get(\"$cleanInternalName\")?.forEach { it() }")
+        cont.writeln("listenerMap.clear()")
+        cont.writeln("listenerLambdasMap.clear()")
         cont.writeln("return v")
         cont.decIndent()
         cont.writeln("}\n")
