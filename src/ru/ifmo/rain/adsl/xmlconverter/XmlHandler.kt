@@ -5,8 +5,9 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import ru.ifmo.rain.adsl.Context
 import java.util.ArrayList
+import java.util.HashMap
 
-class XmlHandler(val buffer: StringBuffer): DefaultHandler() {
+class XmlHandler(val buffer: StringBuffer, val settings: BaseConverterSettings): DefaultHandler() {
     private var depth = 0
 //    val buffer = StringBuffer()
     val imports = StringBuffer()
@@ -15,18 +16,17 @@ class XmlHandler(val buffer: StringBuffer): DefaultHandler() {
 
     override fun startElement(uri: String?, localName: String?, qName: String, attributes: Attributes?) {
         val layoutParams = ArrayList<String>()
+        val attrs = attributes?.toMap()
         if (qName.endsWith("Layout"))
             lastLayout = qName
         ctx.incIndent()
-        ctx.writeln(qName.decapitalize() + " {")
+        ctx.writeln(buildCons(qName, attrs) + " {")
         if (attributes != null) {
             ctx.incIndent()
-            for (index in 0..attributes.getLength()-1) {
-                val attrName = attributes.getLocalName(index)
-                val attrVal = attributes.getValue(index)
-                if (isSkippableAttribute(attrName))
+            for (attr in attrs) {
+                if (isSkippableAttr(attr.key))
                     continue
-                processAttribute(attrName, attrVal, {name, value ->
+                processAttribute(attr.key, attr.value, {name, value ->
                     layoutParams.add("$lastLayout.${value?.toUpperCase()}")
                 })
             }
@@ -41,6 +41,50 @@ class XmlHandler(val buffer: StringBuffer): DefaultHandler() {
             ctx.decIndent()
         }
     }
+
+
+    private fun isSkippableAttr(name: String?): Boolean {
+        return name in settings.ignoredProperties
+    }
+
+    private fun quote(key: String, value: String?): String? {
+        return if (key in settings.quotedKeys) "\"$value\"" else value
+    }
+
+    private fun buildCons(qName: String, attrs: HashMap<String, String>?): String {
+        if(attrs == null)
+            return qName.decapitalize()
+        val classInternalName = settings.helperConProps.keySet().find { it.endsWith(qName) }
+        val constructors = settings.helperConProps[classInternalName]
+        //no helper constructors at all
+        if (constructors == null)
+            return qName.decapitalize()
+        //else find constructor with as many matching arguments as possible
+        val attrKeys = attrs.keySet()
+        var bestMatchingCons: Set<String>? = null
+        for (cons in constructors) {
+            if (cons.all { it in attrKeys })
+                if (bestMatchingCons != null) {
+                    if (cons.size > bestMatchingCons!!.size)
+                        bestMatchingCons = cons
+                } else {
+                    bestMatchingCons = cons
+                }
+        }
+        //no matching constructor found
+        if (bestMatchingCons == null)
+            return qName.decapitalize()
+        val res = StringBuffer()
+        res append "${qName.decapitalize()}("
+        for (arg in bestMatchingCons!!) {
+            res append "$arg = ${quote(arg,attrs[arg])}, "
+            attrs.remove(arg)
+        }
+        res.trim(2)
+        res append ")"
+        return res.toString()
+    }
+
     override fun endElement(uri: String?, localName: String?, qName: String) {
         ctx.writeln("}")
         ctx.decIndent()

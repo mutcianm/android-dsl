@@ -6,27 +6,24 @@ public override fun onCreate(savedInstanceState: Bundle?): Unit {
             linearLayout {
                 orientation = vertical
                 layoutParams(LinearLayout.MATCH_PARENT, LinearLayout.MATCH_PARENT) { }
-                textView {
-                    text = "Enter your password"
+                textView(text = "Enter your password") {
                     layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.WRAP_CONTENT) { }
                 }
                 editText {
                     inputType = textPassword
-                    layoutParams(LinearLayout.MATCH_PARENT, LinearLayout.WRAP_CONTENT) { }
+                    layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.MATCH_PARENT) { }
                     requestFocus {
                     }
                 }
-                textView {
-                    text = "Repeat your password"
+                textView(text = "Repeat your password") {
                     layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.WRAP_CONTENT) { }
                 }
                 editText {
                     inputType = textPassword
-                    layoutParams(LinearLayout.MATCH_PARENT, LinearLayout.WRAP_CONTENT) { }
+                    layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.MATCH_PARENT) { }
                 }
-                button {
-                    text = "Sign in"
-                    layoutParams(LinearLayout.MATCH_PARENT, LinearLayout.WRAP_CONTENT) { }
+                button(text = "Sign in") {
+                    layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.MATCH_PARENT) { }
                 }
             }
             scrollBar {

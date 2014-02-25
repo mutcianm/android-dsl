@@ -10,7 +10,7 @@ class Converter {
         spf?.setNamespaceAware(true)
         val parser = spf?.newSAXParser()
         val reader = parser?.getXMLReader()
-        reader?.setContentHandler(XmlHandler(buffer))
+        reader?.setContentHandler(XmlHandler(buffer, ConverterSettings()))
         reader?.parse(convertToFileURL(ifn))
     }
 

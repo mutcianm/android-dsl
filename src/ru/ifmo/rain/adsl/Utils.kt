@@ -100,6 +100,10 @@ fun readFile(name: String): String {
     return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(data)).toString()
 }
 
+public fun readLines(fileName: String): MutableList<String> {
+    return Files.readAllLines(Paths.get(fileName)!!, StandardCharsets.UTF_8)
+}
+
 public fun <K, V, M: MutableMap<K, V>> Iterator<Pair<K, V>>.toMutableMap(map: M): M {
     for ((k, v) in this) {
         map.put(k, v)
