@@ -133,31 +133,34 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         // get/set Tag is available in View children only
         if (isWidget(view.parent)) {
             for (method in methods) {
+                val containerContext = Context(containerCache, 1)
                 val listenerArgumentTypes = method.fmtArgumentsTypes()
                 val listenerReturnType = method.getReturnType().toStr()
                 val listenerMethodName = decapitalize(method.name!!.replace("set", "").replace("Listener", ""))
-                cont.writeln("fun $parentClassName.$listenerMethodName(l: ($listenerArgumentTypes) -> $listenerReturnType) {")
-                cont.incIndent()
-                cont.writeln("var listenerClass = getTag(1) as? $wrapperClassName")
-                cont.writeln("if (listenerClass == null) {")
-                cont.incIndent()
-                cont.writeln("listenerClass = $wrapperClassName()")
-                cont.decIndent()
-                cont.writeln("}") //if
-                cont.writeln("listenerClass!!._${method.name} = l")
-                cont.writeln("setTag(1, listenerClass)")
-                cont.writeln("setTag(2, {")
-                cont.incIndent()
-                cont.writeln("val wrapper = getTag(1) as? $wrapperClassName")
-                cont.writeln("if (wrapper != null) {")
-                cont.incIndent()
-                genListenerHelperWrapper(cont, listener, methods)
-                cont.writeln("${view.child.name}(listener)")
-                cont.writeln("}") // if
-                cont.decIndent()
-                cont.writeln("})") //setTag(2, ...
-                cont.decIndent()
-                cont.writeln("}\n")
+                val listenerKey = "$parentClassName${listener.cleanName()}"
+                containerContext.writeln("fun $parentClassName.$listenerMethodName(l: ($listenerArgumentTypes) -> $listenerReturnType) {")
+                containerContext.incIndent()
+                containerContext.writeln("var listenerClass = listenerMap.get(\"$listenerKey\") as? $wrapperClassName")
+                containerContext.writeln("if (listenerClass == null) {")
+                containerContext.incIndent()
+                containerContext.writeln("listenerClass = $wrapperClassName()")
+                containerContext.decIndent()
+                containerContext.writeln("}") //if
+                containerContext.writeln("listenerClass!!._${method.name} = l")
+                containerContext.writeln("listenerMap.put(\"$listenerKey\", listenerClass)")
+                containerContext.writeln("val lambdas = listenerLambdasMap.getOrPut(\"$parentClassName\", { ArrayList() })")
+                containerContext.writeln("lambdas.add({")
+                containerContext.incIndent()
+                containerContext.writeln("val wrapper = listenerMap.get(\"$listenerKey\") as? $wrapperClassName")
+                containerContext.writeln("if (wrapper != null) {")
+                containerContext.incIndent()
+                genListenerHelperWrapper(containerContext, listener, methods)
+                containerContext.writeln("${view.child.name}(listener)")
+                containerContext.writeln("}") // if
+                containerContext.decIndent()
+                containerContext.writeln("})") //setTag(2, ...
+                containerContext.decIndent()
+                containerContext.writeln("}\n")
             }
         } else {
             val listenerName = decapitalize(view.child.name!!.replace("set", "").replace("Listener", ""))
@@ -221,8 +224,7 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         cont.writeln("v.init()")
         cont.writeln("viewGroup.addView(v)")
         cont.writeln("_style(v)")
-        cont.writeln("val l = v.getTag(2) as? () -> Unit")
-        cont.writeln("if (l != null) l()")
+        cont.writeln("listenerLambdasMap.get(\"$internalName\")?.forEach { it() }")
         cont.writeln("return v")
         cont.decIndent()
         cont.writeln("}\n")
@@ -239,8 +241,7 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         cont.writeln("v.init()")
         cont.writeln("viewGroup.addView(v.viewGroup)")
         cont.writeln("_style(v)")
-        cont.writeln("val l = v.viewGroup.getTag(2) as? () -> Unit")
-        cont.writeln("if (l != null) l()")
+        cont.writeln("listenerLambdasMap.get(\"$cleanInternalName\")?.forEach { it() }")
         cont.writeln("return v")
         cont.decIndent()
         cont.writeln("}\n")

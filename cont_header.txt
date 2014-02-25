@@ -1,7 +1,12 @@
+import java.util.HashMap
+import java.util.ArrayList
 open class _Container<out T: android.view.ViewGroup>(open val viewGroup: T,
                  open val ctx: android.app.Activity) {
 
     var _style: ((X: Any) -> Unit) = {}
+
+    val listenerLambdasMap = HashMap<String, ArrayList<() -> Unit>>()
+    val listenerMap = HashMap<String, Any?>()
 
     fun style(init: (X: Any) -> Unit) {
         this._style = init
