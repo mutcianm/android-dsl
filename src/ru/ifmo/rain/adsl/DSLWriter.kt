@@ -59,9 +59,9 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
 
     private fun fixListenerMethodArgs(key: String, defaultArgs: String): String {
         return when(key) {
-//                    "OnSeekBarChangeListeneronProgressChanged" -> "p0: android.widget.SeekBar, p1: Int, p2: Boolean"
-//                    "OnSeekBarChangeListeneronStopTrackingTouch" -> "p0: android.widget.SeekBar"
-//                    "OnScrollListeneronScroll" -> "p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int"
+                    "OnSeekBarChangeListeneronProgressChanged" -> "p0: android.widget.SeekBar, p1: Int, p2: Boolean"
+                    "OnSeekBarChangeListeneronStopTrackingTouch" -> "p0: android.widget.SeekBar"
+                    "OnScrollListeneronScroll" -> "p0: android.widget.AbsListView, p1: Int, p2: Int, p3: Int"
             else -> defaultArgs
         }
     }
@@ -221,7 +221,7 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
             args append "${it.propName}: ${it.propType!!.toStr()}, "
         }
         val strArgs = args.toString()
-        cont.writeln("fun $className($strArgs init: $internalName.() -> Unit): $internalName {")
+        cont.writeln("fun android.view.ViewGroup.$className($strArgs init: $internalName.() -> Unit): $internalName {")
         cont.incIndent()
         cont writeln "val v = $internalName(ctx)"
         for (arg in arguments)
@@ -240,16 +240,16 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
                                       cleanInternalName: String) {
         var cont = Context(containerCache, 1)
         cont.writeln("//container function")
-        cont.writeln("fun $cleanNameDecap( init: _$cleanName.() -> Unit): _$cleanName {")
+        cont.writeln("fun android.view.ViewGroup.$cleanNameDecap( init: $cleanName.() -> Unit): $cleanName {")
         cont.incIndent()
         cont.writeln("val v = _$cleanName($cleanInternalName(ctx), ctx)")
-        cont.writeln("v.init()")
+        cont.writeln("v.viewGroup.init()")
         cont.writeln("viewGroup.addView(v.viewGroup)")
         cont.writeln("_style(v)")
         cont.writeln("listenerLambdasMap.get(\"$cleanInternalName\")?.forEach { it() }")
         cont.writeln("listenerMap.clear()")
         cont.writeln("listenerLambdasMap.clear()")
-        cont.writeln("return v")
+        cont.writeln("return v.viewGroup")
         cont.decIndent()
         cont.writeln("}\n")
     }
@@ -292,10 +292,10 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         val cleanNameDecap = classNode.cleanNameDecap()
         val cleanName = classNode.cleanName()
         val cleanInternalName = classNode.cleanInternalName()
-        c.writeln("fun android.app.Activity.$cleanNameDecap(init: _$cleanName.() -> Unit) {")
+        c.writeln("fun android.app.Activity.$cleanNameDecap(init: $cleanName.() -> Unit) {")
         c.incIndent()
         c.writeln("val layout = _$cleanName($cleanInternalName(this), this)")
-        c.writeln("layout.init()")
+        c.writeln("layout.viewGroup.init()")
         c.writeln("setContentView(layout.viewGroup)")
         c.decIndent()
         c.writeln("}\n")
