@@ -2,5 +2,8 @@ out/*
 lib/*
 src/META-INF/*
 **/.idea/workspace.xml
+dsl_out/*
+**/.idea/dictionaries/*
+**/.idea/inspectionProfiles/*
 *.jar
 *.class

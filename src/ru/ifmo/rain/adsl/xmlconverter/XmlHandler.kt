@@ -36,7 +36,7 @@ class XmlHandler(val buffer: StringBuffer, val settings: BaseConverterSettings):
                     ctx.writeNoIndent(arg + ", ")
                 }
                 ctx.trim(2)
-                ctx.writeNoIndent(") { }\n")
+                ctx.writeNoIndent(")\n")
             }
             ctx.decIndent()
         }
@@ -54,6 +54,7 @@ class XmlHandler(val buffer: StringBuffer, val settings: BaseConverterSettings):
     private fun buildCons(qName: String, attrs: HashMap<String, String>?): String {
         if(attrs == null)
             return qName.decapitalize()
+        //FIXME: how to deal with name clashes?
         val classInternalName = settings.helperConProps.keySet().find { it.endsWith(qName) }
         val constructors = settings.helperConProps[classInternalName]
         //no helper constructors at all
