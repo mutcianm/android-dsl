@@ -10,14 +10,28 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class BasicXmlTest extends Assert {
+
+    private Converter c = new Converter();
+
+    public BasicXmlTest() {
+        c.run("testdata/ru/ifmo/rain/adsl/tests/xmlconverter/BasicXml.xml.in");
+    }
+
     @Test
-    public void testBasic() throws Exception {
-        Converter c = new Converter();
-        c.run("testdata/ru/ifmo/rain/adsl/tests/xmlconverter/BasicXml.in");
-        String actual = c.toString();
-        String expected = loadOrCreate(new File("testdata/ru/ifmo/rain/adsl/tests/xmlconverter/BasicXml.out"),
-                actual);
-        assertEquals(actual, expected);
+    public void testUI() throws Exception {
+        String convertedActual = c.toString();
+        String convertedExpected = loadOrCreate(new File("testdata/ru/ifmo/rain/adsl/tests/xmlconverter/BasicXml.xml.out"),
+                convertedActual);
+        assertEquals(convertedActual, convertedExpected);
+
+    }
+
+    @Test
+    public void testResourceIds() throws Exception {
+        String resourcesActual = c.getControlsXmlBuffer().toString();
+        String resourcesExpected = loadOrCreate(new File("testdata/ru/ifmo/rain/adsl/tests/xmlconverter/BasicXml.res.xml.out"),
+                resourcesActual);
+        assertEquals(resourcesActual, resourcesExpected);
     }
 
     protected String loadOrCreate(File file, String data) throws IOException {

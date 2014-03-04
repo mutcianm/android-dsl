@@ -6,11 +6,12 @@ import ru.ifmo.rain.adsl.Context
 import java.util.ArrayList
 import java.util.HashMap
 
-class XmlHandler(val buffer: StringBuffer, val settings: BaseConverterSettings): DefaultHandler() {
+class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, val settings: BaseConverterSettings): DefaultHandler() {
     private var depth = 0
 //    val buffer = StringBuffer()
     val imports = StringBuffer()
     val ctx = Context(buffer)
+    val controlsBuffer = Context(controlsXmlBuffer)
     var lastLayout = ""
 
     override fun startElement(uri: String?, localName: String?, qName: String, attributes: Attributes?) {
@@ -25,6 +26,10 @@ class XmlHandler(val buffer: StringBuffer, val settings: BaseConverterSettings):
             for (attr in attrs) {
                 if (isSkippableAttr(attr.key))
                     continue
+                if (attr.key == "id") {
+                    produceId(attr.value)
+                    continue
+                }
                 processAttribute(attr.key, attr.value, {name, value ->
                     layoutParams.add("$lastLayout.${value?.toUpperCase()}")
                 })
@@ -41,6 +46,11 @@ class XmlHandler(val buffer: StringBuffer, val settings: BaseConverterSettings):
         }
     }
 
+    private fun produceId(id: String) {
+        val idValue = id.substring(id.indexOf("/")+1)
+        controlsBuffer writeln "<item name=\"$idValue\" type=\"id\"/>"
+        ctx.writeln("setId(R.id.$idValue)")
+    }
 
     private fun isSkippableAttr(name: String?): Boolean {
         return name in settings.ignoredProperties
@@ -99,12 +109,17 @@ class XmlHandler(val buffer: StringBuffer, val settings: BaseConverterSettings):
         ctx.incIndent()
         ctx writeln "super.onCreate(savedInstanceState)"
         ctx writeln "UI {"
-
+        controlsBuffer writeln "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        controlsBuffer writeln "<resources>"
+        controlsBuffer.incIndent()
     }
+
     override fun endDocument() {
         ctx.writeln("}")
         ctx.decIndent()
         ctx.writeln("}")
+        controlsBuffer.decIndent()
+        controlsBuffer writeln "</resources>"
     }
 
     private fun processAttribute(name: String?, value: String?, layoutFunc: (String?, String?) -> Unit) {

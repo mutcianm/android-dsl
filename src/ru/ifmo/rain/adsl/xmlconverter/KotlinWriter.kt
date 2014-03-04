@@ -19,9 +19,9 @@ class KotlinWriter {
         return buffer.toString()
     }
 
-    private void writeHeader() {
-        ctx writeln "package com.example.android_test"
-    }
+//    private void writeHeader() {
+//        ctx writeln "package com.example.android_test"
+//    }
 
 }
 

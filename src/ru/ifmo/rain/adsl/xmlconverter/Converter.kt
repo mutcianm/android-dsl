@@ -5,12 +5,13 @@ import java.io.File
 
 class Converter {
     val buffer = StringBuffer()
+    val controlsXmlBuffer = StringBuffer()
     fun run(ifn: String) {
         val spf = SAXParserFactory.newInstance()
         spf?.setNamespaceAware(true)
         val parser = spf?.newSAXParser()
         val reader = parser?.getXMLReader()
-        reader?.setContentHandler(XmlHandler(buffer, ConverterSettings()))
+        reader?.setContentHandler(XmlHandler(buffer, controlsXmlBuffer, ConverterSettings()))
         reader?.parse(convertToFileURL(ifn))
     }
 
