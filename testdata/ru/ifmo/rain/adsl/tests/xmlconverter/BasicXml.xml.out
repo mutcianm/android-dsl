@@ -1,35 +1,37 @@
+import android.view.ViewGroup.LayoutParams.*
+
 public override fun onCreate(savedInstanceState: Bundle?): Unit {
     super.onCreate(savedInstanceState)
     UI {
         frameLayout {
             setId(R.id.item_detail_container)
-            layoutParams(FrameLayout.MATCH_PARENT, FrameLayout.MATCH_PARENT)
+            layoutParams(MATCH_PARENT, MATCH_PARENT)
             linearLayout {
                 orientation = vertical
-                layoutParams(LinearLayout.MATCH_PARENT, LinearLayout.MATCH_PARENT)
+                layoutParams(MATCH_PARENT, MATCH_PARENT)
                 textView(text = "Enter your password") {
                     setId(R.id.textView1)
-                    layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.WRAP_CONTENT)
+                    layoutParams(WRAP_CONTENT, WRAP_CONTENT)
                 }
                 editText {
                     setId(R.id.password)
                     inputType = textPassword
-                    layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.MATCH_PARENT)
+                    layoutParams(WRAP_CONTENT, MATCH_PARENT)
                     requestFocus {
                     }
                 }
                 textView(text = "Repeat your password") {
                     setId(R.id.textView2)
-                    layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.WRAP_CONTENT)
+                    layoutParams(WRAP_CONTENT, WRAP_CONTENT)
                 }
                 editText {
                     setId(R.id.passwordConfirmation)
                     inputType = textPassword
-                    layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.MATCH_PARENT)
+                    layoutParams(WRAP_CONTENT, MATCH_PARENT)
                 }
                 button(text = "Sign in") {
                     setId(R.id.login)
-                    layoutParams(LinearLayout.WRAP_CONTENT, LinearLayout.MATCH_PARENT)
+                    layoutParams(WRAP_CONTENT, MATCH_PARENT)
                 }
             }
             scrollBar {

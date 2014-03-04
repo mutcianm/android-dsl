@@ -31,7 +31,7 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
                     continue
                 }
                 processAttribute(attr.key, attr.value, {name, value ->
-                    layoutParams.add("$lastLayout.${value?.toUpperCase()}")
+                    layoutParams.add("${value?.toUpperCase()}")
                 })
             }
             if (!layoutParams.isEmpty()) {
@@ -105,6 +105,7 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
     }
 
     override fun startDocument() {
+        ctx writeln "import android.view.ViewGroup.LayoutParams.*\n"
         ctx writeln "public override fun onCreate(savedInstanceState: Bundle?): Unit {"
         ctx.incIndent()
         ctx writeln "super.onCreate(savedInstanceState)"
