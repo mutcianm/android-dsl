@@ -8,6 +8,9 @@ val _AppWidgetHostView.appWidgetId: Int
 val _AppWidgetHostView.appWidgetInfo: android.appwidget.AppWidgetProviderInfo?
     get() = viewGroup.getAppWidgetInfo()
 
+val _GestureOverlayView.currentStroke: java.util.ArrayList<android.gesture.GesturePoint?>?
+    get() = viewGroup.getCurrentStroke()
+
 var _GestureOverlayView.eventsInterceptionEnabled: Boolean
     get() = viewGroup.isEventsInterceptionEnabled()
     set(value) = viewGroup.setEventsInterceptionEnabled(value)
@@ -71,6 +74,18 @@ val android.inputmethodservice.ExtractEditText.focused: Boolean
 
 val android.inputmethodservice.ExtractEditText.inputMethodTarget: Boolean
     get() = isInputMethodTarget()
+
+var android.inputmethodservice.KeyboardView.keyboard: android.inputmethodservice.Keyboard?
+    get() = getKeyboard()
+    set(value) = setKeyboard(value!!)
+
+var android.inputmethodservice.KeyboardView.previewEnabled: Boolean
+    get() = isPreviewEnabled()
+    set(value) = setPreviewEnabled(value)
+
+var android.inputmethodservice.KeyboardView.proximityCorrectionEnabled: Boolean
+    get() = isProximityCorrectionEnabled()
+    set(value) = setProximityCorrectionEnabled(value)
 
 var android.opengl.GLSurfaceView.debugFlags: Int
     get() = getDebugFlags()
@@ -166,6 +181,40 @@ var android.view.ViewStub.layoutResource: Int
     get() = getLayoutResource()
     set(value) = setLayoutResource(value)
 
+var _WebView.certificate: android.net.http.SslCertificate?
+    get() = viewGroup.getCertificate()
+    set(value) = viewGroup.setCertificate(value!!)
+
+val _WebView.contentHeight: Int
+    get() = viewGroup.getContentHeight()
+
+val _WebView.favicon: android.graphics.Bitmap?
+    get() = viewGroup.getFavicon()
+
+val _WebView.hitTestResult: android.webkit.WebView.HitTestResult?
+    get() = viewGroup.getHitTestResult()
+
+val _WebView.originalUrl: jet.String?
+    get() = viewGroup.getOriginalUrl()
+
+val _WebView.privateBrowsingEnabled: Boolean
+    get() = viewGroup.isPrivateBrowsingEnabled()
+
+val _WebView.progress: Int
+    get() = viewGroup.getProgress()
+
+val _WebView.scale: Float
+    get() = viewGroup.getScale()
+
+val _WebView.settings: android.webkit.WebSettings?
+    get() = viewGroup.getSettings()
+
+val _WebView.title: jet.String?
+    get() = viewGroup.getTitle()
+
+val _WebView.url: jet.String?
+    get() = viewGroup.getUrl()
+
 var android.widget.AbsSeekBar.keyProgressIncrement: Int
     get() = getKeyProgressIncrement()
     set(value) = setKeyProgressIncrement(value)
@@ -178,8 +227,16 @@ var android.widget.AbsSeekBar.thumbOffset: Int
     get() = getThumbOffset()
     set(value) = setThumbOffset(value)
 
-val android.widget.AutoCompleteTextView.adapter: android.widget.ListAdapter?
-    get() = getAdapter()
+var _AdapterViewFlipper.autoStart: Boolean
+    get() = viewGroup.isAutoStart()
+    set(value) = viewGroup.setAutoStart(value)
+
+var _AdapterViewFlipper.flipInterval: Int
+    get() = viewGroup.getFlipInterval()
+    set(value) = viewGroup.setFlipInterval(value)
+
+val _AdapterViewFlipper.flipping: Boolean
+    get() = viewGroup.isFlipping()
 
 var android.widget.AutoCompleteTextView.completionHint: jet.CharSequence?
     get() = getCompletionHint()
@@ -727,6 +784,18 @@ var _SearchView.submitButtonEnabled: Boolean
 var _SearchView.suggestionsAdapter: android.widget.CursorAdapter?
     get() = viewGroup.getSuggestionsAdapter()
     set(value) = viewGroup.setSuggestionsAdapter(value!!)
+
+val _SlidingDrawer.content: android.view.View?
+    get() = viewGroup.getContent()
+
+val _SlidingDrawer.handle: android.view.View?
+    get() = viewGroup.getHandle()
+
+val _SlidingDrawer.moving: Boolean
+    get() = viewGroup.isMoving()
+
+val _SlidingDrawer.opened: Boolean
+    get() = viewGroup.isOpened()
 
 val _Spinner.baseline: Int
     get() = viewGroup.getBaseline()

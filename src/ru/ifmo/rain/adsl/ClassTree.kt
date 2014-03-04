@@ -4,7 +4,6 @@ import java.util.ArrayList
 import org.objectweb.asm.tree.ClassNode
 import java.util.Queue
 import java.util.ArrayDeque
-import org.objectweb.asm.tree.MethodNode
 
 class NoSuchClassException : Exception()
 

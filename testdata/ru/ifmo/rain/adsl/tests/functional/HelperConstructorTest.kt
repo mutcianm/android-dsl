@@ -19,6 +19,351 @@ open class _Container<out T: android.view.ViewGroup>(open val viewGroup: T,
         return builder.create()?.show()
     }
 
+    fun android.inputmethodservice.KeyboardView.onPress(l: (Int) -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+        if (listenerClass == null) {
+            listenerClass = __KeyboardViewOnKeyboardActionListener()
+        }
+        listenerClass!!._onPress = l
+        listenerMap.put("android.inputmethodservice.KeyboardViewOnKeyboardActionListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.inputmethodservice.KeyboardView", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+            if (wrapper != null) {
+                val listener = object: android.inputmethodservice.KeyboardView.OnKeyboardActionListener {
+                    override fun onPress(p0: Int) {
+                        wrapper!!._onPress(p0)
+                    }
+                    override fun onRelease(p0: Int) {
+                        wrapper!!._onRelease(p0)
+                    }
+                    override fun onKey(p0: Int, p1: IntArray?) {
+                        wrapper!!._onKey(p0, p1!!)
+                    }
+                    override fun onText(p0: jet.CharSequence?) {
+                        wrapper!!._onText(p0!!)
+                    }
+                    override fun swipeLeft() {
+                        wrapper!!._swipeLeft()
+                    }
+                    override fun swipeRight() {
+                        wrapper!!._swipeRight()
+                    }
+                    override fun swipeDown() {
+                        wrapper!!._swipeDown()
+                    }
+                    override fun swipeUp() {
+                        wrapper!!._swipeUp()
+                    }
+                }
+                setOnKeyboardActionListener(listener)
+                }
+            })
+        }
+
+    fun android.inputmethodservice.KeyboardView.onRelease(l: (Int) -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+        if (listenerClass == null) {
+            listenerClass = __KeyboardViewOnKeyboardActionListener()
+        }
+        listenerClass!!._onRelease = l
+        listenerMap.put("android.inputmethodservice.KeyboardViewOnKeyboardActionListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.inputmethodservice.KeyboardView", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+            if (wrapper != null) {
+                val listener = object: android.inputmethodservice.KeyboardView.OnKeyboardActionListener {
+                    override fun onPress(p0: Int) {
+                        wrapper!!._onPress(p0)
+                    }
+                    override fun onRelease(p0: Int) {
+                        wrapper!!._onRelease(p0)
+                    }
+                    override fun onKey(p0: Int, p1: IntArray?) {
+                        wrapper!!._onKey(p0, p1!!)
+                    }
+                    override fun onText(p0: jet.CharSequence?) {
+                        wrapper!!._onText(p0!!)
+                    }
+                    override fun swipeLeft() {
+                        wrapper!!._swipeLeft()
+                    }
+                    override fun swipeRight() {
+                        wrapper!!._swipeRight()
+                    }
+                    override fun swipeDown() {
+                        wrapper!!._swipeDown()
+                    }
+                    override fun swipeUp() {
+                        wrapper!!._swipeUp()
+                    }
+                }
+                setOnKeyboardActionListener(listener)
+                }
+            })
+        }
+
+    fun android.inputmethodservice.KeyboardView.onKey(l: (Int, IntArray?) -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+        if (listenerClass == null) {
+            listenerClass = __KeyboardViewOnKeyboardActionListener()
+        }
+        listenerClass!!._onKey = l
+        listenerMap.put("android.inputmethodservice.KeyboardViewOnKeyboardActionListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.inputmethodservice.KeyboardView", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+            if (wrapper != null) {
+                val listener = object: android.inputmethodservice.KeyboardView.OnKeyboardActionListener {
+                    override fun onPress(p0: Int) {
+                        wrapper!!._onPress(p0)
+                    }
+                    override fun onRelease(p0: Int) {
+                        wrapper!!._onRelease(p0)
+                    }
+                    override fun onKey(p0: Int, p1: IntArray?) {
+                        wrapper!!._onKey(p0, p1!!)
+                    }
+                    override fun onText(p0: jet.CharSequence?) {
+                        wrapper!!._onText(p0!!)
+                    }
+                    override fun swipeLeft() {
+                        wrapper!!._swipeLeft()
+                    }
+                    override fun swipeRight() {
+                        wrapper!!._swipeRight()
+                    }
+                    override fun swipeDown() {
+                        wrapper!!._swipeDown()
+                    }
+                    override fun swipeUp() {
+                        wrapper!!._swipeUp()
+                    }
+                }
+                setOnKeyboardActionListener(listener)
+                }
+            })
+        }
+
+    fun android.inputmethodservice.KeyboardView.onText(l: (jet.CharSequence?) -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+        if (listenerClass == null) {
+            listenerClass = __KeyboardViewOnKeyboardActionListener()
+        }
+        listenerClass!!._onText = l
+        listenerMap.put("android.inputmethodservice.KeyboardViewOnKeyboardActionListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.inputmethodservice.KeyboardView", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+            if (wrapper != null) {
+                val listener = object: android.inputmethodservice.KeyboardView.OnKeyboardActionListener {
+                    override fun onPress(p0: Int) {
+                        wrapper!!._onPress(p0)
+                    }
+                    override fun onRelease(p0: Int) {
+                        wrapper!!._onRelease(p0)
+                    }
+                    override fun onKey(p0: Int, p1: IntArray?) {
+                        wrapper!!._onKey(p0, p1!!)
+                    }
+                    override fun onText(p0: jet.CharSequence?) {
+                        wrapper!!._onText(p0!!)
+                    }
+                    override fun swipeLeft() {
+                        wrapper!!._swipeLeft()
+                    }
+                    override fun swipeRight() {
+                        wrapper!!._swipeRight()
+                    }
+                    override fun swipeDown() {
+                        wrapper!!._swipeDown()
+                    }
+                    override fun swipeUp() {
+                        wrapper!!._swipeUp()
+                    }
+                }
+                setOnKeyboardActionListener(listener)
+                }
+            })
+        }
+
+    fun android.inputmethodservice.KeyboardView.swipeLeft(l: () -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+        if (listenerClass == null) {
+            listenerClass = __KeyboardViewOnKeyboardActionListener()
+        }
+        listenerClass!!._swipeLeft = l
+        listenerMap.put("android.inputmethodservice.KeyboardViewOnKeyboardActionListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.inputmethodservice.KeyboardView", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+            if (wrapper != null) {
+                val listener = object: android.inputmethodservice.KeyboardView.OnKeyboardActionListener {
+                    override fun onPress(p0: Int) {
+                        wrapper!!._onPress(p0)
+                    }
+                    override fun onRelease(p0: Int) {
+                        wrapper!!._onRelease(p0)
+                    }
+                    override fun onKey(p0: Int, p1: IntArray?) {
+                        wrapper!!._onKey(p0, p1!!)
+                    }
+                    override fun onText(p0: jet.CharSequence?) {
+                        wrapper!!._onText(p0!!)
+                    }
+                    override fun swipeLeft() {
+                        wrapper!!._swipeLeft()
+                    }
+                    override fun swipeRight() {
+                        wrapper!!._swipeRight()
+                    }
+                    override fun swipeDown() {
+                        wrapper!!._swipeDown()
+                    }
+                    override fun swipeUp() {
+                        wrapper!!._swipeUp()
+                    }
+                }
+                setOnKeyboardActionListener(listener)
+                }
+            })
+        }
+
+    fun android.inputmethodservice.KeyboardView.swipeRight(l: () -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+        if (listenerClass == null) {
+            listenerClass = __KeyboardViewOnKeyboardActionListener()
+        }
+        listenerClass!!._swipeRight = l
+        listenerMap.put("android.inputmethodservice.KeyboardViewOnKeyboardActionListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.inputmethodservice.KeyboardView", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+            if (wrapper != null) {
+                val listener = object: android.inputmethodservice.KeyboardView.OnKeyboardActionListener {
+                    override fun onPress(p0: Int) {
+                        wrapper!!._onPress(p0)
+                    }
+                    override fun onRelease(p0: Int) {
+                        wrapper!!._onRelease(p0)
+                    }
+                    override fun onKey(p0: Int, p1: IntArray?) {
+                        wrapper!!._onKey(p0, p1!!)
+                    }
+                    override fun onText(p0: jet.CharSequence?) {
+                        wrapper!!._onText(p0!!)
+                    }
+                    override fun swipeLeft() {
+                        wrapper!!._swipeLeft()
+                    }
+                    override fun swipeRight() {
+                        wrapper!!._swipeRight()
+                    }
+                    override fun swipeDown() {
+                        wrapper!!._swipeDown()
+                    }
+                    override fun swipeUp() {
+                        wrapper!!._swipeUp()
+                    }
+                }
+                setOnKeyboardActionListener(listener)
+                }
+            })
+        }
+
+    fun android.inputmethodservice.KeyboardView.swipeDown(l: () -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+        if (listenerClass == null) {
+            listenerClass = __KeyboardViewOnKeyboardActionListener()
+        }
+        listenerClass!!._swipeDown = l
+        listenerMap.put("android.inputmethodservice.KeyboardViewOnKeyboardActionListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.inputmethodservice.KeyboardView", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+            if (wrapper != null) {
+                val listener = object: android.inputmethodservice.KeyboardView.OnKeyboardActionListener {
+                    override fun onPress(p0: Int) {
+                        wrapper!!._onPress(p0)
+                    }
+                    override fun onRelease(p0: Int) {
+                        wrapper!!._onRelease(p0)
+                    }
+                    override fun onKey(p0: Int, p1: IntArray?) {
+                        wrapper!!._onKey(p0, p1!!)
+                    }
+                    override fun onText(p0: jet.CharSequence?) {
+                        wrapper!!._onText(p0!!)
+                    }
+                    override fun swipeLeft() {
+                        wrapper!!._swipeLeft()
+                    }
+                    override fun swipeRight() {
+                        wrapper!!._swipeRight()
+                    }
+                    override fun swipeDown() {
+                        wrapper!!._swipeDown()
+                    }
+                    override fun swipeUp() {
+                        wrapper!!._swipeUp()
+                    }
+                }
+                setOnKeyboardActionListener(listener)
+                }
+            })
+        }
+
+    fun android.inputmethodservice.KeyboardView.swipeUp(l: () -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+        if (listenerClass == null) {
+            listenerClass = __KeyboardViewOnKeyboardActionListener()
+        }
+        listenerClass!!._swipeUp = l
+        listenerMap.put("android.inputmethodservice.KeyboardViewOnKeyboardActionListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.inputmethodservice.KeyboardView", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.inputmethodservice.KeyboardViewOnKeyboardActionListener") as? __KeyboardViewOnKeyboardActionListener
+            if (wrapper != null) {
+                val listener = object: android.inputmethodservice.KeyboardView.OnKeyboardActionListener {
+                    override fun onPress(p0: Int) {
+                        wrapper!!._onPress(p0)
+                    }
+                    override fun onRelease(p0: Int) {
+                        wrapper!!._onRelease(p0)
+                    }
+                    override fun onKey(p0: Int, p1: IntArray?) {
+                        wrapper!!._onKey(p0, p1!!)
+                    }
+                    override fun onText(p0: jet.CharSequence?) {
+                        wrapper!!._onText(p0!!)
+                    }
+                    override fun swipeLeft() {
+                        wrapper!!._swipeLeft()
+                    }
+                    override fun swipeRight() {
+                        wrapper!!._swipeRight()
+                    }
+                    override fun swipeDown() {
+                        wrapper!!._swipeDown()
+                    }
+                    override fun swipeUp() {
+                        wrapper!!._swipeUp()
+                    }
+                }
+                setOnKeyboardActionListener(listener)
+                }
+            })
+        }
+
+    fun keyboardView(attrs: android.util.AttributeSet?,  init: android.inputmethodservice.KeyboardView.() -> Unit): android.inputmethodservice.KeyboardView {
+        val v = android.inputmethodservice.KeyboardView(ctx, attrs!!)
+        v.init()
+        viewGroup.addView(v)
+        _style(v)
+        listenerLambdasMap.get("android.inputmethodservice.KeyboardView")?.forEach { it() }
+        return v
+    }
+
     fun mediaRouteButton( init: android.app.MediaRouteButton.() -> Unit): android.app.MediaRouteButton {
         val v = android.app.MediaRouteButton(ctx)
         v.init()
@@ -184,6 +529,66 @@ open class _Container<out T: android.view.ViewGroup>(open val viewGroup: T,
         return v
     }
 
+    fun android.widget.SlidingDrawer.onScrollStarted(l: () -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.widget.SlidingDrawerOnDrawerScrollListener") as? __SlidingDrawerOnDrawerScrollListener
+        if (listenerClass == null) {
+            listenerClass = __SlidingDrawerOnDrawerScrollListener()
+        }
+        listenerClass!!._onScrollStarted = l
+        listenerMap.put("android.widget.SlidingDrawerOnDrawerScrollListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.widget.SlidingDrawer", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.widget.SlidingDrawerOnDrawerScrollListener") as? __SlidingDrawerOnDrawerScrollListener
+            if (wrapper != null) {
+                val listener = object: android.widget.SlidingDrawer.OnDrawerScrollListener {
+                    override fun onScrollStarted() {
+                        wrapper!!._onScrollStarted()
+                    }
+                    override fun onScrollEnded() {
+                        wrapper!!._onScrollEnded()
+                    }
+                }
+                setOnDrawerScrollListener(listener)
+                }
+            })
+        }
+
+    fun android.widget.SlidingDrawer.onScrollEnded(l: () -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.widget.SlidingDrawerOnDrawerScrollListener") as? __SlidingDrawerOnDrawerScrollListener
+        if (listenerClass == null) {
+            listenerClass = __SlidingDrawerOnDrawerScrollListener()
+        }
+        listenerClass!!._onScrollEnded = l
+        listenerMap.put("android.widget.SlidingDrawerOnDrawerScrollListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.widget.SlidingDrawer", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.widget.SlidingDrawerOnDrawerScrollListener") as? __SlidingDrawerOnDrawerScrollListener
+            if (wrapper != null) {
+                val listener = object: android.widget.SlidingDrawer.OnDrawerScrollListener {
+                    override fun onScrollStarted() {
+                        wrapper!!._onScrollStarted()
+                    }
+                    override fun onScrollEnded() {
+                        wrapper!!._onScrollEnded()
+                    }
+                }
+                setOnDrawerScrollListener(listener)
+                }
+            })
+        }
+
+    //container function
+    fun slidingDrawer(attrs: android.util.AttributeSet?,  init: _SlidingDrawer.() -> Unit): _SlidingDrawer {
+        val v = _SlidingDrawer(android.widget.SlidingDrawer(ctx, attrs!!), ctx)
+        v.init()
+        viewGroup.addView(v.viewGroup)
+        _style(v)
+        listenerLambdasMap.get("android.widget.SlidingDrawer")?.forEach { it() }
+        listenerMap.clear()
+        listenerLambdasMap.clear()
+        return v
+    }
+
     //container function
     fun frameLayout( init: _FrameLayout.() -> Unit): _FrameLayout {
         val v = _FrameLayout(android.widget.FrameLayout(ctx), ctx)
@@ -195,6 +600,54 @@ open class _Container<out T: android.view.ViewGroup>(open val viewGroup: T,
         listenerLambdasMap.clear()
         return v
     }
+
+    fun android.widget.AdapterView<out android.widget.Adapter?>.onItemSelected(l: (android.widget.AdapterView<*>?, android.view.View?, Int, Long) -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.widget.AdapterView<out android.widget.Adapter?>OnItemSelectedListener") as? __AdapterViewOnItemSelectedListener
+        if (listenerClass == null) {
+            listenerClass = __AdapterViewOnItemSelectedListener()
+        }
+        listenerClass!!._onItemSelected = l
+        listenerMap.put("android.widget.AdapterView<out android.widget.Adapter?>OnItemSelectedListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.widget.AdapterView<out android.widget.Adapter?>", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.widget.AdapterView<out android.widget.Adapter?>OnItemSelectedListener") as? __AdapterViewOnItemSelectedListener
+            if (wrapper != null) {
+                val listener = object: android.widget.AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
+                        wrapper!!._onItemSelected(p0!!, p1!!, p2, p3)
+                    }
+                    override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
+                        wrapper!!._onNothingSelected(p0!!)
+                    }
+                }
+                setOnItemSelectedListener(listener)
+                }
+            })
+        }
+
+    fun android.widget.AdapterView<out android.widget.Adapter?>.onNothingSelected(l: (android.widget.AdapterView<*>?) -> jet.Unit) {
+        var listenerClass = listenerMap.get("android.widget.AdapterView<out android.widget.Adapter?>OnItemSelectedListener") as? __AdapterViewOnItemSelectedListener
+        if (listenerClass == null) {
+            listenerClass = __AdapterViewOnItemSelectedListener()
+        }
+        listenerClass!!._onNothingSelected = l
+        listenerMap.put("android.widget.AdapterView<out android.widget.Adapter?>OnItemSelectedListener", listenerClass)
+        val lambdas = listenerLambdasMap.getOrPut("android.widget.AdapterView<out android.widget.Adapter?>", { ArrayList() })
+        lambdas.add({
+            val wrapper = listenerMap.get("android.widget.AdapterView<out android.widget.Adapter?>OnItemSelectedListener") as? __AdapterViewOnItemSelectedListener
+            if (wrapper != null) {
+                val listener = object: android.widget.AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) {
+                        wrapper!!._onItemSelected(p0!!, p1!!, p2, p3)
+                    }
+                    override fun onNothingSelected(p0: android.widget.AdapterView<*>?) {
+                        wrapper!!._onNothingSelected(p0!!)
+                    }
+                }
+                setOnItemSelectedListener(listener)
+                }
+            })
+        }
 
     //container function
     fun linearLayout( init: _LinearLayout.() -> Unit): _LinearLayout {
@@ -338,6 +791,18 @@ open class _Container<out T: android.view.ViewGroup>(open val viewGroup: T,
         viewGroup.addView(v.viewGroup)
         _style(v)
         listenerLambdasMap.get("android.widget.DialerFilter")?.forEach { it() }
+        listenerMap.clear()
+        listenerLambdasMap.clear()
+        return v
+    }
+
+    //container function
+    fun webView( init: _WebView.() -> Unit): _WebView {
+        val v = _WebView(android.webkit.WebView(ctx), ctx)
+        v.init()
+        viewGroup.addView(v.viewGroup)
+        _style(v)
+        listenerLambdasMap.get("android.webkit.WebView")?.forEach { it() }
         listenerMap.clear()
         listenerLambdasMap.clear()
         return v
@@ -1076,6 +1541,18 @@ open class _Container<out T: android.view.ViewGroup>(open val viewGroup: T,
         viewGroup.addView(v.viewGroup)
         _style(v)
         listenerLambdasMap.get("android.widget.Gallery")?.forEach { it() }
+        listenerMap.clear()
+        listenerLambdasMap.clear()
+        return v
+    }
+
+    //container function
+    fun adapterViewFlipper( init: _AdapterViewFlipper.() -> Unit): _AdapterViewFlipper {
+        val v = _AdapterViewFlipper(android.widget.AdapterViewFlipper(ctx), ctx)
+        v.init()
+        viewGroup.addView(v.viewGroup)
+        _style(v)
+        listenerLambdasMap.get("android.widget.AdapterViewFlipper")?.forEach { it() }
         listenerMap.clear()
         listenerLambdasMap.clear()
         return v

@@ -10,9 +10,8 @@ import java.util.ArrayList
 import java.util.TreeMap
 import java.util.Arrays
 import org.objectweb.asm.tree.ClassNode
-import org.objectweb.asm.tree.MethodNode
 import org.objectweb.asm.tree.InnerClassNode
-import java.util.HashSet
+import org.objectweb.asm.tree.MethodNode
 
 open class DSLException(message: String = "") : Exception(message)
 open class DSLGeneratorException(message: String = ""): DSLException(message)
@@ -34,8 +33,8 @@ class Hook<T>(val predicate: ((_class: T) -> Boolean), val function: ((_class: T
 class PropertyData(var parentClass: ClassNode,
                    var propName: String,
                    var propType: Type?,
-                   var getter: String?,
-                   var setter: String?,
+                   var getter: MethodNode?,
+                   var setter: MethodNode?,
                    var valueType: Type?,
                    val isContainer: Boolean)
 
@@ -65,10 +64,10 @@ class Generator(val jarPath: String, val packageName: String,
 
     private val methodHooks = Arrays.asList<Hook<MethodNodeWithParent>>(
             Hook({
-                isWidget(it.parent) && !isBlacklistedClass(it.parent) && it.child.isGetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
+                isWidget(it.parent) && !isBlacklistedClass(it.parent) && it.child.isGetter() && !it.child.isProtected()
             }, { genGetter(it) }),
             Hook({
-                isWidget(it.parent) && !isBlacklistedClass(it.parent) && it.child.isSetter() && !it.child.isProtected() && !it.parent.isGeneric() && !it.child.isGeneric()
+                isWidget(it.parent) && !isBlacklistedClass(it.parent) && it.child.isSetter() && !it.child.isProtected()
             }, { genSetter(it) }),
             Hook({
                 it.child.name!!.startsWith("setOn") && it.child.name!!.endsWith("Listener") && !isBlacklistedClass(it.parent)
@@ -120,7 +119,7 @@ class Generator(val jarPath: String, val packageName: String,
     }
 
     private fun genListenerHelper(methodInfo: MethodNodeWithParent) {
-        val listenerType: Type = methodInfo.child.arguments!![0]
+        val listenerType = methodInfo.child.arguments!![0]
         val name = listenerType.getInternalName()
         val node = classTree.findNode(name)
         if (node == null)
@@ -129,16 +128,18 @@ class Generator(val jarPath: String, val packageName: String,
     }
 
     private fun genSetter(methodInfo: MethodNodeWithParent) {
+        if(methodInfo.parent.isAbstract() && isContainer(methodInfo.parent)) return
         if (!settings.generateSetters) return
         val property = PropertyData(methodInfo.parent, methodInfo.child.toProperty(), null, null,
-                    methodInfo.child.name, methodInfo.child.arguments!![0],isContainer(methodInfo.parent))
+                    methodInfo.child, methodInfo.child.arguments!![0],isContainer(methodInfo.parent))
         updateProperty(property)
     }
 
     private fun genGetter(methodInfo: MethodNodeWithParent) {
+        if(methodInfo.parent.isAbstract() && isContainer(methodInfo.parent)) return
         if (!settings.generateGetters) return
         val property = PropertyData(methodInfo.parent, methodInfo.child.toProperty(),
-                    methodInfo.child.getReturnType(), methodInfo.child.name, null, null, isContainer(methodInfo.parent))
+                    methodInfo.child.getReturnType(), methodInfo.child, null, null, isContainer(methodInfo.parent))
         updateProperty(property)
     }
 
@@ -157,7 +158,7 @@ class Generator(val jarPath: String, val packageName: String,
     }
 
 
-    private fun getConstructors(classNode: ClassNode): List<List<PropertyData>> {
+    private fun getHelperConstructors(classNode: ClassNode): List<List<PropertyData>> {
         val constructors: List<List<String>>? = helperConstructors.get(classNode.cleanInternalName())
         val res = ArrayList<ArrayList<PropertyData>>()
         val defaultConstructor = ArrayList<PropertyData>()
@@ -188,13 +189,15 @@ class Generator(val jarPath: String, val packageName: String,
     private fun genWidget(classNode: ClassNode) {
         val cleanNameDecap = classNode.cleanNameDecap()
         val cleanInternalName = classNode.cleanInternalName()
-        val constructors = getConstructors(classNode)
+        val constructors = getHelperConstructors(classNode)
         for (constructor in constructors) {
-            dslWriter.makeWidget(cleanNameDecap, cleanInternalName, constructor)
+            dslWriter.makeWidget(classNode, cleanNameDecap, cleanInternalName, constructor)
         }
     }
 
     private fun genContainer(classNode: ClassNode) {
+        if (classNode.signature != null)
+            println("${classNode.name} : ${classNode.signature}")
         genContainerWidgetFun(classNode)
         dslWriter.genContainerClass(classNode, extractLayoutParams(classNode))
         dslWriter.genUIWidgetFun(classNode)
@@ -212,7 +215,7 @@ class Generator(val jarPath: String, val packageName: String,
         val cleanNameDecap = classNode.cleanNameDecap()
         val cleanName = classNode.cleanName()
         val cleanInternalName = classNode.cleanInternalName()
-        dslWriter.makeContainerWidgetFun(cleanNameDecap, cleanName, cleanInternalName)
+        dslWriter.makeContainerWidgetFun(classNode, cleanNameDecap, cleanName, cleanInternalName)
     }
 
     private fun processClassData(classData: InputStream?): ClassNode {

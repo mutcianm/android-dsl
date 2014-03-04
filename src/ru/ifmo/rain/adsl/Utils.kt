@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.ByteBuffer
 import java.util.LinkedHashMap
 
+
 fun typeMap(str: String): String {
     return when (str) {
         "java.lang.CharSequence" -> "jet.CharSequence"

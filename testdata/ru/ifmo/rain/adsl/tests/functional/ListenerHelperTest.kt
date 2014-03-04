@@ -310,6 +310,25 @@ fun android.widget.ShareActionProvider.onShareTargetSelected(l: (android.widget.
     setOnShareTargetSelectedListener(l)
 }
 
+class __KeyboardViewOnKeyboardActionListener {
+    var _onPress: (p0: Int) -> jet.Unit = { p0 ->  }
+    fun onPress(f : (p0: Int) -> jet.Unit) { _onPress = f }
+    var _onRelease: (p0: Int) -> jet.Unit = { p0 ->  }
+    fun onRelease(f : (p0: Int) -> jet.Unit) { _onRelease = f }
+    var _onKey: (p0: Int, p1: IntArray?) -> jet.Unit = { p0, p1 ->  }
+    fun onKey(f : (p0: Int, p1: IntArray?) -> jet.Unit) { _onKey = f }
+    var _onText: (p0: jet.CharSequence?) -> jet.Unit = { p0 ->  }
+    fun onText(f : (p0: jet.CharSequence?) -> jet.Unit) { _onText = f }
+    var _swipeLeft: () -> jet.Unit = {  ->  }
+    fun swipeLeft(f : () -> jet.Unit) { _swipeLeft = f }
+    var _swipeRight: () -> jet.Unit = {  ->  }
+    fun swipeRight(f : () -> jet.Unit) { _swipeRight = f }
+    var _swipeDown: () -> jet.Unit = {  ->  }
+    fun swipeDown(f : () -> jet.Unit) { _swipeDown = f }
+    var _swipeUp: () -> jet.Unit = {  ->  }
+    fun swipeUp(f : () -> jet.Unit) { _swipeUp = f }
+}
+
 fun android.view.ViewStub.onInflate(l: (android.view.ViewStub?, android.view.View?) -> jet.Unit) {
     setOnInflateListener(l)
 }
@@ -327,6 +346,40 @@ fun android.widget.TextView.onEditorAction(l: (android.widget.TextView?, Int, an
 
 fun android.app.FragmentBreadCrumbs.onBreadCrumbClick(l: (android.app.FragmentManager.BackStackEntry?, Int) -> Boolean) {
     setOnBreadCrumbClickListener(l)
+}
+
+fun android.widget.SlidingDrawer.onDrawerOpen(l: () -> jet.Unit) {
+    setOnDrawerOpenListener(l)
+}
+
+fun android.widget.SlidingDrawer.onDrawerClose(l: () -> jet.Unit) {
+    setOnDrawerCloseListener(l)
+}
+
+class __SlidingDrawerOnDrawerScrollListener {
+    var _onScrollStarted: () -> jet.Unit = {  ->  }
+    fun onScrollStarted(f : () -> jet.Unit) { _onScrollStarted = f }
+    var _onScrollEnded: () -> jet.Unit = {  ->  }
+    fun onScrollEnded(f : () -> jet.Unit) { _onScrollEnded = f }
+}
+
+fun android.widget.AdapterView<out android.widget.Adapter?>.onItemClick(l: (android.widget.AdapterView<*>?, android.view.View?, Int, Long) -> jet.Unit) {
+    setOnItemClickListener(l)
+}
+
+fun android.widget.AdapterView<out android.widget.Adapter?>.onItemLongClick(l: (android.widget.AdapterView<*>?, android.view.View?, Int, Long) -> Boolean) {
+    setOnItemLongClickListener(l)
+}
+
+class __AdapterViewOnItemSelectedListener {
+    var _onItemSelected: (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit = { p0, p1, p2, p3 ->  }
+    fun onItemSelected(f : (p0: android.widget.AdapterView<*>?, p1: android.view.View?, p2: Int, p3: Long) -> jet.Unit) { _onItemSelected = f }
+    var _onNothingSelected: (p0: android.widget.AdapterView<*>?) -> jet.Unit = { p0 ->  }
+    fun onNothingSelected(f : (p0: android.widget.AdapterView<*>?) -> jet.Unit) { _onNothingSelected = f }
+}
+
+fun android.widget.AdapterView<out android.widget.Adapter?>.onClick(l: (android.view.View?) -> jet.Unit) {
+    setOnClickListener(l)
 }
 
 fun android.widget.VideoView.onPrepared(l: (android.media.MediaPlayer?) -> jet.Unit) {

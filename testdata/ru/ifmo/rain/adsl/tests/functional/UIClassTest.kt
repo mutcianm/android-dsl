@@ -16,6 +16,12 @@ fun android.app.Activity.absoluteLayout(init: _AbsoluteLayout.() -> Unit) {
     setContentView(layout.viewGroup)
 }
 
+fun android.app.Activity.slidingDrawer(attrs: android.util.AttributeSet?, init: _SlidingDrawer.() -> Unit) {
+    val layout = _SlidingDrawer(android.widget.SlidingDrawer(this, attrs!!), this)
+    layout.init()
+    setContentView(layout.viewGroup)
+}
+
 fun android.app.Activity.frameLayout(init: _FrameLayout.() -> Unit) {
     val layout = _FrameLayout(android.widget.FrameLayout(this), this)
     layout.init()
@@ -42,6 +48,12 @@ fun android.app.Activity.twoLineListItem(init: _TwoLineListItem.() -> Unit) {
 
 fun android.app.Activity.dialerFilter(init: _DialerFilter.() -> Unit) {
     val layout = _DialerFilter(android.widget.DialerFilter(this), this)
+    layout.init()
+    setContentView(layout.viewGroup)
+}
+
+fun android.app.Activity.webView(init: _WebView.() -> Unit) {
+    val layout = _WebView(android.webkit.WebView(this), this)
     layout.init()
     setContentView(layout.viewGroup)
 }
@@ -180,6 +192,12 @@ fun android.app.Activity.spinner(init: _Spinner.() -> Unit) {
 
 fun android.app.Activity.gallery(init: _Gallery.() -> Unit) {
     val layout = _Gallery(android.widget.Gallery(this), this)
+    layout.init()
+    setContentView(layout.viewGroup)
+}
+
+fun android.app.Activity.adapterViewFlipper(init: _AdapterViewFlipper.() -> Unit) {
+    val layout = _AdapterViewFlipper(android.widget.AdapterViewFlipper(this), this)
     layout.init()
     setContentView(layout.viewGroup)
 }

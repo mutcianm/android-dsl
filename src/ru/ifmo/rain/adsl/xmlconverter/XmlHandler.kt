@@ -1,6 +1,5 @@
 package ru.ifmo.rain.adsl.xmlconverter
 
-import javax.xml.parsers.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import ru.ifmo.rain.adsl.Context

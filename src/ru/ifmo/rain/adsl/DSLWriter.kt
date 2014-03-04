@@ -77,23 +77,28 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
     public fun produceProperty(prop: PropertyData) {
         var c = Context(propsCache)
         val className: String
+        val setterName: String
+        val getterName: String
         if (prop.isContainer) {
             className = "_${prop.parentClass.cleanName()}"
-            if (prop.setter != null) prop.setter = "viewGroup." + prop.setter
-            if (prop.getter != null) prop.getter = "viewGroup." + prop.getter
+            setterName = if (prop.setter != null) "viewGroup." + prop.setter!!.name else ""
+            getterName = if (prop.getter != null) "viewGroup." + prop.getter!!.name else ""
         } else {
             className = prop.parentClass.cleanInternalName()
+            setterName = if (prop.setter != null)  prop.setter!!.name!! else ""
+            getterName = if (prop.getter != null)  prop.getter!!.name!! else ""
         }
-        val propertyReturnType = prop.propType!!.toStr()
+        val propertyReturnType = prop.getter!!.renderReturnType()
+//        val propertyReturnType = prop.propType!!.toStr()
         val mutability = if (prop.setter == null) "val" else "var"
         val setterValue = if (propertyReturnType.endsWith("?")) "(value!!)" else "(value)"
         prop.propName = fixIdentName(prop.propName)
         with (prop) {
             c.writeln("$mutability $className.$propName: $propertyReturnType")
             c.incIndent()
-            c.writeln("get() = $getter()")
+            c.writeln("get() = $getterName()")
             if (setter != null)
-                c.writeln("set(value) = $setter$setterValue")
+                c.writeln("set(value) = $setterName$setterValue")
         }
         c.newLine()
     }
@@ -133,8 +138,6 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         cont.decIndent()
         cont.writeln("}\n")
         //generate extension function
-
-        // get/set Tag is available in View children only
         if (isWidget(view.parent)) {
             for (method in methods) {
                 val containerContext = Context(containerCache, 1)
@@ -212,18 +215,32 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         }
     }
 
-    public fun makeWidget(className: String,
+    class DCons(val decl: String = "", val inv: String = "")
+
+    private fun getNonDefaultCons(node: ClassNode): DCons {
+        //extract basic constructor and its arguments
+        val csdf = node.getConstructors().filterNot { it.arguments!!.size == 1 && it.arguments!![0].toStr() == "android.content.Context?" }
+        //if trivial constructor not found
+        return if (csdf.size() == node.getConstructors().size())
+            DCons(csdf.head!!.fmtArguments("android.content.Context?") + ", ",
+            ", " + csdf.head!!.fmtArgumentsInvoke("android.content.Context?"))
+        else DCons()
+    }
+
+    public fun makeWidget(classNode: ClassNode,
+                          className: String,
                           internalName: String,
                           arguments: List<PropertyData>) {
         var cont = Context(containerCache, 1)
         val args = StringBuilder()
+        val dc = getNonDefaultCons(classNode)
         arguments.forEach {
             args append "${it.propName}: ${it.propType!!.toStr()}, "
         }
         val strArgs = args.toString()
-        cont.writeln("fun $className($strArgs init: $internalName.() -> Unit): $internalName {")
+        cont.writeln("fun $className(${dc.decl}$strArgs init: $internalName.() -> Unit): $internalName {")
         cont.incIndent()
-        cont writeln "val v = $internalName(ctx)"
+        cont writeln "val v = $internalName(ctx${dc.inv})"
         for (arg in arguments)
             cont.writeln("v.${arg.propName} = ${arg.propName}")
         cont.writeln("v.init()")
@@ -235,14 +252,16 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         cont.writeln("}\n")
     }
 
-    public fun makeContainerWidgetFun(cleanNameDecap: String,
+    public fun makeContainerWidgetFun( classNode: ClassNode,
+                                       cleanNameDecap: String,
                                       cleanName: String,
                                       cleanInternalName: String) {
         var cont = Context(containerCache, 1)
+        val dc = getNonDefaultCons(classNode)
         cont.writeln("//container function")
-        cont.writeln("fun $cleanNameDecap( init: _$cleanName.() -> Unit): _$cleanName {")
+        cont.writeln("fun $cleanNameDecap(${dc.decl} init: _$cleanName.() -> Unit): _$cleanName {")
         cont.incIndent()
-        cont.writeln("val v = _$cleanName($cleanInternalName(ctx), ctx)")
+        cont.writeln("val v = _$cleanName($cleanInternalName(ctx${dc.inv}), ctx)")
         cont.writeln("v.init()")
         cont.writeln("viewGroup.addView(v.viewGroup)")
         cont.writeln("_style(v)")
@@ -292,9 +311,10 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         val cleanNameDecap = classNode.cleanNameDecap()
         val cleanName = classNode.cleanName()
         val cleanInternalName = classNode.cleanInternalName()
-        c.writeln("fun android.app.Activity.$cleanNameDecap(init: _$cleanName.() -> Unit) {")
+        val dc = getNonDefaultCons(classNode)
+        c.writeln("fun android.app.Activity.$cleanNameDecap(${dc.decl}init: _$cleanName.() -> Unit) {")
         c.incIndent()
-        c.writeln("val layout = _$cleanName($cleanInternalName(this), this)")
+        c.writeln("val layout = _$cleanName($cleanInternalName(this${dc.inv}), this)")
         c.writeln("layout.init()")
         c.writeln("setContentView(layout.viewGroup)")
         c.decIndent()

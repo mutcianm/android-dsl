@@ -52,6 +52,10 @@ class _AbsoluteLayout(viewGroup: android.widget.AbsoluteLayout, ctx: android.app
 
 }
 
+class _SlidingDrawer(viewGroup: android.widget.SlidingDrawer, ctx: android.app.Activity): _Container<android.widget.SlidingDrawer>(viewGroup, ctx) {
+
+}
+
 class _FrameLayout(viewGroup: android.widget.FrameLayout, ctx: android.app.Activity): _Container<android.widget.FrameLayout>(viewGroup, ctx) {
 
     fun android.view.View.layoutParams(c: android.content.Context?, attrs: android.util.AttributeSet?, init: android.widget.FrameLayout.LayoutParams.() -> Unit = { }) {
@@ -165,6 +169,28 @@ class _TwoLineListItem(viewGroup: android.widget.TwoLineListItem, ctx: android.a
 }
 
 class _DialerFilter(viewGroup: android.widget.DialerFilter, ctx: android.app.Activity): _Container<android.widget.DialerFilter>(viewGroup, ctx) {
+
+}
+
+class _WebView(viewGroup: android.webkit.WebView, ctx: android.app.Activity): _Container<android.webkit.WebView>(viewGroup, ctx) {
+
+    fun android.view.View.layoutParams(c: android.content.Context?, attrs: android.util.AttributeSet?, init: android.view.ViewGroup.LayoutParams.() -> Unit = { }) {
+        val lp = android.view.ViewGroup.LayoutParams(c!!, attrs!!)
+        lp.init()
+        this@layoutParams.setLayoutParams(lp)
+    }
+
+    fun android.view.View.layoutParams(width: Int, height: Int, init: android.view.ViewGroup.LayoutParams.() -> Unit = { }) {
+        val lp = android.view.ViewGroup.LayoutParams(width, height)
+        lp.init()
+        this@layoutParams.setLayoutParams(lp)
+    }
+
+    fun android.view.View.layoutParams(source: android.view.ViewGroup.LayoutParams?, init: android.view.ViewGroup.LayoutParams.() -> Unit = { }) {
+        val lp = android.view.ViewGroup.LayoutParams(source!!)
+        lp.init()
+        this@layoutParams.setLayoutParams(lp)
+    }
 
 }
 
@@ -503,6 +529,10 @@ class _Gallery(viewGroup: android.widget.Gallery, ctx: android.app.Activity): _C
         lp.init()
         this@layoutParams.setLayoutParams(lp)
     }
+
+}
+
+class _AdapterViewFlipper(viewGroup: android.widget.AdapterViewFlipper, ctx: android.app.Activity): _Container<android.widget.AdapterViewFlipper>(viewGroup, ctx) {
 
 }
 

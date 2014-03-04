@@ -1,1 +1,3 @@
 android.inputmethodservice.KeyboardView.shifted
+android.widget.AutoCompleteTextView.adapter
+android.webkit.WebView.visibleTitleHeight

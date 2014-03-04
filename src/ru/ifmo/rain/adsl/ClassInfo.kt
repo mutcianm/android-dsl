@@ -3,10 +3,6 @@ package ru.ifmo.rain.adsl
 import org.objectweb.asm.*
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
-import java.util.ArrayList
-import org.objectweb.asm.tree.LocalVariableNode
-import java.util.HashMap
-import com.sun.tools.classfile.StackMapTable_attribute.append_frame
 
 class NoSignatureException(message: String): DSLException(message)
 
@@ -26,136 +22,6 @@ fun cleanInternalName(name: String): String {
     return name.replace('/', '.').replace('$', '.')
 }
 
-val MethodNode.arguments: Array<Type>?
-    get() = Type.getArgumentTypes(desc)
-
-fun genericTypeToStr(param: GenericType): String {
-    var res = StringBuilder()
-    res append when(param.classifier) {
-        is ToplevelClass -> cleanInternalName((param.classifier as ToplevelClass).internalName)
-        is BaseType -> Type.getType("${(param.classifier as BaseType).descriptor}")!!.toStr()
-        else -> "WTF"
-    }
-    if (param.arguments.size > 0) {
-        res append "<"
-        for (arg in param.arguments) {
-            res append when(arg) {
-                is UnBoundedWildcard -> "*"
-                is NoWildcard -> genericTypeToStr(arg.genericType)
-                else -> "WTFARG"
-            }
-            res append ", "
-        }
-        res.delete(res.size-2, res.size)
-        res append ">"
-    }
-    if (param.classifier is ToplevelClass) res append "?"
-    return res.toString()
-}
-
-fun MethodNode.buildKotlinSignature(): List<String> {
-    if (signature == null)
-        return ArrayList<String>()
-    val parsed = parseGenericMethodSignature(signature!!)
-    return parsed.valueParameters.map { genericTypeToStr(it.genericType) }
-}
-
-fun MethodNode.processArguments(app: (argName: String, argType: String, nullable: String) -> String): String {
-    if (getArgumentCount() == 0)
-        return ""
-    val locals = if (localVariables == null || localVariables!!.isEmpty())
-        HashMap<Int, LocalVariableNode>()
-    else
-        localVariables!!.toMap { a -> a.index to a }
-    val buf = StringBuffer()
-    var argNum = 0
-    var nameIndex = if (isStatic()) 0 else 1
-    val genericArgs = buildKotlinSignature()
-    for (arg in arguments!!) {
-        val argType = arg.toStr()
-        val nullable = if (argType.endsWith("?")) "!!" else ""
-        val local = locals[nameIndex]
-        val argName = local?.name ?: "p$argNum"
-        buf append app(argName, if(signature != null) genericArgs[argNum] else argType, nullable)
-        argNum++
-        nameIndex += arg.getSize()
-    }
-    buf.delete(buf.length-2, buf.length)
-    return buf.toString()
-}
-
-fun MethodNode.fmtArguments(): String {
-    return processArguments { name, _type, nul -> "$name: $_type, " }
-}
-
-fun MethodNode.fmtArgumentsInvoke(): String {
-    return processArguments { name, _type, nul -> "$name$nul, " }
-}
-
-fun MethodNode.fmtArgumentsTypes(): String {
-    return processArguments { name, _type, nul -> "$_type, " }
-}
-
-fun MethodNode.fmtArgumentsNames(): String {
-    return processArguments { name, _type, nul -> "$name, " }
-}
-
-fun MethodNode.isStatic(): Boolean {
-    return (access and Opcodes.ACC_STATIC) != 0
-}
-
-fun MethodNode.isGetter(): Boolean {
-    return (((name!!.startsWith("get") && name!!.length > 3) ||
-            (name!!.startsWith("is") && name!!.length > 2)) &&
-             arguments?.size == 0 && (getReturnType().getSort() != Type.VOID))
-}
-
-fun MethodNode.isSetter(): Boolean {
-    return ((name!!.startsWith("set") && name!!.length > 3) && arguments?.size == 1)
-}
-
-fun MethodNode.isProperty(): Boolean {
-    return ((name!!.startsWith("set") && name!!.length > 3) ||
-            (name!!.startsWith("get") && name!!.length > 3) ||
-            (name!!.startsWith("is") && name!!.length > 2))
-}
-
-fun MethodNode.isProperty(prop: String): Boolean {
-    if (!isProperty()) return false
-    return (name == "set" + capitalize(prop) ||
-    name == "get" + capitalize(prop) ||
-    name == "is" + capitalize(prop))
-}
-
-fun MethodNode.isConstructor(): Boolean {
-    return name == "<init>"
-}
-
-fun MethodNode.isProtected(): Boolean {
-    return ((access and Opcodes.ACC_PROTECTED) != 0)
-}
-
-fun MethodNode.isGeneric(): Boolean {
-    return signature != null
-}
-
-fun MethodNode.getArgumentCount(): Int {
-    //wtf !!
-    return if (arguments != null) arguments!!.size else 0
-}
-
-fun MethodNode.getReturnType(): Type {
-    return Type.getReturnType(desc)!!
-}
-
-fun MethodNode.toProperty(): String {
-    val tmp = if (name!!.startsWith("get") || name!!.startsWith("set"))
-        name!!.substring(3)
-    else
-        name!!.substring(2)
-    return decapitalize(tmp)
-}
-
 class MethodNodeWithParent(var parent: ClassNode, val child: MethodNode)
 
 fun ClassNode.cleanName(): String {
@@ -166,8 +32,19 @@ fun ClassNode.cleanNameDecap(): String {
     return decapitalize(cleanName())
 }
 
+fun ClassNode.buldTypeParams(): String {
+    return if (signature != null) {
+        val wtf = parseGenericMethodSignature(signature!!)
+        if (wtf.typeParameters.isEmpty()) return ""
+        val t: List<String> = wtf.typeParameters.map { it.upperBounds.fold("") {i, bound -> i + "out "+ genericTypeToStr(bound)}}
+        val res = t.makeString()
+        "<$res>"
+    } else ""
+}
+
 fun ClassNode.cleanInternalName(): String {
-    return name!!.replace('/', '.').replace('$', '.')
+
+    return name!!.replace('/', '.').replace('$', '.') + buldTypeParams()
 }
 
 fun ClassNode.toContainerName() = "_${cleanName()}"
