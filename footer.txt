@@ -1,3 +1,7 @@
 fun android.app.Activity.UI(init: android.app.Activity.() -> Unit) {
     init()
 }
+
+fun UI(act: android.app.Activity, init: android.app.Activity.() -> Unit) {
+    act.init()
+}

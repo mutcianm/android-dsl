@@ -7,10 +7,13 @@ import java.util.ArrayList
 import java.util.HashMap
 
 class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, val settings: BaseConverterSettings): DefaultHandler() {
-    private var depth = 0
-//    val buffer = StringBuffer()
-    val imports = StringBuffer()
-    val ctx = Context(buffer)
+
+    val globalCtx = Context(buffer)
+    val importsCtx = globalCtx.fork()
+    val headerCtx = globalCtx.fork()
+    val widgetsDeclCtx = globalCtx.fork(newIndentDepth = globalCtx.indentDepth+1)
+    val widgetsBodyCtx = globalCtx.fork(newIndentDepth = globalCtx.indentDepth+1)
+
     val controlsBuffer = Context(controlsXmlBuffer)
     var lastLayout = ""
 
@@ -19,37 +22,46 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
         val attrs = attributes?.toMap()
         if (qName.endsWith("Layout"))
             lastLayout = qName
-        ctx.incIndent()
-        ctx.writeln(buildCons(qName, attrs) + " {")
+        widgetsBodyCtx.incIndent()
+        val id = produceId(attrs, qName)
+        if (id != null) {
+            widgetsBodyCtx.writeNoIndent(buildCons(qName, attrs) + " {\n")
+            widgetsBodyCtx.incIndent()
+            widgetsBodyCtx.writeln("setId(R.id.$id)")
+            widgetsBodyCtx.decIndent()
+        }
+        else
+            widgetsBodyCtx.writeln(buildCons(qName, attrs) + " {")
         if (attributes != null) {
-            ctx.incIndent()
+            widgetsBodyCtx.incIndent()
             for (attr in attrs) {
-                if (isSkippableAttr(attr.key))
-                    continue
-                if (attr.key == "id") {
-                    produceId(attr.value)
-                    continue
-                }
+                if (isSkippableAttr(attr.key)) continue
                 processAttribute(attr.key, attr.value, {name, value ->
                     layoutParams.add("${value?.toUpperCase()}")
                 })
             }
             if (!layoutParams.isEmpty()) {
-                ctx.write("layoutParams(")
+                widgetsBodyCtx.write("layoutParams(")
                 for (arg in layoutParams) {
-                    ctx.writeNoIndent(arg + ", ")
+                    widgetsBodyCtx.writeNoIndent(arg + ", ")
                 }
-                ctx.trim(2)
-                ctx.writeNoIndent(")\n")
+                widgetsBodyCtx.trim(2)
+                widgetsBodyCtx.writeNoIndent(")\n")
             }
-            ctx.decIndent()
+            widgetsBodyCtx.decIndent()
         }
     }
 
-    private fun produceId(id: String) {
+    private fun produceId(attributes: HashMap<String, String>?, widgetClass: String): String? {
+        if (attributes == null) return null
+        val id = attributes["id"]
+        attributes.remove("id")
+        if (id == null) return null
         val idValue = id.substring(id.indexOf("/")+1)
         controlsBuffer writeln "<item name=\"$idValue\" type=\"id\"/>"
-        ctx.writeln("setId(R.id.$idValue)")
+        widgetsBodyCtx write "$idValue = "
+        widgetsDeclCtx writeln "val $idValue: $widgetClass by Delegates.notNull()"
+        return idValue
     }
 
     private fun isSkippableAttr(name: String?): Boolean {
@@ -96,8 +108,8 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
     }
 
     override fun endElement(uri: String?, localName: String?, qName: String) {
-        ctx.writeln("}")
-        ctx.decIndent()
+        widgetsBodyCtx.writeln("}")
+        widgetsBodyCtx.decIndent()
     }
 
     override fun characters(ch: CharArray?, start: Int, length: Int) {
@@ -105,31 +117,39 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
     }
 
     override fun startDocument() {
-        ctx writeln "import android.view.ViewGroup.LayoutParams.*\n"
-        ctx writeln "public override fun onCreate(savedInstanceState: Bundle?): Unit {"
-        ctx.incIndent()
-        ctx writeln "super.onCreate(savedInstanceState)"
-        ctx writeln "UI {"
+        importsCtx writeln "import android.view.ViewGroup.LayoutParams.*"
+        importsCtx writeln "import android.widget.*"
+        importsCtx writeln "import com.example.adsl.*"
+        importsCtx writeln "import kotlin.properties.Delegates"
+        headerCtx writeln "\nclass Foo(val act: android.app.Activity) {"
+        widgetsDeclCtx.newLine()
+        widgetsBodyCtx writeln "{"
+        widgetsBodyCtx.incIndent()
+        widgetsBodyCtx writeln "UI(act) {"
         controlsBuffer writeln "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         controlsBuffer writeln "<resources>"
         controlsBuffer.incIndent()
     }
 
     override fun endDocument() {
-        ctx.writeln("}")
-        ctx.decIndent()
-        ctx.writeln("}")
+        widgetsBodyCtx.writeln("}")
+        widgetsBodyCtx.decIndent()
+        widgetsBodyCtx.writeln("}")
         controlsBuffer.decIndent()
         controlsBuffer writeln "</resources>"
+        widgetsDeclCtx.newLine()
+        widgetsBodyCtx.decIndent()
+        widgetsBodyCtx.writeln("}")
+        globalCtx.absorbChildren()
     }
 
     private fun processAttribute(name: String?, value: String?, layoutFunc: (String?, String?) -> Unit) {
         when (name) {
             "layout_width" -> layoutFunc(name, value)
             "layout_height" -> layoutFunc(name, value)
-            "text" -> ctx.writeln("$name = \"$value\"")
-            "caption" -> ctx.writeln("$name = \"$value\"")
-            else -> ctx.writeln("$name = $value")
+            "text" -> widgetsBodyCtx.writeln("$name = \"$value\"")
+            "caption" -> widgetsBodyCtx.writeln("$name = \"$value\"")
+            else -> widgetsBodyCtx.writeln("$name = $value")
         }
     }
 }
