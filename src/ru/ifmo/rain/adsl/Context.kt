@@ -4,9 +4,9 @@ import java.util.ArrayList
 
 open class InvalidIndent(num: Int) : DSLWriterException("Indentation level < 0: $num")
 
-class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: Int = 0) {
+open class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: Int = 0) {
     val indentUnit = "    "
-    private var currentIndent = indentUnit.repeat(indentDepth)
+    protected var currentIndent: String = indentUnit.repeat(indentDepth)
     val children = ArrayList<Context>()
 
     public fun incIndent() {
@@ -21,9 +21,9 @@ class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: Int = 
         currentIndent = currentIndent.substring(0, currentIndent.length - indentUnit.length)
     }
 
-    public fun write(what: String) {
-        buffer.append(currentIndent)
-        buffer.append(what)
+    public open fun write(what: String) {
+        writeNoIndent(currentIndent)
+        writeNoIndent(what)
     }
 
     public fun writeNoIndent(what: String) {
@@ -36,7 +36,7 @@ class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: Int = 
     }
 
     public fun newLine() {
-        buffer.append('\n')
+        writeNoIndent("\n")
     }
 
 
@@ -44,8 +44,11 @@ class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: Int = 
         buffer.delete(buffer.length-num, buffer.length)
     }
 
-    public fun fork(newBuffer: StringBuffer = StringBuffer(), newIndentDepth: Int = indentDepth): Context {
-        val child = Context(newBuffer, newIndentDepth)
+    public fun fork<T: Context>(newBuffer: StringBuffer = StringBuffer(),
+                    newIndentDepth: Int = indentDepth,
+                    factoryFunc: (() -> T)?
+    ): T {
+        val child = if (factoryFunc!=null) factoryFunc() else Context(newBuffer, newIndentDepth)
         children.add(child)
         return child
     }
@@ -60,7 +63,7 @@ class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: Int = 
         }
     }
 
-    public fun toString(): String {
+    public open fun toString(): String {
         return buffer.toString()
     }
 }

@@ -20,8 +20,13 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
     override fun startElement(uri: String?, localName: String?, qName: String, attributes: Attributes?) {
         val layoutParams = ArrayList<String>()
         val attrs = attributes?.toMap()
-        if (qName.endsWith("Layout"))
+        val ctx: WidgetContext
+        if (qName.endsWith("Layout")) {
             lastLayout = qName
+            ctx = widgetsBodyCtx.fork()
+        } else {
+
+        }
         widgetsBodyCtx.incIndent()
         val id = produceId(attrs, qName)
         if (id != null) {
