@@ -89,7 +89,6 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
             getterName = if (prop.getter != null)  prop.getter!!.name!! else ""
         }
         val propertyReturnType = prop.getter!!.renderReturnType()
-//        val propertyReturnType = prop.propType!!.toStr()
         val mutability = if (prop.setter == null) "val" else "var"
         val setterValue = if (propertyReturnType.endsWith("?")) "(value!!)" else "(value)"
         prop.propName = fixIdentName(prop.propName)
@@ -266,8 +265,8 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
         cont.writeln("viewGroup.addView(v.viewGroup)")
         cont.writeln("_style(v)")
         cont.writeln("listenerLambdasMap.get(\"$cleanInternalName\")?.forEach { it() }")
-        cont.writeln("listenerMap.clear()")
-        cont.writeln("listenerLambdasMap.clear()")
+        cont.writeln("v.listenerMap.clear()")
+        cont.writeln("v.listenerLambdasMap.clear()")
         cont.writeln("return v")
         cont.decIndent()
         cont.writeln("}\n")
