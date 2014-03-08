@@ -10,14 +10,18 @@ open class WidgetContext(): Context() {
         layoutParams.add(value.toUpperCase())
     }
 
-    public fun addProperty(key: String, value: String) {
+    public open fun addProperty(key: String, value: String, keyPrefix: String = "") {
         when (key) {
             "layout_width" -> layoutFunc(key, value)
             "layout_height" -> layoutFunc(key, value)
-            "text" -> writeln("$key = \"$value\"")
-            "caption" -> writeln("$key = \"$value\"")
-            else -> writeln("$key = $value")
+            "text" -> writeln("$keyPrefix$key = \"$value\"")
+            "caption" -> writeln("$keyPrefix$key = \"$value\"")
+            else -> writeln("$keyPrefix$key = $value")
         }
+    }
+
+    public open fun setId(id: String) {
+        writeln("setId(R.id.$id)")
     }
 
     public override fun toString(): String {
@@ -28,9 +32,12 @@ open class WidgetContext(): Context() {
 }
 
 class LayoutContext(): WidgetContext() {
-    public override fun write(what: String) {
-        writeNoIndent(currentIndent)
-        writeNoIndent("viewGroup")
-        writeNoIndent(what)
+
+    public override fun setId(id: String) {
+        writeln("viewGroup.setId(R.id.$id)")
+    }
+
+    public override fun addProperty(key: String, value: String, keyPrefix: String) {
+        super<WidgetContext>.addProperty(key, value, "viewGroup.")
     }
 }

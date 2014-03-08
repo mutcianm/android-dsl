@@ -44,13 +44,17 @@ open class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: I
         buffer.delete(buffer.length-num, buffer.length)
     }
 
-    public fun fork<T: Context>(newBuffer: StringBuffer = StringBuffer(),
-                    newIndentDepth: Int = indentDepth,
-                    factoryFunc: (() -> T)?
-    ): T {
-        val child = if (factoryFunc!=null) factoryFunc() else Context(newBuffer, newIndentDepth)
+    public fun fork(newBuffer: StringBuffer = StringBuffer(),
+                    newIndentDepth: Int = indentDepth ): Context {
+        val child = Context(newBuffer, newIndentDepth)
         children.add(child)
         return child
+    }
+
+    public fun adopt<T: Context>(c: T, inheritIndent: Boolean = true): T {
+        children.add(c)
+        if (inheritIndent) c.currentIndent = currentIndent
+        return c
     }
 
     public fun absorbChildren(noIndent: Boolean = true) {
@@ -61,6 +65,7 @@ open class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: I
             else
                 write(child.toString())
         }
+        children.clear()
     }
 
     public open fun toString(): String {

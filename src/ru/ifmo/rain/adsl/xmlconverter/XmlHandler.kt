@@ -18,43 +18,32 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
     var lastLayout = ""
 
     override fun startElement(uri: String?, localName: String?, qName: String, attributes: Attributes?) {
-        val layoutParams = ArrayList<String>()
         val attrs = attributes?.toMap()
         val ctx: WidgetContext
+        widgetsBodyCtx.incIndent()
         if (qName.endsWith("Layout")) {
             lastLayout = qName
-            ctx = widgetsBodyCtx.fork()
+            ctx = widgetsBodyCtx.adopt(LayoutContext())
         } else {
-
+            ctx = widgetsBodyCtx.adopt(WidgetContext())
         }
-        widgetsBodyCtx.incIndent()
         val id = produceId(attrs, qName)
         if (id != null) {
-            widgetsBodyCtx.writeNoIndent(buildCons(qName, attrs) + " {\n")
-            widgetsBodyCtx.incIndent()
-            widgetsBodyCtx.writeln("setId(R.id.$id)")
-            widgetsBodyCtx.decIndent()
+            ctx.writeNoIndent(buildCons(qName, attrs) + " {\n")
+            ctx.incIndent()
+            ctx.setId(id)
+            ctx.decIndent()
         }
         else
-            widgetsBodyCtx.writeln(buildCons(qName, attrs) + " {")
+            ctx.writeln(buildCons(qName, attrs) + " {")
         if (attributes != null) {
-            widgetsBodyCtx.incIndent()
+            ctx.incIndent()
             for (attr in attrs) {
                 if (isSkippableAttr(attr.key)) continue
-                processAttribute(attr.key, attr.value, {name, value ->
-                    layoutParams.add("${value?.toUpperCase()}")
-                })
+                ctx.addProperty(attr.key, attr.value)
             }
-            if (!layoutParams.isEmpty()) {
-                widgetsBodyCtx.write("layoutParams(")
-                for (arg in layoutParams) {
-                    widgetsBodyCtx.writeNoIndent(arg + ", ")
-                }
-                widgetsBodyCtx.trim(2)
-                widgetsBodyCtx.writeNoIndent(")\n")
-            }
-            widgetsBodyCtx.decIndent()
         }
+        widgetsBodyCtx.absorbChildren(true)
     }
 
     private fun produceId(attributes: HashMap<String, String>?, widgetClass: String): String? {
