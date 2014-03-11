@@ -17,7 +17,7 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
     var lastLayout = ""
 
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-        val attrs = attributes?.toMap()
+        val attrs = attributes.toMap()
         val ctx: WidgetContext
         widgetsBodyCtx.incIndent()
         if (qName.endsWith("Layout")) {
@@ -33,13 +33,11 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
             ctx.setId(id)
             ctx.decIndent()
         } else
-            ctx.writeln(buildCons(qName, attrs) + " {")
-        if (attributes != null) {
-            ctx.incIndent()
-            for (attr in attrs) {
-                if (isSkippableAttr(attr.key)) continue
-                ctx.addProperty(attr.key, attr.value)
-            }
+        ctx.writeln(buildCons(qName, attrs) + " {")
+        ctx.incIndent()
+        for (attr in attrs) {
+            if (isSkippableAttr(attr.key)) continue
+            ctx.addProperty(attr.key, attr.value)
         }
         widgetsBodyCtx.absorbChildren(true)
     }

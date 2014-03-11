@@ -194,7 +194,7 @@ class DSLWriter(val settings: BaseGeneratorSettings, val classTree: ClassTree) {
             cont.writeln("override fun ${method.name}(${methodArgs})$returnTerm {")
             cont.incIndent()
             //FIXME: incorrect assertion checks, again
-            cont.writeln("${returnStmt}wrapper!!._${method.name}(${method.fmtArgumentsInvoke()})")
+            cont.writeln("${returnStmt}wrapper._${method.name}(${method.fmtArgumentsInvoke()})")
             cont.decIndent()
             cont.writeln("}")
         }

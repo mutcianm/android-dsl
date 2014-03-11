@@ -7,14 +7,15 @@ import java.nio.file.Path
 import java.nio.charset.StandardCharsets
 import java.nio.ByteBuffer
 import java.util.LinkedHashMap
+import java.io.FileWriter
 
 
 fun typeMap(str: String): String {
     return when (str) {
-        "java.lang.CharSequence" -> "jet.CharSequence"
-        "java.lang.String" -> "jet.String"
-        "java.lang.Integer" -> "jet.Int"
-        "java.lang.Object" -> "jet.Any"
+        "java.lang.CharSequence" -> "CharSequence"
+        "java.lang.String" -> "String"
+        "java.lang.Integer" -> "Int"
+        "java.lang.Object" -> "Any"
         else -> str
     }
 }
@@ -29,7 +30,7 @@ fun Type.toStr(nullable: Boolean = true): String {
         Type.BYTE -> "Byte"
         Type.CHAR -> "Char"
         Type.SHORT -> "Short"
-        Type.VOID -> "jet.Unit"
+        Type.VOID -> "Unit"
         Type.ARRAY -> {
             val innerType = getElementType()
             if (innerType != null) {
@@ -99,6 +100,12 @@ fun updateIfNotNull<T>(old: T, new: T): T {
 fun readFile(name: String): String {
     var data = Files.readAllBytes(Paths.get(name) as Path)
     return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(data)).toString()
+}
+
+fun writeFile(fileName: String, content: String) {
+    val f = FileWriter(fileName)
+    f.write(content)
+    f.close()
 }
 
 public fun readLines(fileName: String): MutableList<String> {

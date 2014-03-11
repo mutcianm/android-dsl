@@ -2,6 +2,7 @@ package ru.ifmo.rain.adsl.xmlconverter
 
 import javax.xml.parsers.SAXParserFactory
 import java.io.File
+import ru.ifmo.rain.adsl.writeFile
 
 class Converter {
     val buffer = StringBuffer()
@@ -32,7 +33,10 @@ fun convertToFileURL(filename: String): String {
 }
 
 fun main(args: Array<String>) {
-    val c = Converter()
-    c.run(args[0])
-    println(c.toString())
+    for (arg in args) {
+        val c = Converter()
+        c.run(arg)
+        writeFile("${arg.replaceAll(".xml", ".kt")}", c.buffer.toString())
+        writeFile("${arg.replaceAll(".xml", ".ui.xml")}", c.controlsXmlBuffer.toString())
+    }
 }
