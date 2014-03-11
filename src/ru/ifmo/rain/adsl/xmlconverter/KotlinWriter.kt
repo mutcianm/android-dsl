@@ -7,7 +7,7 @@ class KotlinWriter {
     val buffer = StringBuffer()
     val ctx = Context(buffer)
 
-    public fun handleAttribute(parentName: String, name: String, value:String) {
+    public fun handleAttribute(parentName: String, name: String, value: String) {
 
     }
 
@@ -15,13 +15,13 @@ class KotlinWriter {
 
     }
 
-    public fun toString(): String {
+    public override fun toString(): String {
         return buffer.toString()
     }
 
-//    private void writeHeader() {
-//        ctx writeln "package com.example.android_test"
-//    }
+    //    private void writeHeader() {
+    //        ctx writeln "package com.example.android_test"
+    //    }
 
 }
 

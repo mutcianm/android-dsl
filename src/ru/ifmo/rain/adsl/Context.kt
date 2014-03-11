@@ -16,7 +16,7 @@ open class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: I
 
     public fun decIndent() {
         indentDepth--
-        if(indentDepth < 0)
+        if (indentDepth < 0)
             throw InvalidIndent(indentDepth)
         currentIndent = currentIndent.substring(0, currentIndent.length - indentUnit.length)
     }
@@ -41,17 +41,17 @@ open class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: I
 
 
     public fun trim(num: Int) {
-        buffer.delete(buffer.length-num, buffer.length)
+        buffer.delete(buffer.length - num, buffer.length)
     }
 
     public fun fork(newBuffer: StringBuffer = StringBuffer(),
-                    newIndentDepth: Int = indentDepth ): Context {
+                    newIndentDepth: Int = indentDepth): Context {
         val child = Context(newBuffer, newIndentDepth)
         children.add(child)
         return child
     }
 
-    public fun adopt<T: Context>(c: T, inheritIndent: Boolean = true): T {
+    public fun adopt<T : Context>(c: T, inheritIndent: Boolean = true): T {
         children.add(c)
         if (inheritIndent) c.currentIndent = currentIndent
         return c
@@ -68,7 +68,7 @@ open class Context(val buffer: StringBuffer = StringBuffer(), var indentDepth: I
         children.clear()
     }
 
-    public open fun toString(): String {
+    public override fun toString(): String {
         return buffer.toString()
     }
 }

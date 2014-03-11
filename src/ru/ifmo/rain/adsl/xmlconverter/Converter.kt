@@ -15,7 +15,7 @@ class Converter {
         reader?.parse(convertToFileURL(ifn))
     }
 
-    public fun toString(): String {
+    public override fun toString(): String {
         return buffer.toString()
     }
 }

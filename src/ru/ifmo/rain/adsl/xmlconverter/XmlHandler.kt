@@ -3,21 +3,20 @@ package ru.ifmo.rain.adsl.xmlconverter
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import ru.ifmo.rain.adsl.Context
-import java.util.ArrayList
 import java.util.HashMap
 
-class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, val settings: BaseConverterSettings): DefaultHandler() {
+class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, val settings: BaseConverterSettings) : DefaultHandler() {
 
     val globalCtx = Context(buffer)
     val importsCtx = globalCtx.fork()
     val headerCtx = globalCtx.fork()
-    val widgetsDeclCtx = globalCtx.fork(newIndentDepth = globalCtx.indentDepth+1)
-    val widgetsBodyCtx = globalCtx.fork(newIndentDepth = globalCtx.indentDepth+1)
+    val widgetsDeclCtx = globalCtx.fork(newIndentDepth = globalCtx.indentDepth + 1)
+    val widgetsBodyCtx = globalCtx.fork(newIndentDepth = globalCtx.indentDepth + 1)
 
     val controlsBuffer = Context(controlsXmlBuffer)
     var lastLayout = ""
 
-    override fun startElement(uri: String?, localName: String?, qName: String, attributes: Attributes?) {
+    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
         val attrs = attributes?.toMap()
         val ctx: WidgetContext
         widgetsBodyCtx.incIndent()
@@ -33,8 +32,7 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
             ctx.incIndent()
             ctx.setId(id)
             ctx.decIndent()
-        }
-        else
+        } else
             ctx.writeln(buildCons(qName, attrs) + " {")
         if (attributes != null) {
             ctx.incIndent()
@@ -51,7 +49,7 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
         val id = attributes["id"]
         attributes.remove("id")
         if (id == null) return null
-        val idValue = id.substring(id.indexOf("/")+1)
+        val idValue = id.substring(id.indexOf("/") + 1)
         controlsBuffer writeln "<item name=\"$idValue\" type=\"id\"/>"
         widgetsBodyCtx write "$idValue = "
         widgetsDeclCtx writeln "val $idValue: $widgetClass by Delegates.notNull()"
@@ -67,7 +65,7 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
     }
 
     private fun buildCons(qName: String, attrs: HashMap<String, String>?): String {
-        if(attrs == null)
+        if (attrs == null)
             return qName.decapitalize()
         //FIXME: how to deal with name clashes?
         val classInternalName = settings.helperConProps.keySet().find { it.endsWith(qName) }
@@ -93,7 +91,7 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
         val res = StringBuffer()
         res append "${qName.decapitalize()}("
         for (arg in bestMatchingCons!!) {
-            res append "$arg = ${quote(arg,attrs[arg])}, "
+            res append "$arg = ${quote(arg, attrs[arg])}, "
             attrs.remove(arg)
         }
         res.trim(2)
@@ -101,7 +99,7 @@ class XmlHandler(val buffer: StringBuffer, val controlsXmlBuffer: StringBuffer, 
         return res.toString()
     }
 
-    override fun endElement(uri: String?, localName: String?, qName: String) {
+    override fun endElement(uri: String?, localName: String, qName: String) {
         widgetsBodyCtx.writeln("}")
         widgetsBodyCtx.decIndent()
     }
